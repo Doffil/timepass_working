@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "2571652265",
+    "firebase_url": "https://timepass-cd820.firebaseio.com",
+    "project_id": "timepass-cd820",
+    "storage_bucket": "timepass-cd820.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2571652265:android:86115502754b718d01adb8",
+        "android_client_info": {
+          "package_name": "com.example.timepass"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2571652265-576qp7k41017j17v6jjviuq5kih6ovdp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.timepass",
+            "certificate_hash": "c5d1a750e0f98498d33797b9538961acb51144b5"
+          }
+        },
+        {
+          "client_id": "2571652265-rg49g6b38s2fv84e5pvqa3qbhg2c82sp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlqHCuK52feInxSLq6oOF4lzK347Lyu18"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2571652265-rg49g6b38s2fv84e5pvqa3qbhg2c82sp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

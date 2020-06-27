@@ -4,8 +4,8 @@ class Model {
   String id;
   String name;
   String title;
-
-  Model({this.id, this.name, this.title});
+  String imageUrl;
+  Model({this.id, this.name, this.title,this.imageUrl});
 }
 
 class SearchList extends StatefulWidget {
@@ -42,19 +42,32 @@ class _SearchListState extends State<SearchList> {
     _list=
         _list = List();
     _list.add(
-      Model(id: "1", name: "name 1", title: "a title 1"),
+      Model(id: "1", name: "Vegetables", title: "a title 1",
+          imageUrl: "https://cdn.britannica.com/17/196817-050-6A15DAC3/vegetables.jpg"),
     );
     _list.add(
-      Model(id: "2", name: "name 2", title: "a title 2"),
+      Model(id: "2", name: "Fruits", title: "a title 2",
+          imageUrl: "https://cdn-prod.medicalnewstoday.com/content/images/hero/325/325253/325253_1100.jpg"),
     );
     _list.add(
-      Model(id: "3", name: "name 3", title: "b title 3"),
+      Model(id: "3", name: "Breads", title: "b title 3",
+          imageUrl: "https://www.biggerbolderbaking.com/wp-content/uploads/2020/04/Hearty-Yeast-Free-Bread-WS-Thumbnail.jpg"),
     );
     _list.add(
-      Model(id: "4", name: "name 4", title: "b title 4"),
+      Model(id: "4", name: "Sweets", title: "b title 4",
+          imageUrl: "https://c.ndtvimg.com/2019-10/o52ta3a8_sweets-_625x300_26_October_19.jpg"),
     );
     _list.add(
-      Model(id: "5", name: "name 5", title: "b title 5"),
+      Model(id: "5", name: "Spices", title: "b title 5",
+          imageUrl: "https://marketresearchbiz-ikwnsbmbizhvmufcjx.netdna-ssl.com/wp-content/uploads/2017/11/spices-market-400x225.jpg"),
+    );
+    _list.add(
+      Model(id: "6", name: "Dal Types", title: "b title 6",
+          imageUrl: "https://i.ndtvimg.com/i/2016-11/types-of-dal_620x350_41479190401.jpg"),
+    );
+    _list.add(
+      Model(id: "7", name: "Milk Products", title: "b title 7",
+          imageUrl: "https://cdn.dnaindia.com/sites/default/files/styles/full/public/2018/09/21/734051-milk-products.jpg"),
     );
     _searchList = _list;
 
@@ -75,31 +88,6 @@ class _SearchListState extends State<SearchList> {
     });
   }
 
-  Widget searchCard() => Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Card(
-      elevation: 2.0,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Icon(Icons.search),
-            SizedBox(
-              width: 10.0,
-            ),
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                    border: InputBorder.none, hintText: "Find our product"),
-              ),
-            ),
-            Icon(Icons.menu),
-          ],
-        ),
-      ),
-    ),
-  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -195,67 +183,51 @@ class GridItem extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
+      color: Colors.white,
       margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
       elevation: 10.0,
-      child: InkWell(
-        splashColor: Colors.orange,
-        onTap: () {
-          print(model.id);
-        },
+      child:Container(
+        alignment: Alignment.center,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            AspectRatio(
-              aspectRatio: 18.0 / 11.0,
-              child: Image.network(
-                'https://picsum.photos/250?image=9',
-                fit: BoxFit.contain,
+            Flexible(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: FadeInImage.assetNetwork(
+                    placeholder: 'assets/images/shopping.jpeg',
+                    image: this.model.imageUrl,
+                  fit: BoxFit.fitHeight,
+                  width: 240,
+
+                ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 4.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    this.model.name,
-                    style: TextStyle(
-                        fontFamily: 'Raleway',
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.0),
-                    maxLines: 1,
-                  ),
-                  SizedBox(height: 0.0),
-                  Text(
-                    model.title,
-                    style: TextStyle(fontFamily: 'Roboto'),
-                  ),
-                ],
+              padding: EdgeInsets.all(5.0),
+              child: Text(
+                this.model.name,
+                softWrap: true,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight:FontWeight.w500
+                ),
               ),
-            ),
+            )
           ],
         ),
       ),
     );
   }
 }
-//
-//void main() {
-//  runApp(MyApp());
-//}
-//
-//class MyApp extends StatelessWidget {
-//  @override
-//  Widget build(BuildContext context) {
-//    return MaterialApp(
-//      title: 'Flutter Demo',
-//      theme: ThemeData(
-//        primarySwatch: Colors.blue,
-//      ),
-//      home: SearchList(),
-//    );
-//  }
-//}
+
+
+
+
+
 
 
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timepass/pages/HomeScreen.dart';
-import 'package:timepass/pages/ProfilePage.dart';
-import 'package:timepass/pages/ShoppingCart.dart';
+import 'package:timepass/SplashScreen.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,7 +12,10 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: HomeScreen(),
+        home: SplashScreen(),
+      routes: <String,WidgetBuilder>{
+          '/HomeScreen':(BuildContext context)=> new HomeScreen()
+        }
     );
   }
 }

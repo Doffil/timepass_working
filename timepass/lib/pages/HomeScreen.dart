@@ -12,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedItem=0;
-  List<Widget> _pages=[HomePage(),ShoppingCart(),ProfilePage()];
+  List<Widget> _pages=[SearchList(),ShoppingCart(),ProfilePage()];
   var pagecontroller= PageController();
 
   @override

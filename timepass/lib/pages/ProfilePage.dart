@@ -64,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "Richmond Blankson",
+                        "Rohit Ghodke",
                         style: TextStyle(
                           fontSize: 16.0,
                         ),
@@ -73,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 10.0,
                       ),
                       Text(
-                        "+233247656959",
+                        "+919762434445",
                         style: TextStyle(color: Colors.grey),
                       ),
                       SizedBox(

@@ -1,14 +1,27 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:timepass/pages/SubProduct.dart';
+
+class SubCategory{
+  String description;
+  String subcategory_id;
+  SubCategory({this.subcategory_id,this.description});
+}
+
 class Model {
   String id;
   String name;
   String title;
   String imageUrl;
-  String subcategory;
-  Model({this.id, this.name, this.title,this.imageUrl});
+  bool subcategory;
+//  Map<SubCategory,String>subcategories;
+  List<SubCategory> subcategories;
+  Model({this.id, this.name, this.title,this.imageUrl,this.subcategory,this.subcategories});
 }
+
+
 
 class SearchList extends StatefulWidget {
   SearchList({Key key}) : super(key: key);
@@ -46,6 +59,7 @@ class _SearchListState extends State<SearchList> {
     _list.add(
       Model(id: "1", name: "Vegetables", title: "a title 1",
           imageUrl: "https://cdn.britannica.com/17/196817-050-6A15DAC3/vegetables.jpg",
+          subcategory: true,
       ),
     );
     _list.add(
@@ -194,7 +208,7 @@ class GridItem extends StatelessWidget {
         child:InkWell(
           splashColor: Colors.orange,
           onTap: (){
-            print(model.id);
+            print(this.model.subcategory);
             Navigator.push(
               context,
               MaterialPageRoute(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:timepass/widgets/custom_list_tile.dart';
 import 'package:timepass/widgets/small_button.dart';
 
@@ -8,11 +10,32 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String _locationMessage="";
+  String _currentAddress="";
   bool turnOnNotification = false;
   bool turnOnLocation = false;
 
+  void _getCurrentLocation() async{
+    final position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print(position);
+    var lat;
+    var long;
+    lat=position.latitude;
+    long=position.longitude;
+
+    List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(lat,long);
+    Placemark place=placemark[0];
+    setState(() {
+      _locationMessage="${position.latitude}, ${position.longitude}";
+      _currentAddress="${place.locality}, ${place.postalCode}, ${place.country}";
+      });
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    String addr="Pruthvi House,Nashik-422009";
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -103,9 +126,28 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: EdgeInsets.all(16.0),
                   child: Column(
                     children: <Widget>[
+                      FlatButton(
+                        onPressed: (){
+                          _getCurrentLocation();
+                        },
+                        child: Text('Get Current Location'),
+                      ),
+                      Text(_locationMessage),
                       CustomListTile(
                         icon: Icons.location_on,
                         text: "Location",
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          margin: EdgeInsets.all(5.0),
+                          child: Text('Address : '+_currentAddress,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15
+                            ),
+                          ),
+                        ),
                       ),
                       Divider(
                         height: 10.0,

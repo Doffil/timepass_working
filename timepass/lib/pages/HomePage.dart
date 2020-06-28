@@ -64,27 +64,27 @@ class _SearchListState extends State<SearchList> {
     );
     _list.add(
       Model(id: "2", name: "Fruits", title: "a title 2",
-          imageUrl: "https://cdn-prod.medicalnewstoday.com/content/images/hero/325/325253/325253_1100.jpg"),
+          imageUrl: "https://cdn.britannica.com/17/196817-050-6A15DAC3/vegetables.jpg"),
     );
     _list.add(
       Model(id: "3", name: "Breads", title: "b title 3",
-          imageUrl: "https://www.biggerbolderbaking.com/wp-content/uploads/2020/04/Hearty-Yeast-Free-Bread-WS-Thumbnail.jpg"),
+          imageUrl: "https://cdn.britannica.com/17/196817-050-6A15DAC3/vegetables.jpg"),
     );
     _list.add(
       Model(id: "4", name: "Sweets", title: "b title 4",
-          imageUrl: "https://c.ndtvimg.com/2019-10/o52ta3a8_sweets-_625x300_26_October_19.jpg"),
+          imageUrl: "https://cdn.britannica.com/17/196817-050-6A15DAC3/vegetables.jpg"),
     );
     _list.add(
       Model(id: "5", name: "Spices", title: "b title 5",
-          imageUrl: "https://marketresearchbiz-ikwnsbmbizhvmufcjx.netdna-ssl.com/wp-content/uploads/2017/11/spices-market-400x225.jpg"),
+          imageUrl: "https://cdn.britannica.com/17/196817-050-6A15DAC3/vegetables.jpg"),
     );
     _list.add(
       Model(id: "6", name: "Dal Types", title: "b title 6",
-          imageUrl: "https://i.ndtvimg.com/i/2016-11/types-of-dal_620x350_41479190401.jpg"),
+          imageUrl: "https://cdn.britannica.com/17/196817-050-6A15DAC3/vegetables.jpg"),
     );
     _list.add(
       Model(id: "7", name: "Milk Products", title: "b title 7",
-          imageUrl: "https://cdn.dnaindia.com/sites/default/files/styles/full/public/2018/09/21/734051-milk-products.jpg"),
+          imageUrl: "https://cdn.britannica.com/17/196817-050-6A15DAC3/vegetables.jpg"),
     );
     _searchList = _list;
 
@@ -217,9 +217,9 @@ class GridItem extends StatelessWidget {
             );
           },
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Flexible(
                 child: ClipRRect(
@@ -227,8 +227,8 @@ class GridItem extends StatelessWidget {
                   child: FadeInImage.assetNetwork(
                     placeholder: 'assets/images/shopping.jpeg',
                     image: this.model.imageUrl,
-                    fit: BoxFit.fitHeight,
-                    width: 240,
+                    fit: BoxFit.contain,
+//                    width: 240,
                   ),
                 ),
               ),

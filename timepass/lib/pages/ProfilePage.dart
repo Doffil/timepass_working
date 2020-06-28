@@ -15,6 +15,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool turnOnNotification = false;
   bool turnOnLocation = false;
 
+
   void _getCurrentLocation() async{
     final position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     print(position);
@@ -33,9 +34,58 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
-    String addr="Pruthvi House,Nashik-422009";
+
+    final myController=TextEditingController();
+    final myController1=TextEditingController();
+    final myController2=TextEditingController();
+    String name="Rohit",mobile="9384034";
+
+//
+//    @override
+//    void dispose() {
+//      // Clean up the controller when the widget is disposed.
+//      myController.dispose();
+//      myController1.dispose();
+//      myController2.dispose();
+//      super.dispose();
+//    }
+
+   void _showDialog(){
+      showDialog(
+        context:context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text('Edit Profile'),
+              content:TextField(
+                controller: myController,
+              ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancel'),
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+              child: Text('Update'),
+                onPressed: (){
+                  setState(() {
+                    name=myController.text;
+                    mobile=myController2.text;
+                    Navigator.pop(context);
+                  });
+                },
+            ),
+            ],
+
+          );
+        }
+          );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -45,13 +95,10 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-
               Text(
                 "Profile",
                 style: TextStyle(
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.bold,
-
+                  fontSize: 20.0,
                 ),
               ),
               SizedBox(
@@ -86,23 +133,23 @@ class _ProfilePageState extends State<ProfilePage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        "Rohit Ghodke",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                        ),
-                      ),
+                      Text(name),
                       SizedBox(
                         height: 10.0,
                       ),
                       Text(
-                        "+919762434445",
-                        style: TextStyle(color: Colors.grey),
+                        myController2.text,
                       ),
                       SizedBox(
                         height: 20.0,
                       ),
-                      SmallButton(btnText: "Edit"),
+                      OutlineButton(
+                        child: Text('Edit'),
+                        onPressed:(){
+                          _showDialog();
+                        }
+                      )
+//                      SmallButton(btnText: "Edit",),
                     ],
                   ),
                 ],

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:timepass/pages/SubProduct.dart';
 class Model {
   String id;
   String name;
   String title;
   String imageUrl;
+  String subcategory;
   Model({this.id, this.name, this.title,this.imageUrl});
 }
 
@@ -43,7 +45,8 @@ class _SearchListState extends State<SearchList> {
         _list = List();
     _list.add(
       Model(id: "1", name: "Vegetables", title: "a title 1",
-          imageUrl: "https://cdn.britannica.com/17/196817-050-6A15DAC3/vegetables.jpg"),
+          imageUrl: "https://cdn.britannica.com/17/196817-050-6A15DAC3/vegetables.jpg",
+      ),
     );
     _list.add(
       Model(id: "2", name: "Fruits", title: "a title 2",
@@ -188,37 +191,50 @@ class GridItem extends StatelessWidget {
       elevation: 10.0,
       child:Container(
         alignment: Alignment.center,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Flexible(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: FadeInImage.assetNetwork(
+        child:InkWell(
+          splashColor: Colors.orange,
+          onTap: (){
+            print(model.id);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context)=> SubProduct(id1: model),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Flexible(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: FadeInImage.assetNetwork(
                     placeholder: 'assets/images/shopping.jpeg',
                     image: this.model.imageUrl,
-                  fit: BoxFit.fitHeight,
-                  width: 240,
+                    fit: BoxFit.fitHeight,
+                    width: 240,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(5.0),
+                child: Text(
+                  this.model.name,
+                  softWrap: true,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight:FontWeight.w500
+                  ),
+                ),
+              )
+            ],
+          ),
+        )
 
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(5.0),
-              child: Text(
-                this.model.name,
-                softWrap: true,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight:FontWeight.w500
-                ),
-              ),
-            )
-          ],
-        ),
+
       ),
     );
   }

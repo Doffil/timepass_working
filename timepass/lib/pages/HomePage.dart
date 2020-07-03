@@ -204,6 +204,7 @@ import 'dart:convert';
 import 'package:timepass/Model.dart';
 import 'package:timepass/pages/SubProduct.dart';
 import 'package:timepass/services/Service.dart';
+import 'package:timepass/theme.dart';
 
 class GridItem extends StatelessWidget {
   GridItem(this.model);
@@ -226,12 +227,12 @@ class GridItem extends StatelessWidget {
                 splashColor: Colors.orange,
                 onTap: (){
                   print(this.model.id);
-//            Navigator.push(
-//              context,
-//              MaterialPageRoute(
-//                builder: (context)=> SubProduct(id1: model),
-//              ),
-//            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context)=> SubProduct(id1: model),
+              ),
+            );
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -270,7 +271,6 @@ class GridItem extends StatelessWidget {
       }
 }
 
-
 class SearchList extends StatefulWidget {
   @override
   _SearchListState createState() => _SearchListState();
@@ -278,6 +278,7 @@ class SearchList extends StatefulWidget {
 
 class _SearchListState extends State<SearchList> {
   List<Welcome>_products;
+  List<Welcome>_filteredProducts;
   bool _loading;
 
   @override
@@ -287,6 +288,7 @@ class _SearchListState extends State<SearchList> {
     Service.getProducts().then((products){
       setState(() {
         _products=products;
+        _filteredProducts=_products;
         _loading=false;
       });
     });
@@ -295,36 +297,60 @@ class _SearchListState extends State<SearchList> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 20.0,left: 5.0),
-            child: Text(
-                'Products',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w500,
+        padding: const EdgeInsets.only(top: 20.0,left: 5.0,bottom: 10.0),
+        child: Text(
+        'Products',
+          style: TextStyle(
+            fontSize: 30,
+            color: MyColors.primaryColor,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0,top: 10.0),
+            child: Container(
+              width: 350,
+              child: TextField(
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(10.0),
+                  border:OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  suffixIcon: Icon(
+                    Icons.search
+                  ),
+                  hintText: 'Search the product',
+                ),
+                onChanged: (string){
+                  setState(() {
+                    _filteredProducts=_products.where((u) =>
+                    (u.name.toLowerCase().contains(string.toLowerCase()))).toList();
+                  });
+                },
               ),
             ),
           ),
-
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: GridView.builder(
+                itemCount: null==_filteredProducts? 0 :_filteredProducts.length,
+                itemBuilder:(context,index){
+//                Welcome product= _filteredProducts[index];
+                  return GridItem(_filteredProducts[index]);
+                },
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                ),
+              ),
+            ),
+          )
         ],
-      ),
-
-//        body:Container(
-//          child: GridView.builder(
-//            itemCount: null==_products? 0 :_products.length,
-//              itemBuilder:(context,index){
-////                Welcome product= _products[index];
-//                return GridItem(_products[index]);
-//              },
-//            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//              crossAxisCount: 2,
-//            ),
-//          ),
-//        )
-    );
+    ));
   }
 
 }

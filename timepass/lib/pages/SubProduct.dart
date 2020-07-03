@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:timepass/pages/HomePage.dart';
-import 'package:timepass/widgets/custom_list_tile.dart';
-import 'package:timepass/widgets/small_button.dart';
+import 'package:timepass/Model.dart';
+import 'package:flutter/painting.dart';
 
 class SubProduct extends StatelessWidget {
 
-//  final Model id1;
-
-//  SubProduct({Key key, @required this.id1}) :super(key: key);
+  final Welcome id1;
+  var len;
+  SubProduct({Key key, @required this.id1}) :super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: new ListView.builder(
-        itemCount: 5,
+        itemCount: id1.subCategory.length,
         padding: const EdgeInsets.all(15),
         itemBuilder: (context, i) {
+          len=i;
           return Container(
             height: 130,
             decoration: BoxDecoration(
@@ -39,8 +39,7 @@ class SubProduct extends StatelessWidget {
                         decoration: BoxDecoration(
                             color: Colors.red,
                             image: DecorationImage(
-//                              image: NetworkImage(id1.imageUrl),
-//                                image:AssetImage(),
+                              image: NetworkImage(id1.imageUrl),
                                 fit: BoxFit.cover),
                             borderRadius:
                             BorderRadius.all(Radius.circular(10.0)),
@@ -74,12 +73,7 @@ class SubProduct extends StatelessWidget {
                     },
                     child: Container(
                         padding: EdgeInsets.all(30.0),
-//                        child: Text(id1.name),
-//                        child: Chip(
-//                          label: Text(id1.name),
-//                          shadowColor: Colors.blue,
-//                          elevation: 10,
-//                        )
+                        child: Text(id1.subCategory[i].subName),
                     ),
                   ),
                 ],

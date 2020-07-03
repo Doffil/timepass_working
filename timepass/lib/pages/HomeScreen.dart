@@ -20,8 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LoginStore>(
-        builder: (_, loginStore, __) {
+//    return Consumer<LoginStore>(
+//        builder: (_, loginStore, __) {
           return Scaffold(
               body: PageView(
                 children: _pages,
@@ -59,6 +59,5 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               )
           );
-        });
+        }
   }
-}

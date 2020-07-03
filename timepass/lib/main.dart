@@ -10,19 +10,19 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-        return MultiProvider(
-    providers: [
-    Provider<LoginStore>(
-        create: (_) => LoginStore(),
-    )
-    ],
-    child: const MaterialApp(
-    home: SplashPage(),
-    ),
+
+    return MaterialApp(
+      home: HomeScreen(),
     );
-//        home: SplashScreen(),
-//      routes: <String,WidgetBuilder>{
-//          '/LoginScreen':(BuildContext context)=> new LoginScreen()
-//        }
+//        return MultiProvider(
+//    providers: [
+//    Provider<LoginStore>(
+//        create: (_) => LoginStore(),
+//    )
+//    ],
+//    child: const MaterialApp(
+//    home: SplashPage(),
+//    ),
+//    );
   }
 }

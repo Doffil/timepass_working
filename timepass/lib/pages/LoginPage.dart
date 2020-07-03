@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               Container(
                                   margin: const EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text('TheGorgeousOtp',
+                                  child: Text('Grocery',
                                       style: TextStyle(color: MyColors.primaryColor, fontSize: 30, fontWeight: FontWeight.w800)))
                             ],
                           ),
@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                                   clearButtonMode: OverlayVisibilityMode.editing,
                                   keyboardType: TextInputType.phone,
                                   maxLines: 1,
-                                  placeholder: '+33...',
+                                  placeholder: '+91...',
                                 ),
                               ),
                               Container(

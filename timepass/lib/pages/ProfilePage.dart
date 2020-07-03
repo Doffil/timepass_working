@@ -39,13 +39,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LoginStore>(
-        builder: (_, loginStore, __) {
+//    return Consumer<LoginStore>(
+//        builder: (_, loginStore, __) {
           final myController = TextEditingController();
           final myController1 = TextEditingController();
           final myController2 = TextEditingController();
-          String name = "Rohit",
-              mobile = "9384034";
+          String name = "Rohit Ghodke",
+              mobile = "+91976243445";
 
 //
 //    @override
@@ -94,7 +94,7 @@ class _ProfilePageState extends State<ProfilePage> {
             backgroundColor: Colors.white,
             body: SingleChildScrollView(
               child: Container(
-                margin: EdgeInsets.only(top: 20.0),
+                margin: EdgeInsets.only(top: 40.0),
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               height: 10.0,
                             ),
                             Text(
-                              myController2.text,
+                            mobile
                             ),
                             SizedBox(
                               height: 20.0,
@@ -327,9 +327,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 color: Colors.grey,
                               ),
                               FlatButton(
-                                onPressed: () {
-                                  loginStore.signOut(context);
-                                },
+//                                onPressed: () {
+//                                  loginStore.signOut(context);
+//                                },
                                 child: Text('Sign Out',style: TextStyle(fontSize: 18.0),),
                               ),
                               // SizedBox(height: 10.0,),
@@ -347,6 +347,5 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           );
-        });
-  }
+        }
 }

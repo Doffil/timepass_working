@@ -6,9 +6,9 @@ import 'package:timepass/widgets/small_button.dart';
 
 class SubProduct extends StatelessWidget {
 
-  final Model id1;
+//  final Model id1;
 
-  SubProduct({Key key, @required this.id1}) :super(key: key);
+//  SubProduct({Key key, @required this.id1}) :super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class SubProduct extends StatelessWidget {
                         decoration: BoxDecoration(
                             color: Colors.red,
                             image: DecorationImage(
-                              image: NetworkImage(id1.imageUrl),
+//                              image: NetworkImage(id1.imageUrl),
 //                                image:AssetImage(),
                                 fit: BoxFit.cover),
                             borderRadius:
@@ -74,7 +74,7 @@ class SubProduct extends StatelessWidget {
                     },
                     child: Container(
                         padding: EdgeInsets.all(30.0),
-                        child: Text(id1.name),
+//                        child: Text(id1.name),
 //                        child: Chip(
 //                          label: Text(id1.name),
 //                          shadowColor: Colors.blue,

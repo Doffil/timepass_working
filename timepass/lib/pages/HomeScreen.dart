@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:timepass/Model.dart';
 import 'package:timepass/pages/HomePage.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
+import 'package:timepass/pages/SubProduct.dart';
 import 'package:timepass/stores/login_store.dart';
 import 'package:timepass/theme.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
@@ -13,9 +15,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int _selectedItem = 0;
-  List<Widget> _pages = [SearchList(), ShoppingCart(), ProfilePage()];
+  List<Widget> _pages = [SearchList(), ProfilePage(), ProfilePage()];
   var pagecontroller = PageController();
 
   @override
@@ -32,19 +33,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 controller: pagecontroller,
               ),
-              bottomNavigationBar: FloatingNavbar(
+              bottomNavigationBar: BottomNavigationBar(
                 items: [
-                  FloatingNavbarItem(
-                    icon: Icons.home,
-                    title: 'Home',
+                  BottomNavigationBarItem(
+                    title:Text('Home'),
+                    icon: Icon(Icons.home)
                   ),
-                  FloatingNavbarItem(
-                    icon: Icons.shopping_cart,
-                    title: 'Shopping-Cart',
+                  BottomNavigationBarItem(
+                      title:Text('Shopping-Cart'),
+                      icon: Icon(Icons.shopping_cart)
                   ),
-                  FloatingNavbarItem(
-                    icon: Icons.account_circle,
-                    title: 'Profile',
+                  BottomNavigationBarItem(
+                      title:Text('Profile'),
+                      icon: Icon(Icons.supervised_user_circle),
                   ),
                 ],
                 currentIndex: _selectedItem,

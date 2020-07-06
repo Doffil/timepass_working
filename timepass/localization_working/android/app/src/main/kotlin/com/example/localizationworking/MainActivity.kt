@@ -1,0 +1,6 @@
+package com.example.localizationworking
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}

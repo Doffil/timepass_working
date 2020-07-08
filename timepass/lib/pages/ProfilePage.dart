@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:timepass/stores/login_store.dart';
 import 'package:timepass/widgets/custom_list_tile.dart';
@@ -12,27 +15,13 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String _locationMessage="";
-  String _currentAddress="";
-  bool turnOnNotification = false;
-  bool turnOnLocation = false;
-
-
-  void _getCurrentLocation() async{
-    final position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print(position);
-    var lat;
-    var long;
-    lat=position.latitude;
-    long=position.longitude;
-
-    List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(lat,long);
-    Placemark place=placemark[0];
+  File _image;
+  final picker= ImagePicker();
+  Future getImage() async{
+    final image = await picker.getImage(source: ImageSource.gallery);
     setState(() {
-      _locationMessage="${position.latitude}, ${position.longitude}";
-      _currentAddress="${place.locality}, ${place.postalCode}, ${place.country}";
-      });
-
+      _image = File(image.path);
+    });
   }
 
 
@@ -41,54 +30,39 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
 //    return Consumer<LoginStore>(
 //        builder: (_, loginStore, __) {
-          final myController = TextEditingController();
+          TextEditingController _controller = TextEditingController();
           final myController1 = TextEditingController();
           final myController2 = TextEditingController();
-          String name = "Rohit Ghodke",
-              mobile = "+91976243445";
+          String name="";
 
-//
-//    @override
-//    void dispose() {
-//      // Clean up the controller when the widget is disposed.
-//      myController.dispose();
-//      myController1.dispose();
-//      myController2.dispose();
-//      super.dispose();
-//    }
-
-          void _showDialog() {
+       void _showDialog(){
             showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: Text('Edit Profile'),
                     content: TextField(
-                      controller: myController,
+                      controller: _controller,
                     ),
                     actions: <Widget>[
                       FlatButton(
-                        child: Text('Cancel'),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      FlatButton(
                         child: Text('Update'),
                         onPressed: () {
-                          setState(() {
-                            name = myController.text;
-                            mobile = myController2.text;
-                            Navigator.pop(context);
-                          });
+                          Navigator.of(context)
+                              .pop(_controller.text.toString());
+//                          Navigator.pop(context,_controller.text.toString());
                         },
                       ),
                     ],
-
                   );
                 }
-            );
+            ).then((value){
+              setState(() {
+                name=value;
+              });
+            });
           }
+
 
           return Scaffold(
             backgroundColor: Colors.white,
@@ -100,126 +74,143 @@ class _ProfilePageState extends State<ProfilePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "Profile",
+                      "User Profile",
                       style: TextStyle(
-                        fontSize: 20.0,
+                        fontSize: 27.0,
+
                       ),
                     ),
                     SizedBox(
                       height: 20.0,
                     ),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          height: 120.0,
+                          height: 130.0,
                           width: 120.0,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(60.0),
+                            borderRadius: BorderRadius.circular(90.0),
                             boxShadow: [
                               BoxShadow(
                                   blurRadius: 3.0,
                                   offset: Offset(0, 4.0),
                                   color: Colors.black38),
-                            ],
-                            image: DecorationImage(
-                              image: AssetImage(
-                                "assets/images/profileuser.png",
+                            ]),
+                              child:_image==null?Image.asset("assets/images/profileuser.png")
+                                  :Image.file(_image)
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50,left: 12),
+                          child: ButtonTheme(
+                            height: 40,
+                            minWidth: 30,
+                            child: RaisedButton.icon(
+                              textColor: Colors.white,
+                              color: Colors.redAccent,
+                              onPressed: (){
+                                  getImage();
+                              },
+                              icon:Icon(Icons.edit),
+                              label:Text(
+                                'Change Picture',
+                                style: TextStyle(
+                                    fontSize: 18
+                                ),
                               ),
-                              fit: BoxFit.cover,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0)
+                              ),
                             ),
+
                           ),
-                        ),
-                        SizedBox(
-                          width: 20.0,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(name),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            Text(
-                            mobile
-                            ),
-                            SizedBox(
-                              height: 20.0,
-                            ),
-                            OutlineButton(
-                                child: Text('Edit'),
-                                onPressed: () {
-                                  _showDialog();
-                                }
-                            )
-//                      SmallButton(btnText: "Edit",),
-                          ],
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: 30.0,
-                    ),
-                    Text(
-                      "Account",
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.0,
+                      height: 40.0,
                     ),
                     Card(
-                      elevation: 3.0,
+                      elevation: 5.0,
+                      child: Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Text(
+                                    'Name: ',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                                Text(
+                                  name,
+                                  style: TextStyle(
+                                    fontSize: 18
+                                  ),
+                                )
+                              ],
+                            ),
+                            Divider(
+                              height: 25,
+                              color: Colors.grey,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Text(
+                                  'Email: '
+                                ,style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                ),
+                                Text(
+                                  'ghodkerohit999@gmail.com',
+                                  style: TextStyle(
+                                    fontSize: 18
+                                  ),
+                                )
+                              ],
+                            ),
+                            Divider(
+                              height: 25,
+                              color: Colors.grey,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Text(
+                                  'Alternate Phone no.: '
+                                  ,style: TextStyle(
+                                    fontSize: 18,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                ),
+                                Text(
+                                  '9762434445',
+                                  style: TextStyle(
+                                    fontSize: 18
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Card(
+                      elevation: 5.0,
                       child: Padding(
                         padding: EdgeInsets.all(16.0),
                         child: Column(
                           children: <Widget>[
-                            FlatButton(
-                              onPressed: () {
-                                _getCurrentLocation();
-                              },
-                              child: Text('Get Current Location'),
-                            ),
-                            Text(_locationMessage),
-                            CustomListTile(
-                              icon: Icons.location_on,
-                              text: "Location",
-                            ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Container(
-                                margin: EdgeInsets.all(5.0),
-                                child: Text('Address : ' + _currentAddress,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Divider(
-                              height: 10.0,
-                              color: Colors.grey,
-                            ),
-                            CustomListTile(
-                              icon: Icons.shopping_cart,
-                              text: "Shipping",
-                            ),
-                            Divider(
-                              height: 10.0,
-                              color: Colors.grey,
-                            ),
                             CustomListTile(
                               icon: Icons.check_circle,
                               text: "View Orders",
                             ),
-                            Divider(
-                              height: 10.0,
-                              color: Colors.grey,
-                            ),
                           ],
                         ),
                       ),
@@ -227,8 +218,34 @@ class _ProfilePageState extends State<ProfilePage> {
                     SizedBox(
                       height: 30.0,
                     ),
+                    Center(
+                      child: ButtonTheme(
+                        height: 40,
+                        child: RaisedButton.icon(
+                          textColor: Colors.white,
+                          color: Colors.blueAccent,
+                            onPressed: () {
+                            _showDialog();
+                            },
+                            icon:Icon(Icons.edit),
+                            label:Text(
+                              'Edit Profile',
+                              style: TextStyle(
+                                fontSize: 18
+                              ),
+                            ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0)
+                          ),
+                        ),
+                      ),
+                    ),
+                    Text(name),
+                    SizedBox(
+                      height: 30,
+                    ),
                     Text(
-                      "Notifications",
+                      "Other Functionalities",
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -239,76 +256,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     Card(
                       elevation: 3.0,
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  "App Notification",
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                  ),
-                                ),
-                                Switch(
-                                  value: turnOnNotification,
-                                  onChanged: (bool value) {
-                                    // print("The value: $value");
-                                    setState(() {
-                                      turnOnNotification = value;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                            Divider(
-                              height: 10.0,
-                              color: Colors.grey,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  "Location Tracking",
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                  ),
-                                ),
-                                Switch(
-                                  value: turnOnLocation,
-                                  onChanged: (bool value) {
-                                    // print("The value: $value");
-                                    setState(() {
-                                      turnOnLocation = value;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                            Divider(
-                              height: 10.0,
-                              color: Colors.grey,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30.0,
-                    ),
-                    Text(
-                      "Other",
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    Card(
                       child: Padding(
                         padding: EdgeInsets.all(16.0),
                         child: Container(
@@ -320,23 +267,22 @@ class _ProfilePageState extends State<ProfilePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                  "Language", style: TextStyle(fontSize: 16.0)),
-                              // SizedBox(height: 10.0,),
-                              Divider(
-                                height: 30.0,
-                                color: Colors.grey,
-                              ),
-                              FlatButton(
-//                                onPressed: () {
-//                                  loginStore.signOut(context);
-//                                },
-                                child: Text('Sign Out',style: TextStyle(fontSize: 18.0),),
+                                  "Language",
+                                  style: TextStyle(
+                                      fontSize: 18.0
+                                  )
                               ),
                               // SizedBox(height: 10.0,),
                               Divider(
-                                height: 30.0,
+                                height: 25.0,
                                 color: Colors.grey,
                               ),
+                               Text('Sign Out',
+                                  style: TextStyle(
+                                      fontSize: 18.0)
+                                  ,),
+                              // SizedBox(height: 10.0,),
+
                             ],
                           ),
                         ),

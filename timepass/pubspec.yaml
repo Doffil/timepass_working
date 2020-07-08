@@ -24,9 +24,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
+  carousel_pro: ^1.0.0
   firebase_core: ^0.4.5
   firebase_auth: ^0.16.1
   floating_bottom_navigation_bar: ^1.3.0
@@ -36,6 +35,7 @@ dependencies:
   flutter_mobx: ^1.1.0+1
   provider: ^4.1.3
   numeric_keyboard: ^1.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -58,6 +58,7 @@ flutter:
      - assets/images/shopping.jpeg
      - assets/images/login.png
      - assets/data.json
+     - assets/images/vegetables.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:timepass/Model.dart';
 import 'package:flutter/painting.dart';
+import 'package:timepass/pages/DetailsPage.dart';
 import 'package:timepass/pages/HomeScreen.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
 import 'package:timepass/theme.dart';
@@ -105,7 +106,12 @@ class _SubProductState extends State<SubProduct> {
                           padding: EdgeInsets.all(15.0),
                           child: GestureDetector(
                             onTap: () {
-
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context)=> DetailsPage(),
+                                ),
+                              );
                             },
                             child: Container(
                               width: 100.0,

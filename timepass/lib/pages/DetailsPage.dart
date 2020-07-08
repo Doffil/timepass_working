@@ -1,15 +1,19 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:timepass/Model.dart';
+import 'package:timepass/pages/ShoppingCart.dart';
 
 class DetailsPage extends StatefulWidget {
+  final details;
+  DetailsPage({Key key, @required this.details}) :super(key: key);
   @override
   _DetailsPageState createState() => _DetailsPageState();
 }
 
 class _DetailsPageState extends State<DetailsPage> {
   List<bool>isSelected = [true, false, false,false];
-
+  List<SubCategory>cart=[];
   final heroTag = "assets/images/vegetables.jpeg";
 
   @override
@@ -39,7 +43,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       images: [
                         AssetImage(heroTag),
                         AssetImage("assets/images/shopping.jpeg"),
-                        AssetImage("assets/images/profileuser.png")
+                        NetworkImage(heroTag),
                       ],
                       showIndicator: false,
                     ),
@@ -74,13 +78,13 @@ class _DetailsPageState extends State<DetailsPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          'Cabbage',
+                          widget.details.subName,
                           style: TextStyle(
                               fontSize: 30.0
                           ),
                         ),
                         Text(
-                          'Rs.20/g',
+                          'Rs.'+widget.details.subPrice+'/g',
                           style: TextStyle(
                               fontSize: 30.0
                           ),
@@ -136,7 +140,9 @@ class _DetailsPageState extends State<DetailsPage> {
                         child:ButtonTheme(
                           height: 45,
                           child: RaisedButton.icon(
-                            onPressed: (){},
+                            onPressed: (){
+                              cart.add(widget.details);
+                            },
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0)
                             ),
@@ -163,12 +169,22 @@ class _DetailsPageState extends State<DetailsPage> {
       ),
       floatingActionButton:FloatingActionButton(
         child: Icon(Icons.shopping_cart),
+        onPressed: tocart,
+      ),
+    );
+  }
+
+  tocart(){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context)=>ShoppingCart(cart1: cart),
       ),
     );
   }
 
   var sum = 10000;
-  int _n=1;
+  var _n=0;
   var value1=500,value2=750,value3=1000,value4=1500;
 
   Widget _quantity(){
@@ -224,7 +240,7 @@ class _DetailsPageState extends State<DetailsPage> {
   }
   void minus() {
     setState(() {
-      if (_n != 1)
+      if (_n != 0)
         _n--;
     });
   }
@@ -280,17 +296,20 @@ class _DetailsPageState extends State<DetailsPage> {
               for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
                 if (buttonIndex == index) {
                   isSelected[buttonIndex] = true;
+                  var k=int.parse(widget.details.subPrice);
+                  assert(k is int);
+
                   if(index==0){
-                    sum=20*value1*_n;
+                    sum=(k)*value1*_n;
                   }
                   if(index==1){
-                    sum=20*value2*_n;
+                    sum=(k)*value2*_n;
                   }
                   if(index==2){
-                    sum=20*value3*_n;
+                    sum=(k)*value3*_n;
                   }
                   if(index==3){
-                    sum=20*value4*_n;
+                    sum=(k)*value4*_n;
                   }
                 } else {
                   isSelected[buttonIndex] = false;

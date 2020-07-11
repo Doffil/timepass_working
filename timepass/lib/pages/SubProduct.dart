@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:timepass/Model.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:timepass/pages/DetailsPage.dart';
 import 'package:timepass/pages/HomeScreen.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
@@ -25,13 +26,14 @@ class _SubProductState extends State<SubProduct> {
   List<SubCategory>_subfilteredProducts;
 
   void tapcart(){
-    print(cart.length);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context)=> ShoppingCart(cart1:cart),
-      ),
-    );
+//    print(cart.length);
+//    Navigator.push(
+//      context,
+//      MaterialPageRoute(
+//        builder: (context)=> ShoppingCart(cart1:cart),
+//      builder: (context) => ShoppingCart(),
+//      ),
+//    );
   }
   @override
   void initState() {
@@ -45,8 +47,7 @@ class _SubProductState extends State<SubProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//      backgroundColor: Colors.white,
-      body: Column(
+      body:Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
            Padding(
@@ -145,13 +146,13 @@ class _SubProductState extends State<SubProduct> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 7.0,left: 10.0),
-                                      child: Text(
-                                        'Rs.'+widget.id1.subCategory[i].subPrice+'/kg',
-                                        style: TextStyle(
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.w400
-                                        ),
-                                      ),
+//                                      child: Text(
+//                                        (widget.id1.subCategory[i].subPrice).toString(),
+//                                        style: TextStyle(
+//                                          fontSize: 14.0,
+//                                          fontWeight: FontWeight.w400
+//                                        ),
+//                                      ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 10.0,left: 10.0),

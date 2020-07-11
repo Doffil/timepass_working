@@ -50,9 +50,9 @@ class SubCategory {
     });
 
     String subName;
-    String subId;
-    String subPrice;
-    String subQuantity;
+    int subId;
+    int subPrice;
+    int subQuantity;
     String subImageUrl;
 
     factory SubCategory.fromJson(Map<String, dynamic> json) => SubCategory(
@@ -71,4 +71,3 @@ class SubCategory {
         "subImageUrl": subImageUrl,
     };
 }
-

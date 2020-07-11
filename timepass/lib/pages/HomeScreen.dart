@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timepass/Model.dart';
@@ -5,6 +6,7 @@ import 'package:timepass/pages/HomePage.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
 import 'package:timepass/pages/SubProduct.dart';
+import 'package:timepass/pages/home_page.dart';
 import 'package:timepass/stores/login_store.dart';
 import 'package:timepass/theme.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';

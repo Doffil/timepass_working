@@ -103,49 +103,51 @@ class _SubProductState extends State<SubProduct> {
                       ),
                     );
                   },
-                  child: Container(
-                    height: 130,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25.0)
-                    ),
-                    child: Card(
-                      elevation: 20,
-                      child: Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.all(15.0),
-                              child: Container(
-                                width: 100.0,
-                                height: 100.0,
-                                decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    image: DecorationImage(
-                                      image: NetworkImage(widget.id1.imageUrl),
-                                        fit: BoxFit.cover),
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                    boxShadow: [
-                                      BoxShadow(blurRadius: 2.0)
-                                    ]),
-                              ),
-                          ),
-                          Container(
-                                padding: EdgeInsets.all(5.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10.0,top: 9.0),
-                                      child: Text(
-                                        widget.id1.subCategory[i].subName,
-                                        style: TextStyle(
-                                            fontSize: 18.0
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      width: 372,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        elevation: 9,
+                        child: Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.all(15.0),
+                                child: Container(
+                                  width: 100.0,
+                                  height: 100.0,
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      image: DecorationImage(
+                                        image: NetworkImage(widget.id1.imageUrl),
+                                          fit: BoxFit.cover),
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                      boxShadow: [
+                                        BoxShadow(blurRadius: 2.0)
+                                      ]),
+                                ),
+                            ),
+                            Container(
+                                  padding: EdgeInsets.all(5.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10.0,top: 9.0),
+                                        child: Text(
+                                          widget.id1.subCategory[i].subName,
+                                          style: TextStyle(
+                                              fontSize: 18.0
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 7.0,left: 10.0),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 7.0,left: 10.0),
 //                                      child: Text(
 //                                        (widget.id1.subCategory[i].subPrice).toString(),
 //                                        style: TextStyle(
@@ -153,44 +155,45 @@ class _SubProductState extends State<SubProduct> {
 //                                          fontWeight: FontWeight.w400
 //                                        ),
 //                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10.0,left: 10.0),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.only(right: 23.0),
-                                            child: ButtonTheme(
-                                              minWidth:20.0,
-                                              child: OutlineButton(
-                                                child: Icon(Icons.favorite_border),
-                                                shape:RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(6.0)
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0,left: 10.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.only(right: 23.0),
+                                              child: ButtonTheme(
+                                                minWidth:20.0,
+                                                child: OutlineButton(
+                                                  child: Icon(Icons.favorite_border),
+                                                  shape:RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(6.0)
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          ButtonTheme(
-                                            minWidth: 20.0,
-                                            child: OutlineButton(
-                                              child: Icon(Icons.shopping_cart),
-                                              shape:RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(6.0)
-                                              ),
-                                              onPressed:(){
-                                                  cart.add(widget.id1.subCategory[i]);
+                                            ButtonTheme(
+                                              minWidth: 20.0,
+                                              child: OutlineButton(
+                                                child: Icon(Icons.shopping_cart),
+                                                shape:RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(6.0)
+                                                ),
+                                                onPressed:(){
+                                                    cart.add(widget.id1.subCategory[i]);
 //                                           widget.valueSetter(widget.id1.subCategory[i]);
-                                            },
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                            ),
+                                              },
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                              ),
 
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),

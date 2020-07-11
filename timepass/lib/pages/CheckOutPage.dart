@@ -63,11 +63,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
             ),
             getData(),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(top: 10),
               child: Align(
                 alignment: Alignment.center,
                 child: Container(
-                  width: 330,
+                  margin: EdgeInsets.only(
+                      left: 18,right: 18,bottom: 5
+                  ),
                   child: Card(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0)
@@ -128,7 +130,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
             Align(
               alignment: Alignment.center,
               child: Container(
-                width: 330,
+                margin: EdgeInsets.only(
+                    left: 18,right: 18,bottom: 5
+                ),
                 child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)
@@ -272,7 +276,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     child: Align(
                       alignment: Alignment.center,
                       child: Container(
-                        width: 330,
+                          margin: EdgeInsets.only(
+                              left: 18,right: 18,bottom: 5
+                          ),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25.0)
                         ),

@@ -160,7 +160,9 @@ class _ShoppingCartState extends State<ShoppingCart>{
                     child: Align(
                       alignment: Alignment.center,
                       child: Container(
-                        width: 330,
+                        margin: EdgeInsets.only(
+                          left: 18,right: 18,bottom: 5
+                        ),
                         child: Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0)

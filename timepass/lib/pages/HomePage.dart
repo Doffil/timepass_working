@@ -126,9 +126,10 @@ class _SearchListState extends State<SearchList> {
         ),
       ),
           Padding(
-            padding: const EdgeInsets.only(left: 10.0,top: 10.0,right:10.0),
+            padding: const EdgeInsets.only(top: 10.0,
+                left:9,right: 9),
             child: Container(
-              width: 350,
+              margin: EdgeInsets.all(7),
               child: TextField(
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(10.0),

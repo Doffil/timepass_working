@@ -64,7 +64,7 @@ class _SubProductState extends State<SubProduct> {
           Padding(
             padding: const EdgeInsets.only(left: 10.0,top: 10.0,right:10.0),
             child: Container(
-              width: 350,
+              margin: EdgeInsets.all(7),
               child: TextField(
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(10.0),
@@ -92,7 +92,7 @@ class _SubProductState extends State<SubProduct> {
           Expanded(
             child: new ListView.builder(
               itemCount:widget.id1.subCategory.length,
-              padding: const EdgeInsets.only(top:15.0,left: 15.0,right: 15.0),
+//              padding: const EdgeInsets.only(top:15.0,left: 15.0,right: 15.0),
               itemBuilder: (context, i) {
                 return GestureDetector(
                   onTap: () {
@@ -106,12 +106,14 @@ class _SubProductState extends State<SubProduct> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Container(
-                      width: 330,
+                      margin: EdgeInsets.only(left: 18,
+                          right: 18,bottom: 5),
+//                      width: 330,
                       child: Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
                         ),
-                        elevation: 9,
+                        elevation: 7,
                         child: Row(
                           children: <Widget>[
                             Padding(

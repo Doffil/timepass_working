@@ -106,7 +106,7 @@ class _SubProductState extends State<SubProduct> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Container(
-                      width: 372,
+                      width: 330,
                       child: Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)

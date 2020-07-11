@@ -19,8 +19,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
   String _currentAddress="";
   bool turnOnNotification = false;
   bool turnOnLocation = false;
+  int sum=0;
 
-
+  @override
+  void initState() {
+    super.initState();
+  }
   void _getCurrentLocation() async{
     final position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     print(position);
@@ -58,6 +62,48 @@ class _CheckOutPageState extends State<CheckOutPage> {
               ),
             ),
             getData(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  width: 330,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0)
+                    ),
+                    elevation: 6.0,
+                    child: Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                'Total Amount: '
+                                ,style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold
+                              ),
+                              ),
+                              Text(
+                                sum.toString(),
+                                style: TextStyle(
+                                    fontSize: 18
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -82,7 +128,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
             Align(
               alignment: Alignment.center,
               child: Container(
-                width: 372,
+                width: 330,
                 child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)
@@ -219,13 +265,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemBuilder:(BuildContext context,int index){
+                  sum=sum+snapshot.data[index]["subPrice"];
 //                  SubCategory subCategory = snapshot.data[index];
                   return GestureDetector(
                     onTap: () {},
                     child: Align(
                       alignment: Alignment.center,
                       child: Container(
-                        width: 372,
+                        width: 330,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25.0)
                         ),

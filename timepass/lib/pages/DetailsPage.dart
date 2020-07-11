@@ -354,7 +354,6 @@ class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//      backgroundColor: Color(0xFF7A9BEE),
       body: Stack(
         children: <Widget>[
           Container(
@@ -419,7 +418,7 @@ class _DetailsPageState extends State<DetailsPage> {
                           ),
                         ),
                         Text(
-                            (widget.details.subPrice.toString()),
+                           'Rs. '+(widget.details.subPrice.toString())+'/g',
                           style: TextStyle(
                               fontSize: 30.0
                           ),
@@ -463,6 +462,7 @@ class _DetailsPageState extends State<DetailsPage> {
                           minWidth:20.0,
                           height: 45,
                           child: OutlineButton(
+                            onPressed: (){},
                             child: Icon(Icons.favorite_border),
                             shape:RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(6.0)
@@ -528,8 +528,34 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   var sum = 10000;
-  var _n=0;
+  var _n=1;
+  var indexValue=0,priceValue=20;
   var value1=500,value2=750,value3=1000,value4=1500;
+  void add(){
+    setState(() {
+      _n++;
+      sum=sum+sum;
+    });
+  }
+  void minus() {
+    setState(() {
+      if (_n != 1)
+        _n--;
+      if(indexValue==0){
+        sum= (value1*priceValue*_n);
+      }
+      if(indexValue==1){
+        sum= (value2*priceValue*_n);
+      }
+      if(indexValue==2){
+        sum= (value3*priceValue*_n);
+      }
+      if(indexValue==3){
+        sum= (value4*priceValue*_n);
+      }
+    });
+  }
+
 
   Widget _quantity(){
     return Row(
@@ -574,19 +600,6 @@ class _DetailsPageState extends State<DetailsPage> {
         ),
       ],
     );
-  }
-
-  void add(){
-    setState(() {
-      _n++;
-      sum=sum+sum;
-    });
-  }
-  void minus() {
-    setState(() {
-      if (_n != 0)
-        _n--;
-    });
   }
 
   Widget _availableSize() {
@@ -636,13 +649,14 @@ class _DetailsPageState extends State<DetailsPage> {
           ],
           isSelected: isSelected,
           onPressed: (int index) {
+            var k=(widget.details.subPrice);
+            assert(k is int);
             setState(() {
               for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
                 if (buttonIndex == index) {
                   isSelected[buttonIndex] = true;
-                  var k=(widget.details.subPrice);
-                  assert(k is int);
-
+                  indexValue = index;
+                  priceValue = k;
                   if(index==0){
                     sum=(k)*value1*_n;
                   }

@@ -4,7 +4,6 @@ import 'package:timepass/pages/HomePage.dart';
 import 'package:timepass/pages/HomeScreen.dart';
 import 'package:timepass/pages/LoginPage.dart';
 import 'package:timepass/stores/login_store.dart';
-import 'package:timepass/theme.dart';
 
 import 'home_page.dart';
 
@@ -31,7 +30,6 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.primaryColor,
     );
   }
 }

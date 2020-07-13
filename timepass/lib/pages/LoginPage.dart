@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:timepass/stores/login_store.dart';
-import 'package:timepass/theme.dart';
 import 'package:timepass/widgets/loader_hud.dart';
 
 class LoginPage extends StatefulWidget {
@@ -61,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                               Container(
                                   margin: const EdgeInsets.symmetric(horizontal: 10),
                                   child: Text('Grocery',
-                                      style: TextStyle(color: MyColors.primaryColor, fontSize: 30, fontWeight: FontWeight.w800)))
+                                      style: TextStyle( fontSize: 30, fontWeight: FontWeight.w800)))
                             ],
                           ),
                         ),
@@ -77,10 +76,10 @@ class _LoginPageState extends State<LoginPage> {
                                   child: RichText(
                                     textAlign: TextAlign.center,
                                     text: TextSpan(children: <TextSpan>[
-                                      TextSpan(text: 'We will send you an ', style: TextStyle(color: MyColors.primaryColor)),
+                                      TextSpan(text: 'We will send you an '),
                                       TextSpan(
-                                          text: 'One Time Password ', style: TextStyle(color: MyColors.primaryColor, fontWeight: FontWeight.bold)),
-                                      TextSpan(text: 'on this mobile number', style: TextStyle(color: MyColors.primaryColor)),
+                                          text: 'One Time Password ', style: TextStyle( fontWeight: FontWeight.bold)),
+                                      TextSpan(text: 'on this mobile number'),
                                     ]),
                                   )),
                               Container(
@@ -122,7 +121,6 @@ class _LoginPageState extends State<LoginPage> {
                                       ));
                                     }
                                   },
-                                  color: MyColors.primaryColor,
                                   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14))),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -137,7 +135,6 @@ class _LoginPageState extends State<LoginPage> {
                                           padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
                                             borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                            color: MyColors.primaryColorLight,
                                           ),
                                           child: Icon(
                                             Icons.arrow_forward_ios,

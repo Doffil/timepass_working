@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:timepass/theme.dart';
 
 class LoaderHUD extends StatelessWidget {
   final bool inAsyncCall;
@@ -10,7 +9,6 @@ class LoaderHUD extends StatelessWidget {
     height: 100,
     decoration: BoxDecoration(
       borderRadius: const BorderRadius.all(Radius.circular(8)),
-      color: MyColors.primaryColor.withOpacity(0.7),
     ),
     child: const Center(child: CircularProgressIndicator()),
   );

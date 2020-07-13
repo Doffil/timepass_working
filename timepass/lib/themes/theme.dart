@@ -6,16 +6,16 @@ import 'light_color.dart';
 class AppTheme {
   const AppTheme();
   static ThemeData lightTheme = ThemeData(
-      backgroundColor: LightColor.background,
-      primaryColor: LightColor.background,
-      cardTheme: CardTheme(color: LightColor.background),
-      textTheme: TextTheme(display1: TextStyle(color: LightColor.black)),
-      iconTheme: IconThemeData(color: LightColor.iconColor),
-      bottomAppBarColor: LightColor.background,
-      dividerColor: LightColor.lightGrey,
-      primaryTextTheme: TextTheme(
-          body1: TextStyle(color:LightColor.titleTextColor)
-      )
+    backgroundColor: LightColor.background,
+    primaryColor: LightColor.background,
+    cardTheme: CardTheme(color: LightColor.background),
+    textTheme: TextTheme(display1: TextStyle(color: LightColor.black)),
+    iconTheme: IconThemeData(color: LightColor.iconColor),
+    bottomAppBarColor: LightColor.background,
+    dividerColor: LightColor.lightGrey,
+    primaryTextTheme: TextTheme(
+      body1: TextStyle(color:LightColor.titleTextColor)
+    )
   );
 
   static TextStyle titleStyle = const TextStyle(color: LightColor.titleTextColor, fontSize: 16);
@@ -31,8 +31,8 @@ class AppTheme {
   static List<BoxShadow> shadow =  <BoxShadow>[
     BoxShadow(color: Color(0xfff8f8f8), blurRadius: 10, spreadRadius: 15),
   ];
-
-
+  
+  
   static EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 10);
   static EdgeInsets hPadding = const EdgeInsets.symmetric(horizontal: 10,);
 

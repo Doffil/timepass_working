@@ -3,7 +3,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
 import 'package:provider/provider.dart';
 import 'package:timepass/stores/login_store.dart';
-import 'package:timepass/theme.dart';
 import 'package:timepass/widgets/loader_hud.dart';
 
 class OtpPage extends StatefulWidget {
@@ -61,9 +60,9 @@ class _OtpPageState extends State<OtpPage> {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(20)),
-                      color: MyColors.primaryColorLight.withAlpha(20),
+
                     ),
-                    child: Icon(Icons.arrow_back_ios, color: MyColors.primaryColor, size: 16,),
+                    child: Icon(Icons.arrow_back_ios, size: 16,),
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -117,7 +116,6 @@ class _OtpPageState extends State<OtpPage> {
                               onPressed: () {
                                 loginStore.validateOtpAndLogin(context, text);
                               },
-                              color: MyColors.primaryColor,
                               shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(Radius.circular(14))
                               ),
@@ -131,7 +129,6 @@ class _OtpPageState extends State<OtpPage> {
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
                                         borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                        color: MyColors.primaryColorLight,
                                       ),
                                       child: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16,),
                                     )
@@ -142,10 +139,8 @@ class _OtpPageState extends State<OtpPage> {
                           ),
                           NumericKeyboard(
                             onKeyboardTap: _onKeyboardTap,
-                            textColor: MyColors.primaryColorLight,
                             rightIcon: Icon(
                               Icons.backspace,
-                              color: MyColors.primaryColorLight,
                             ),
                             rightButtonFn: () {
                               setState(() {

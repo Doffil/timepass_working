@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timepass/stores/login_store.dart';
-import 'package:timepass/theme.dart';
 
 class HomePage1 extends StatefulWidget {
   const HomePage1({Key key}) : super(key: key);
@@ -23,7 +22,6 @@ class _HomePageState extends State<HomePage1> {
                 onPressed: () {
                   loginStore.signOut(context);
                 },
-                color: MyColors.primaryColor,
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(14))
                 ),
@@ -37,7 +35,6 @@ class _HomePageState extends State<HomePage1> {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(20)),
-                          color: MyColors.primaryColorLight,
                         ),
                         child: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16,),
                       )

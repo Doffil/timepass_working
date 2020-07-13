@@ -8,7 +8,6 @@ import 'package:timepass/pages/ShoppingCart.dart';
 import 'package:timepass/pages/SubProduct.dart';
 import 'package:timepass/pages/home_page.dart';
 import 'package:timepass/stores/login_store.dart';
-import 'package:timepass/theme.dart';
 
 class SubProductScreen extends StatefulWidget {
   final Welcome id2;
@@ -59,7 +58,6 @@ class _SubProductScreenState extends State< SubProductScreen> {
             ),
           ],
           currentIndex: _selectedItem,
-          selectedItemColor: MyColors.primaryColor,
           onTap: (index) {
           setState(() {
          _selectedItem = index;

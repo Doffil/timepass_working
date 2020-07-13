@@ -7,7 +7,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
 
-import '../theme.dart';
 
 class CheckOutPage extends StatefulWidget {
   @override
@@ -57,7 +56,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 'Check-Out',
                 style: TextStyle(
                   fontSize: 30,
-                  color: MyColors.primaryColor,
                   fontWeight: FontWeight.w500,
                 ),
               ),

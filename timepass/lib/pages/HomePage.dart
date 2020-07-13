@@ -9,7 +9,8 @@ import 'package:timepass/Model.dart';
 import 'package:timepass/pages/SubProduct.dart';
 import 'package:timepass/pages/SubProductScreen.dart';
 import 'package:timepass/services/Service.dart';
-import 'package:timepass/theme.dart';
+import 'package:timepass/themes/light_color.dart';
+import 'package:timepass/themes/theme.dart';
 
 class GridItem extends StatelessWidget {
   GridItem(this.model);
@@ -24,7 +25,7 @@ class GridItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.0),
       ),
       color: Colors.white,
-      margin: EdgeInsets.fromLTRB(0, 0, 10, 10),
+      margin: EdgeInsets.fromLTRB(7, 7, 10, 10),
       elevation: 3.0,
       child: Container(
           alignment: Alignment.center,
@@ -39,8 +40,10 @@ class GridItem extends StatelessWidget {
 //                ),
 //              );
 
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SubProductScreen(id2:model)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SubProduct(id1: model)));
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -57,8 +60,8 @@ class GridItem extends StatelessWidget {
                       placeholder: 'assets/images/shopping.jpeg',
                       image: this.model.imageUrl,
                       fit: BoxFit.fill,
-                      height: 142,
-                      width: 240,
+                      height: 130,
+                      width: 220,
                     ),
                   ),
                 ),
@@ -118,9 +121,10 @@ class _SearchListState extends State<SearchList> {
     });
   }
 
-  _getMoreData(){
+  _getMoreData() {
     print('more data needed');
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,12 +138,11 @@ class _SearchListState extends State<SearchList> {
                 height: 100,
                 child: DrawerHeader(
                   child: Text(
-                      'Grocery',
+                    'Grocery',
                     style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold
-                    ),
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
                   ),
                   decoration: BoxDecoration(
                     color: Colors.blue,
@@ -170,57 +173,141 @@ class _SearchListState extends State<SearchList> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding:EdgeInsets.only(top: 50.0, left: 0.0, bottom: 2.0),
+                padding: EdgeInsets.only(top: 50.0, bottom: 2.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          IconButton(
+//                    icon: Icon(Icons.menu,size: 30,),
+                            icon: FaIcon(FontAwesomeIcons.alignLeft),
+                            color: Colors.black87,
+                            onPressed: () =>
+                                scaffoldKey.currentState.openDrawer(),
+                          ),
+                          Text(
+                            'Categories',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(right: 8),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.orangeAccent),
+                        child: Stack(
+                          children: <Widget>[
+                            IconButton(
+//                    icon: Icon(Icons.menu,size: 30,),
+                              icon: FaIcon(FontAwesomeIcons.shoppingBag,
+                                  size: 20),
+                              color: Colors.black,
+                              onPressed: () =>
+                                  scaffoldKey.currentState.openDrawer(),
+                            ),
+//      list.length ==0 ? new Container() :
+                            new Positioned(
+                              right: 2,
+                              bottom: 4,
+                              child: new Stack(
+                                children: <Widget>[
+                                  new Icon(Icons.brightness_1,
+                                      size: 20.0, color: Colors.green[800]),
+                                  new Positioned(
+                                      top: 3.0,
+                                      right: 3.0,
+                                      child: new Center(
+                                        child: new Text(
+                                          '10',
+                                          style: new TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 11.0,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ])),
+//            Padding(
+//              padding: const EdgeInsets.only(
+//                  top: 1.0, left: 9, right: 9, bottom: 10),
+//              child: Container(
+//                height: 40,
+//                color: LightColor.lightGrey.withAlpha(100),
+//                margin: EdgeInsets.all(7),
+//                child: TextField(
+//                  decoration: InputDecoration(
+//                    contentPadding: EdgeInsets.only(left: 15),
+//                    border: OutlineInputBorder(
+//                      borderRadius: BorderRadius.circular(40.0),
+//                    ),
+//                    suffixIcon: Icon(Icons.search),
+//                    hintText: 'Search the product',
+//                  ),
+//                  onChanged: (string) {
+//                    setState(() {
+//                      _filteredProducts = _products
+//                          .where((u) => (u.name
+//                              .toLowerCase()
+//                              .contains(string.toLowerCase())))
+//                          .toList();
+//                    });
+//                    if (string.length == null) {
+//                      FocusScope.of(context).unfocus();
+//                    }
+//                  },
+//                ),
+//              ),
+//            ),
+            Container(
+              width: AppTheme.fullWidth(context),
+              margin: EdgeInsets.all(10),
               child: Row(
                 children: <Widget>[
-                  IconButton(
-//                    icon: Icon(Icons.menu,size: 30,),
-                  icon: FaIcon(FontAwesomeIcons.alignLeft),
-                    onPressed: () => scaffoldKey.currentState.openDrawer(),
-                  ),
-                  Text(
-                    'Categories',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: MyColors.primaryColor,
-                      letterSpacing: 1.1,
-                      fontWeight: FontWeight.w800,
+                  Expanded(
+                    child: Container(
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: LightColor.lightGrey.withAlpha(100),
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: TextField(
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Search Products",
+                            hintStyle: TextStyle(fontSize: 12),
+                            contentPadding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 0, top: 5),
+                            prefixIcon:
+                                Icon(Icons.search, color: Colors.black54)),
+                        onChanged: (string) {
+                          setState(() {
+                            _filteredProducts = _products
+                                .where((u) => (u.name
+                                    .toLowerCase()
+                                    .contains(string.toLowerCase())))
+                                .toList();
+                          });
+                          if (string.length == null) {
+                            FocusScope.of(context).unfocus();
+                          }
+                        },
+                      ),
                     ),
                   ),
+//                  _icon(Icons.filter_list, color: Colors.black54)
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  top: 1.0, left: 9, right: 9, bottom: 10),
-              child: Container(
-                height: 40,
-                color: Colors.white70,
-                margin: EdgeInsets.all(7),
-                child: TextField(
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 15),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(40.0),
-                    ),
-                    suffixIcon: Icon(Icons.search),
-                    hintText: 'Search the product',
-                  ),
-                  onChanged: (string) {
-                    setState(() {
-                      _filteredProducts = _products
-                          .where((u) => (u.name
-                              .toLowerCase()
-                              .contains(string.toLowerCase())))
-                          .toList();
-                    });
-                    if (string.length == null) {
-                      FocusScope.of(context).unfocus();
-                    }
-                  },
-                ),
-              ),
-            ),
+
             Expanded(
               child: MediaQuery.removePadding(
                 context: context,

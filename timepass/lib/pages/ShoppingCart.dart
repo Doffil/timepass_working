@@ -44,7 +44,6 @@ import 'package:timepass/pages/HomePage.dart';
 import 'package:timepass/pages/HomeScreen.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/sqlite/db_helper.dart';
-import 'package:timepass/theme.dart';
 
 class ShoppingCart extends StatefulWidget {
   @override
@@ -123,7 +122,6 @@ class _ShoppingCartState extends State<ShoppingCart>{
                   'Shopping-Cart',
                   style: TextStyle(
                     fontSize: 30,
-                    color: MyColors.primaryColor,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -132,9 +130,9 @@ class _ShoppingCartState extends State<ShoppingCart>{
           ),
           getData(),
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(6.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 RaisedButton(
                   color: Colors.green,

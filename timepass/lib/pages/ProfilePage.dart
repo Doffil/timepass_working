@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+  var scaffoldKey = GlobalKey<ScaffoldState>();
   File _image;
   final picker= ImagePicker();
   Future getImage() async{
@@ -23,8 +26,6 @@ class _ProfilePageState extends State<ProfilePage> {
       _image = File(image.path);
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +64,47 @@ class _ProfilePageState extends State<ProfilePage> {
             });
           }
 
-
           return Scaffold(
+            key: scaffoldKey,
+            drawer: Drawer(
+              child: ListView(
+                // Important: Remove any padding from the ListView.
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  Container(
+                    height: 100,
+                    child: DrawerHeader(
+                      child: Text(
+                        'Grocery',
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.home),
+                    title: Text('Home'),
+                    onTap: () {
+                      // Update the state of the app.
+                      // ...
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Item 2'),
+                    onTap: () {
+                      // Update the state of the app.
+                      // ...
+                    },
+                  ),
+                ],
+              ),
+            ),
             backgroundColor: Colors.white,
             body: SingleChildScrollView(
               child: Container(
@@ -73,12 +113,21 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      "User Profile",
-                      style: TextStyle(
-                        fontSize: 27.0,
+                    Row(
+                      children: <Widget>[
+                        IconButton(
+//                    icon: Icon(Icons.menu,size: 30,),
+                          icon: FaIcon(FontAwesomeIcons.alignLeft),
+                          onPressed: () => scaffoldKey.currentState.openDrawer(),
+                        ),
+                        Text(
+                          "User Profile",
+                          style: TextStyle(
+                            fontSize: 27.0,
 
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(
                       height: 20.0,

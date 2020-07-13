@@ -1,6 +1,8 @@
 
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timepass/Model.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +12,7 @@ import 'package:timepass/pages/ShoppingCart.dart';
 import 'package:timepass/theme.dart';
 
 class SubProduct extends StatefulWidget {
-  final Welcome id1;
+  Welcome id1;
   var len;
   final ValueSetter<SubCategory> valueSetter;
   SubProduct({Key key, @required this.id1,this.valueSetter}) :super(key: key);
@@ -24,6 +26,7 @@ class _SubProductState extends State<SubProduct> {
    List<SubCategory>_subproducts;
    List<SubCategory>cart=[];
   List<SubCategory>_subfilteredProducts;
+  var scaffoldKey = GlobalKey<ScaffoldState>();
 
   void tapcart(){
 //    print(cart.length);
@@ -47,29 +50,80 @@ class _SubProductState extends State<SubProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
+      drawer: Drawer(
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Container(
+              height: 100,
+              child: DrawerHeader(
+                child: Text(
+                  'Grocery',
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text('Home'),
+              onTap: () {
+                // Update the state of the app.
+                // ...
+              },
+            ),
+            ListTile(
+              title: Text('Item 2'),
+              onTap: () {
+                // Update the state of the app.
+                // ...
+              },
+            ),
+          ],
+        ),
+      ),
       body:Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
            Padding(
-              padding: const EdgeInsets.only(top: 24.0,left: 5.0,bottom: 2.0),
-              child: Text(
-                widget.id1.name,
-                style: TextStyle(
-                  fontSize: 30,
-                  color: MyColors.primaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
+              padding: const EdgeInsets.only(top: 50.0,left: 15.0,bottom: 2.0),
+              child: Row(
+                children: <Widget>[
+                  IconButton(
+//                    icon: Icon(Icons.menu,size: 30,),
+                    icon: FaIcon(FontAwesomeIcons.alignLeft),
+                    onPressed: () => scaffoldKey.currentState.openDrawer(),
+                  ),
+                  Text(
+                    widget.id1.name,
+                    style: TextStyle(
+                      fontSize: 30,
+                      letterSpacing: 1.5,
+                      fontWeight: FontWeight.w800,
+                      color: MyColors.primaryColor,
+                    ),
+                  ),
+                ],
               ),
             ),
           Padding(
-            padding: const EdgeInsets.only(left: 10.0,top: 10.0,right:10.0),
+            padding: const EdgeInsets.only(left: 10.0,top: 7.0,right:10.0,bottom: 10),
             child: Container(
-              margin: EdgeInsets.all(7),
+              height: 40,
+              margin: EdgeInsets.only(top: 5,left:5),
               child: TextField(
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(10.0),
                   border:OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(40.0),
                   ),
                   suffixIcon: Icon(
                       Icons.search
@@ -88,9 +142,11 @@ class _SubProductState extends State<SubProduct> {
               ),
             ),
           ),
-
           Expanded(
-            child: new ListView.builder(
+            child: MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child:new ListView.builder(
               itemCount:widget.id1.subCategory.length,
 //              padding: const EdgeInsets.only(top:15.0,left: 15.0,right: 15.0),
               itemBuilder: (context, i) {
@@ -106,90 +162,86 @@ class _SubProductState extends State<SubProduct> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Container(
-                      margin: EdgeInsets.only(left: 18,
-                          right: 18,bottom: 5),
+                      margin: EdgeInsets.only(left: 10,
+                          right: 10,bottom: 5),
 //                      width: 330,
                       child: Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
                         ),
-                        elevation: 7,
+                        elevation:2,
                         child: Row(
                           children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.all(15.0),
-                                child: Container(
-                                  width: 100.0,
-                                  height: 100.0,
-                                  decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      image: DecorationImage(
-                                        image: NetworkImage(widget.id1.imageUrl),
-                                          fit: BoxFit.cover),
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                      boxShadow: [
-                                        BoxShadow(blurRadius: 2.0)
-                                      ]),
-                                ),
+                            Container(
+                              width: 130.0,
+                              height: 128.0,
+                              decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  image: DecorationImage(
+                                    image: NetworkImage(widget.id1.imageUrl),
+                                      fit: BoxFit.cover),
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+//                                  boxShadow: [
+//                                    BoxShadow(blurRadius: 2.0)
+//                                  ]
+                              ),
                             ),
                             Container(
-                                  padding: EdgeInsets.all(5.0),
+                              width: 200,
+                                  padding: EdgeInsets.only(left: 10),
                                   child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+//                                      mainAxisAlignment: MainAxisAlignment.start,
+//                                      crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
+                                        Text(
+                                           widget.id1.subCategory[i].subName+'nf;nsnf;slnfslkdjfjs;dfns;n',
+                                           style: TextStyle(
+                                             fontSize: 15.0,
+                                             fontWeight: FontWeight.w500,
+                                             letterSpacing: 0.8,
+                                           ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 5,
+                                         ),
                                       Padding(
-                                        padding: EdgeInsets.only(left: 10.0,top: 9.0),
-                                        child: Text(
-                                          widget.id1.subCategory[i].subName,
-                                          style: TextStyle(
-                                              fontSize: 18.0
-                                          ),
+                                        padding: const EdgeInsets.only(top: 3.0),
+                                      child: Text(
+                                        'Rs.'+(widget.id1.subCategory[i].subPrice).toString()+'/g',
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.w600
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 7.0,left: 10.0),
-//                                      child: Text(
-//                                        (widget.id1.subCategory[i].subPrice).toString(),
-//                                        style: TextStyle(
-//                                          fontSize: 14.0,
-//                                          fontWeight: FontWeight.w400
+                                      ),
+//                                      Padding(
+//                                        padding: const EdgeInsets.only(top: 0),
+//                                        child: Row(
+//                                          children: <Widget>[
+//                                            Padding(
+//                                              padding: const EdgeInsets.only(right: 23.0),
+//                                              child: ButtonTheme(
+//                                                minWidth:20.0,
+//                                                child: RaisedButton.icon(
+//                                                  onPressed: (){},
+//                                                  color: Colors.green,
+//                                                  label: Text(
+//                                                    'Buy Now',
+//                                                    style: TextStyle(
+//                                                      fontSize: 15
+//                                                    ),
+//                                                  ),
+//                                                  shape: RoundedRectangleBorder(
+//                                                    borderRadius: BorderRadius.circular(20)
+//                                                  ),
+//                                                  textColor: Colors.white,
+//                                                  icon: Icon(Icons.shopping_cart,size: 15,),
+//                                                ),
+//                                              ),
+//                                            ),
+//                                          ],
 //                                        ),
-//                                      ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 10.0,left: 10.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.only(right: 23.0),
-                                              child: ButtonTheme(
-                                                minWidth:20.0,
-                                                child: OutlineButton(
-                                                  child: Icon(Icons.favorite_border),
-                                                  shape:RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(6.0)
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            ButtonTheme(
-                                              minWidth: 20.0,
-                                              child: OutlineButton(
-                                                child: Icon(Icons.shopping_cart),
-                                                shape:RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(6.0)
-                                                ),
-                                                onPressed:(){
-                                                    cart.add(widget.id1.subCategory[i]);
-//                                           widget.valueSetter(widget.id1.subCategory[i]);
-                                              },
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
+//                                      )
                                     ],
                                   ),
                               ),
@@ -201,6 +253,7 @@ class _SubProductState extends State<SubProduct> {
                   ),
                 );
               },
+            ),
             ),
           ),
         ],

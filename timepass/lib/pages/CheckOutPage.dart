@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timepass/pages/HomeScreen.dart';
+import 'package:timepass/pages/RegisterPage.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
 import 'package:timepass/sqlite/db_helper.dart';
 import 'package:geolocator/geolocator.dart';
@@ -202,7 +203,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context)=> HomeScreen(),
+                          builder: (context)=> RegisterPage(),
                         ),
                       );
                     },

@@ -37,9 +37,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timepass/Model.dart';
 import 'package:timepass/pages/CheckOutPage.dart';
+import 'package:timepass/pages/HomePage.dart';
 import 'package:timepass/pages/HomeScreen.dart';
+import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/sqlite/db_helper.dart';
 import 'package:timepass/theme.dart';
 
@@ -50,7 +53,9 @@ class ShoppingCart extends StatefulWidget {
 
 
 class _ShoppingCartState extends State<ShoppingCart>{
+  var scaffoldKey = GlobalKey<ScaffoldState>();
 
+//  var sum=0;
   noItemsInCart(){
     return Center(
         child: Text(
@@ -62,18 +67,67 @@ class _ShoppingCartState extends State<ShoppingCart>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldKey,
+        drawer: Drawer(
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              Container(
+                height: 100,
+                child: DrawerHeader(
+                  child: Text(
+                    'Grocery',
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.home),
+                title: Text('Home'),
+                onTap: () {
+                  // Update the state of the app.
+                  // ...
+                },
+              ),
+              ListTile(
+                title: Text('Item 2'),
+                onTap: () {
+                  // Update the state of the app.
+                  // ...
+                },
+              ),
+            ],
+          ),
+        ),
       body:Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 24.0,left: 5.0,bottom: 2.0),
-            child: Text(
-              'Shopping-Cart',
-              style: TextStyle(
-                fontSize: 30,
-                color: MyColors.primaryColor,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+//                    icon: Icon(Icons.menu,size: 30,),
+                  icon: FaIcon(FontAwesomeIcons.alignLeft),
+                  onPressed: () => scaffoldKey.currentState.openDrawer(),
+                ),
+                Text(
+                  'Shopping-Cart',
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: MyColors.primaryColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ),
           getData(),
@@ -139,103 +193,65 @@ class _ShoppingCartState extends State<ShoppingCart>{
       future: getAllItems(),
       builder: (context,snapshot){
         if(snapshot.connectionState == ConnectionState.none && snapshot.hasData == null){
-          return Center(
-            child: Text(
-              'No data found',
-              style: TextStyle(
-                fontSize: 20
-              ),
-            ),
-          );
+         return CircularProgressIndicator();
         }else{
-          return Flexible(
+          return Expanded(
             child: ListView.builder(
                 itemCount: snapshot?.data?.length ?? 0,
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemBuilder:(BuildContext context,int index){
 //                  SubCategory subCategory = snapshot.data[index];
+//                sum=sum+snapshot.data[index]["subPrice"];
                   return GestureDetector(
                     onTap: () {},
                     child: Align(
                       alignment: Alignment.center,
                       child: Container(
                         margin: EdgeInsets.only(
-                          left: 18,right: 18,bottom: 5
+                          left: 10,right: 10,bottom: 5
                         ),
                         child: Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0)
                           ),
-                          elevation: 9,
+                          elevation: 2,
                           child: Row(
                             children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.all(9.0),
-                                child: Container(
-                                  width: 100.0,
-                                  height: 100.0,
-                                  decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      image: DecorationImage(
-                                          image: NetworkImage(snapshot.data[index]["subImageUrl"]),
-                                          fit: BoxFit.cover
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                      boxShadow: [
-                                        BoxShadow(blurRadius: 2.0)
-                                      ]),
+                              Container(
+                                width: 130.0,
+                                height: 128.0,
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    image: DecorationImage(
+                                        image: NetworkImage(snapshot.data[index]["subImageUrl"]),
+                                        fit: BoxFit.cover
+                                    ),
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
                                 ),
                               ),
-                              Container(
-                                padding: EdgeInsets.all(5.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10.0,top: 9.0),
-                                      child: Text(
-                                        snapshot.data[index]["subName"],
-                                        style: TextStyle(
-                                            fontSize: 18.0
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 7.0,left: 10.0),
-                                      child: Text(
-                                        snapshot.data[index]["subPrice"].toString(),
-                                        style: TextStyle(
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.w400
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10.0,left: 10.0),
-                                      child: Row(
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.only(left: 9,right: 3),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween ,
                                         children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.only(right: 23.0),
-                                            child: ButtonTheme(
-                                              minWidth:20.0,
-                                              child: OutlineButton(
-                                                child: Icon(Icons.favorite_border),
-                                                shape:RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(6.0)
-                                                ),
-                                              ),
+                                          Text(
+                                            snapshot.data[index]["subName"],
+                                            style: TextStyle(
+                                                fontSize: 18.0
                                             ),
                                           ),
-                                          ButtonTheme(
-                                            minWidth: 20.0,
-                                            child: OutlineButton(
-                                              child: Icon(Icons.delete),
-                                              shape:RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(6.0)
-                                              ),
+                                          Container(
+                                            width: 50,
+                                            padding: EdgeInsets.zero,
+//                                          margin: EdgeInsets.only(left: 120),
+                                            child: IconButton(
+                                             icon: Icon(Icons.close),
                                               onPressed:() async{
                                                 int rowAffected = await DatabaseHelper.
                                                 instance.delete(snapshot.data[index]["subId"]);
@@ -248,8 +264,71 @@ class _ShoppingCartState extends State<ShoppingCart>{
                                           )
                                         ],
                                       ),
-                                    )
-                                  ],
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding:
+                                            EdgeInsets.only(top: 0.0),
+                                            child: Text(
+                                              'V:'+snapshot.data[index]["subPrice"].toString(),
+                                              style: TextStyle(
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.w600
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: 50,
+                                            height: 30,
+                                            child: OutlineButton(
+                                              child: Icon(Icons.add),
+                                              shape:RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8.0)
+                                              ),
+                                              onPressed:(){}),
+                                          ),
+                                          Text(
+                                            '1',
+                                            style: TextStyle(
+                                              fontSize: 18
+                                            ),
+                                          ),
+                                          Container(
+                                            width: 50,
+                                            child: OutlineButton(
+                                                child: FaIcon(FontAwesomeIcons.minus),
+                                                shape:RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(6.0)
+                                                ),
+                                                onPressed:(){}),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 5,bottom:5),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Text(
+                                              'Price : ',
+                                              style: TextStyle(
+                                                fontSize: 20
+                                              ),
+                                            ),
+                                            Text(
+                                              '2351733',
+                                              style: TextStyle(
+                                                fontSize: 20
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],

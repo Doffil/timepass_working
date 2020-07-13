@@ -329,6 +329,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:timepass/Model.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
+import 'package:timepass/pages/ShoppingCartScreen.dart';
 import 'package:timepass/sqlite/db_helper.dart';
 
 class DetailsPage extends StatefulWidget {
@@ -521,7 +522,7 @@ class _DetailsPageState extends State<DetailsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context)=>ShoppingCart(),
+        builder: (context)=>ShoppingCartScreen(),
 //      builder: (context)=>ShoppingCart(),
       ),
     );

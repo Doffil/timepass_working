@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/Model.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/cupertino.dart';
@@ -43,9 +44,17 @@ class _SubProductState extends State<SubProduct> {
     setState(() {
       _subproducts = widget.id1.subCategory;
       _subfilteredProducts = _subproducts;
+      _getMoreData();
     });
   }
+  int cartLength=0;
+  _getMoreData() async{
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      cartLength = prefs.getInt('cartLength') ?? 0;
+    });
 
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,8 +134,12 @@ class _SubProductState extends State<SubProduct> {
                             icon:
                                 FaIcon(FontAwesomeIcons.shoppingBag, size: 20),
                             color: Colors.black,
-                            onPressed: () =>
-                                scaffoldKey.currentState.openDrawer(),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ShoppingCart()));
+                            },
                           ),
 //      list.length ==0 ? new Container() :
                           new Positioned(
@@ -141,7 +154,7 @@ class _SubProductState extends State<SubProduct> {
                                     right: 3.0,
                                     child: new Center(
                                       child: new Text(
-                                        '10',
+                                        cartLength.toString(),
                                         style: new TextStyle(
                                             color: Colors.white,
                                             fontSize: 11.0,
@@ -282,7 +295,8 @@ class _SubProductState extends State<SubProduct> {
                                               dropdownValue = newValue;
                                             });
                                           },
-                                          items: <String>['One', 'Two', 'Free', 'Four']
+                                          items: <String>[
+                                            '100g', '200g', '500g', '1kg']
                                               .map<DropdownMenuItem<String>>((String value) {
                                             return DropdownMenuItem<String>(
                                               value: value,

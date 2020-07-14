@@ -5,15 +5,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/Model.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
-import 'package:timepass/pages/SubCategories.dart';
 import 'package:timepass/pages/SubProduct.dart';
 import 'package:timepass/pages/SubProductScreen.dart';
 import 'package:timepass/services/Service.dart';
 import 'package:timepass/themes/light_color.dart';
 import 'package:timepass/themes/theme.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class GridItem extends StatelessWidget {
   GridItem(this.model);
@@ -46,7 +45,7 @@ class GridItem extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategories()));
+                      builder: (context) => SubProduct(id1: model)));
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -99,12 +98,12 @@ class GridItem extends StatelessWidget {
   }
 }
 
-class SearchList extends StatefulWidget {
+class SubCategories extends StatefulWidget {
   @override
-  _SearchListState createState() => _SearchListState();
+  _SubCategoriesState createState() => _SubCategoriesState();
 }
 
-class _SearchListState extends State<SearchList> {
+class _SubCategoriesState extends State<SubCategories> {
   List<Welcome> _products;
   List<Welcome> _filteredProducts;
   bool _loading;
@@ -115,6 +114,7 @@ class _SearchListState extends State<SearchList> {
   void initState() {
     super.initState();
     _loading = true;
+
     Service.getProducts().then((products) {
       setState(() {
         _products = products;
@@ -124,6 +124,7 @@ class _SearchListState extends State<SearchList> {
       });
     });
   }
+
   int cartLength=0;
   _getMoreData() async{
     final prefs = await SharedPreferences.getInstance();
@@ -194,7 +195,7 @@ class _SearchListState extends State<SearchList> {
                                 scaffoldKey.currentState.openDrawer(),
                           ),
                           Text(
-                            'Categories',
+                            'Sub-Categories',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w800,
@@ -210,15 +211,15 @@ class _SearchListState extends State<SearchList> {
                           children: <Widget>[
                             IconButton(
 //                    icon: Icon(Icons.menu,size: 30,),
-                              icon: FaIcon(FontAwesomeIcons.shoppingBag,
-                                  size: 20),
-                              color: Colors.black,
-                              onPressed: () =>{
-                              Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                              builder: (context) => ShoppingCart()))
-                              }
+                                icon: FaIcon(FontAwesomeIcons.shoppingBag,
+                                    size: 20),
+                                color: Colors.black,
+                                onPressed: () =>{
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ShoppingCart()))
+                                }
 
                             ),
 //      list.length ==0 ? new Container() :
@@ -230,14 +231,14 @@ class _SearchListState extends State<SearchList> {
                                   new Icon(Icons.brightness_1,
                                       size: 20.0, color: Colors.green[800]),
                                   new Positioned(
-                                      top: 2.0,
-                                      right: 6.0,
+                                      top: 3.0,
+                                      right: 3.0,
                                       child: new Center(
                                         child: new Text(
-                                         cartLength.toString(),
+                                          cartLength.toString(),
                                           style: new TextStyle(
                                               color: Colors.white,
-                                              fontSize: 13.0,
+                                              fontSize: 11.0,
                                               fontWeight: FontWeight.w500),
                                         ),
                                       )),
@@ -299,13 +300,13 @@ class _SearchListState extends State<SearchList> {
                             contentPadding: EdgeInsets.only(
                                 left: 10, right: 10, bottom: 0, top: 5),
                             prefixIcon:
-                                Icon(Icons.search, color: Colors.black54)),
+                            Icon(Icons.search, color: Colors.black54)),
                         onChanged: (string) {
                           setState(() {
                             _filteredProducts = _products
                                 .where((u) => (u.name
-                                    .toLowerCase()
-                                    .contains(string.toLowerCase())))
+                                .toLowerCase()
+                                .contains(string.toLowerCase())))
                                 .toList();
                           });
                           if (string.length == null) {

@@ -44,6 +44,7 @@ import 'package:timepass/pages/HomePage.dart';
 import 'package:timepass/pages/HomeScreen.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/sqlite/db_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShoppingCart extends StatefulWidget {
   @override
@@ -183,6 +184,9 @@ class _ShoppingCartState extends State<ShoppingCart>{
   }
   Future getAllItems() async{
     List<Map<String,dynamic>> queryRows = await DatabaseHelper.instance.queryAll();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('cartLength', queryRows.length);
+    print(queryRows.length);
     return queryRows;
   }
 

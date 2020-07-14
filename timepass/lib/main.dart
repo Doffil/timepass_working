@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:timepass/pages/HomePage.dart';
 import 'package:timepass/pages/HomeScreen.dart';
 import 'package:timepass/SplashScreen.dart';
 import 'package:timepass/pages/splash_page.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: HomeScreen(),
+      home: SearchList(),
     );
 //        return MultiProvider(
 //    providers: [

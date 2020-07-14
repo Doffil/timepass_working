@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timepass/Model.dart';
+import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
 import 'package:timepass/pages/SubCategories.dart';
 import 'package:timepass/pages/SubProduct.dart';
@@ -43,7 +45,7 @@ class GridItem extends StatelessWidget {
 //                ),
 //              );
 
-              Navigator.push(
+               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => SubCategories()));
@@ -107,15 +109,32 @@ class SearchList extends StatefulWidget {
 class _SearchListState extends State<SearchList> {
   List<Welcome> _products;
   List<Welcome> _filteredProducts;
-  bool _loading;
+  bool _loading=true;
   var scaffoldKey = GlobalKey<ScaffoldState>();
-  ScrollController _scrollController = ScrollController();
+  final spinkit = SpinKitWave(
+    color: Colors.lightBlue,
+    size: 30,
+  );
+
+//
+//  @override
+//  void initState() {
+//    super.initState();
+//    _loading = true;
+//    Service.getProducts().then((products) {
+//      setState(() {
+//        _products = products;
+//        _filteredProducts = _products;
+//        _loading = false;
+//        _getMoreData();
+//      });
+//    });
+//  }
+
 
   @override
   void initState() {
-    super.initState();
-    _loading = true;
-    Service.getProducts().then((products) {
+     Service.getProducts().then((products) {
       setState(() {
         _products = products;
         _filteredProducts = _products;
@@ -123,7 +142,9 @@ class _SearchListState extends State<SearchList> {
         _getMoreData();
       });
     });
+     super.initState();
   }
+
   int cartLength=0;
   _getMoreData() async{
     final prefs = await SharedPreferences.getInstance();
@@ -160,15 +181,44 @@ class _SearchListState extends State<SearchList> {
                 leading: Icon(Icons.home),
                 title: Text('Home'),
                 onTap: () {
-                  // Update the state of the app.
-                  // ...
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SearchList()));
                 },
               ),
               ListTile(
-                title: Text('Item 2'),
+                leading: FaIcon(FontAwesomeIcons.shoppingBag),
+                title: Text('Shopping-Cart'),
                 onTap: () {
-                  // Update the state of the app.
-                  // ...
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ShoppingCart()));
+                },
+              ),
+              ListTile(
+                leading: FaIcon(FontAwesomeIcons.userCircle),
+                title: Text('Profile'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfilePage()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.language),
+                title: Text('Language'),
+                onTap: () {
+                  //yet to implement
+                },
+              ),
+              ListTile(
+                leading: FaIcon(FontAwesomeIcons.signOutAlt),
+                title: Text('Sign-Out'),
+                onTap: () {
+                  //add at the last
                 },
               ),
             ],
@@ -176,7 +226,8 @@ class _SearchListState extends State<SearchList> {
         ),
 //      backgroundColor: Color(0xF6F5F5),
 //    backgroundColor: Colors.black12,
-        body: Column(
+        body:_loading?Center(child: spinkit,):
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
@@ -228,16 +279,17 @@ class _SearchListState extends State<SearchList> {
                               child: new Stack(
                                 children: <Widget>[
                                   new Icon(Icons.brightness_1,
-                                      size: 20.0, color: Colors.green[800]),
+                                      size: 21.0, color: Colors.green[800]),
                                   new Positioned(
                                       top: 2.0,
-                                      right: 6.0,
+                                      right: 6.2,
+                                      bottom: 1,
                                       child: new Center(
                                         child: new Text(
                                          cartLength.toString(),
                                           style: new TextStyle(
                                               color: Colors.white,
-                                              fontSize: 13.0,
+                                              fontSize: 11.0,
                                               fontWeight: FontWeight.w500),
                                         ),
                                       )),
@@ -319,7 +371,6 @@ class _SearchListState extends State<SearchList> {
                 ],
               ),
             ),
-
             Expanded(
               child: MediaQuery.removePadding(
                 context: context,
@@ -327,7 +378,6 @@ class _SearchListState extends State<SearchList> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: new GridView.builder(
-                    controller: _scrollController,
                     itemCount: null == _filteredProducts
                         ? 0
                         : _filteredProducts.length,

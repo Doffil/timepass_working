@@ -6,6 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:timepass/pages/HomePage.dart';
+import 'package:timepass/pages/ShoppingCart.dart';
 import 'package:timepass/stores/login_store.dart';
 import 'package:timepass/widgets/custom_list_tile.dart';
 import 'package:timepass/widgets/small_button.dart';
@@ -91,15 +93,44 @@ class _ProfilePageState extends State<ProfilePage> {
                     leading: Icon(Icons.home),
                     title: Text('Home'),
                     onTap: () {
-                      // Update the state of the app.
-                      // ...
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SearchList()));
                     },
                   ),
                   ListTile(
-                    title: Text('Item 2'),
+                    leading: FaIcon(FontAwesomeIcons.shoppingBag),
+                    title: Text('Shopping-Cart'),
                     onTap: () {
-                      // Update the state of the app.
-                      // ...
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ShoppingCart()));
+                    },
+                  ),
+                  ListTile(
+                    leading: FaIcon(FontAwesomeIcons.userCircle),
+                    title: Text('Profile'),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfilePage()));
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.language),
+                    title: Text('Language'),
+                    onTap: () {
+                      //yet to implement
+                    },
+                  ),
+                  ListTile(
+                    leading: FaIcon(FontAwesomeIcons.signOutAlt),
+                    title: Text('Sign-Out'),
+                    onTap: () {
+                      //add at the last
                     },
                   ),
                 ],
@@ -123,7 +154,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         Text(
                           "User Profile",
                           style: TextStyle(
-                            fontSize: 27.0,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
 
                           ),
                         ),

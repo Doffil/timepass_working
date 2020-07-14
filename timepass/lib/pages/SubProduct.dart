@@ -6,8 +6,11 @@ import 'package:timepass/Model.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:timepass/pages/DetailsPage.dart';
+import 'package:timepass/pages/HomePage.dart';
 import 'package:timepass/pages/HomeScreen.dart';
+import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
+import 'package:timepass/sqlite/db_helper.dart';
 import 'package:timepass/themes/light_color.dart';
 import 'package:timepass/themes/theme.dart';
 
@@ -40,12 +43,12 @@ class _SubProductState extends State<SubProduct> {
   }
   @override
   void initState() {
-    super.initState();
     setState(() {
       _subproducts = widget.id1.subCategory;
       _subfilteredProducts = _subproducts;
       _getMoreData();
     });
+    super.initState();
   }
   int cartLength=0;
   _getMoreData() async{
@@ -83,15 +86,44 @@ class _SubProductState extends State<SubProduct> {
               leading: Icon(Icons.home),
               title: Text('Home'),
               onTap: () {
-                // Update the state of the app.
-                // ...
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchList()));
               },
             ),
             ListTile(
-              title: Text('Item 2'),
+              leading: FaIcon(FontAwesomeIcons.shoppingBag),
+              title: Text('Shopping-Cart'),
               onTap: () {
-                // Update the state of the app.
-                // ...
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ShoppingCart()));
+              },
+            ),
+            ListTile(
+              leading: FaIcon(FontAwesomeIcons.userCircle),
+              title: Text('Profile'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfilePage()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.language),
+              title: Text('Language'),
+              onTap: () {
+                //yet to implement
+              },
+            ),
+            ListTile(
+              leading: FaIcon(FontAwesomeIcons.signOutAlt),
+              title: Text('Sign-Out'),
+              onTap: () {
+                //add at the last
               },
             ),
           ],
@@ -272,7 +304,7 @@ class _SubProductState extends State<SubProduct> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Container(
-                                        width: 70,
+                                        width: 74,
                                         height: 30,
                                         margin: EdgeInsets.only(top: 10),
                                         padding: EdgeInsets.only(left: 10),
@@ -310,6 +342,25 @@ class _SubProductState extends State<SubProduct> {
                                         margin: EdgeInsets.only(right: 7,top: 10),
                                         child: RaisedButton.icon(
                                           onPressed: () async{
+//                                            cart.add(widget.id1.subCategory[i]);
+                                            int i1= await DatabaseHelper.instance.insert({
+                                              DatabaseHelper.columnName : widget.id1.subCategory[i].subName,
+                                              DatabaseHelper.columnSubId : widget.id1.subCategory[i].subId,
+                                              DatabaseHelper.columnPrice : widget.id1.subCategory[i].subPrice,
+                                              DatabaseHelper.columnQuantity : widget.id1.subCategory[i].subQuantity,
+                                              DatabaseHelper.columnImageUrl : widget.id1.subCategory[i].subImageUrl,
+                                            });
+                                            final snackBar = SnackBar(
+                                              content: Text('Yay! Item added to the cart.'),
+                                              action: SnackBarAction(
+                                                label: 'Undo',
+                                                textColor: Colors.white,
+                                                onPressed: (){},
+                                              ),
+                                              backgroundColor: Colors.green,
+                                            );
+                                            Scaffold.of(context).showSnackBar(snackBar);
+                                            print('inserted id is $i1');
                                           },
                                           shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(8.0)

@@ -45,6 +45,7 @@ import 'package:timepass/pages/HomeScreen.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/sqlite/db_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timepass/themes/theme.dart';
 
 class ShoppingCart extends StatefulWidget {
   @override
@@ -93,15 +94,44 @@ class _ShoppingCartState extends State<ShoppingCart>{
                 leading: Icon(Icons.home),
                 title: Text('Home'),
                 onTap: () {
-                  // Update the state of the app.
-                  // ...
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SearchList()));
                 },
               ),
               ListTile(
-                title: Text('Item 2'),
+                leading: FaIcon(FontAwesomeIcons.shoppingBag),
+                title: Text('Shopping-Cart'),
                 onTap: () {
-                  // Update the state of the app.
-                  // ...
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ShoppingCart()));
+                },
+              ),
+              ListTile(
+                leading: FaIcon(FontAwesomeIcons.userCircle),
+                title: Text('Profile'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfilePage()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.language),
+                title: Text('Language'),
+                onTap: () {
+                  //yet to implement
+                },
+              ),
+              ListTile(
+                leading: FaIcon(FontAwesomeIcons.signOutAlt),
+                title: Text('Sign-Out'),
+                onTap: () {
+                  //add at the last
                 },
               ),
             ],
@@ -113,18 +143,33 @@ class _ShoppingCartState extends State<ShoppingCart>{
           Padding(
             padding: const EdgeInsets.only(top: 24.0,left: 5.0,bottom: 2.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    IconButton(
+//                    icon: Icon(Icons.menu,size: 30,),
+                      icon: FaIcon(FontAwesomeIcons.alignLeft),
+                      onPressed: () => scaffoldKey.currentState.openDrawer(),
+                    ),
+                    Text(
+                      'Shopping-Cart',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
                 IconButton(
 //                    icon: Icon(Icons.menu,size: 30,),
-                  icon: FaIcon(FontAwesomeIcons.alignLeft),
-                  onPressed: () => scaffoldKey.currentState.openDrawer(),
-                ),
-                Text(
-                  'Shopping-Cart',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  icon: FaIcon(FontAwesomeIcons.trashAlt,color:Colors.red,),
+                  onPressed: ()async{
+                    await DatabaseHelper.instance.deleteAll();
+                    setState(() {
+                      getAllItems();
+                    });
+                  },
                 ),
               ],
             ),
@@ -156,25 +201,25 @@ class _ShoppingCartState extends State<ShoppingCart>{
                       borderRadius: BorderRadius.circular(8.0)
                   ),
                 ),
-                RaisedButton(
-                  color: Colors.redAccent,
-                  textColor: Colors.white,
-                  onPressed: ()async{
-                    await DatabaseHelper.instance.deleteAll();
-                    setState(() {
-                      getAllItems();
-                    });
-                  },
-                  child: Text(
-                    'Clear Cart',
-                    style: TextStyle(
-                      fontSize: 20
-                    ),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0)
-                  ),
-                ),
+//                RaisedButton(
+//                  color: Colors.redAccent,
+//                  textColor: Colors.white,
+//                  onPressed: ()async{
+//                    await DatabaseHelper.instance.deleteAll();
+//                    setState(() {
+//                      getAllItems();
+//                    });
+//                  },
+//                  child: Text(
+//                    'Clear Cart',
+//                    style: TextStyle(
+//                      fontSize: 20
+//                    ),
+//                  ),
+//                  shape: RoundedRectangleBorder(
+//                    borderRadius: BorderRadius.circular(8.0)
+//                  ),
+//                ),
               ],
             ),
           )

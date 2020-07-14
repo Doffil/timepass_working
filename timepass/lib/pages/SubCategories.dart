@@ -7,12 +7,15 @@ import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/Model.dart';
+import 'package:timepass/pages/HomePage.dart';
+import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
 import 'package:timepass/pages/SubProduct.dart';
 import 'package:timepass/pages/SubProductScreen.dart';
 import 'package:timepass/services/Service.dart';
 import 'package:timepass/themes/light_color.dart';
 import 'package:timepass/themes/theme.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class GridItem extends StatelessWidget {
   GridItem(this.model);
@@ -33,7 +36,7 @@ class GridItem extends StatelessWidget {
           alignment: Alignment.center,
           child: InkWell(
             splashColor: Colors.orange,
-            onTap: () {
+            onTap: (){
               print(this.model.id);
 //              Navigator.push(
 //                context,
@@ -108,13 +111,15 @@ class _SubCategoriesState extends State<SubCategories> {
   List<Welcome> _filteredProducts;
   bool _loading;
   var scaffoldKey = GlobalKey<ScaffoldState>();
-  ScrollController _scrollController = ScrollController();
+  final spinkit = SpinKitWave(
+    color: Colors.lightBlue,
+    size: 30,
+  );
 
   @override
   void initState() {
     super.initState();
     _loading = true;
-
     Service.getProducts().then((products) {
       setState(() {
         _products = products;
@@ -161,15 +166,44 @@ class _SubCategoriesState extends State<SubCategories> {
                 leading: Icon(Icons.home),
                 title: Text('Home'),
                 onTap: () {
-                  // Update the state of the app.
-                  // ...
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SearchList()));
                 },
               ),
               ListTile(
-                title: Text('Item 2'),
+                leading: FaIcon(FontAwesomeIcons.shoppingBag),
+                title: Text('Shopping-Cart'),
                 onTap: () {
-                  // Update the state of the app.
-                  // ...
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ShoppingCart()));
+                },
+              ),
+              ListTile(
+                leading: FaIcon(FontAwesomeIcons.userCircle),
+                title: Text('Profile'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfilePage()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.language),
+                title: Text('Language'),
+                onTap: () {
+                  //yet to implement
+                },
+              ),
+              ListTile(
+                leading: FaIcon(FontAwesomeIcons.signOutAlt),
+                title: Text('Sign-Out'),
+                onTap: () {
+                  //add at the last
                 },
               ),
             ],
@@ -177,7 +211,7 @@ class _SubCategoriesState extends State<SubCategories> {
         ),
 //      backgroundColor: Color(0xF6F5F5),
 //    backgroundColor: Colors.black12,
-        body: Column(
+        body:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
@@ -195,6 +229,7 @@ class _SubCategoriesState extends State<SubCategories> {
                                 scaffoldKey.currentState.openDrawer(),
                           ),
                           Text(
+                            _loading?'Loading...':
                             'Sub-Categories',
                             style: TextStyle(
                               fontSize: 22,
@@ -320,29 +355,28 @@ class _SubCategoriesState extends State<SubCategories> {
                 ],
               ),
             ),
-
+            _loading?Center(child: spinkit,):
             Expanded(
               child: MediaQuery.removePadding(
                 context: context,
                 removeTop: true,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10),
-                  child: new GridView.builder(
-                    controller: _scrollController,
-                    itemCount: null == _filteredProducts
-                        ? 0
-                        : _filteredProducts.length,
-                    itemBuilder: (context, index) {
+                    child: new GridView.builder(
+                      itemCount: null == _filteredProducts
+                          ? 0
+                          : _filteredProducts.length,
+                      itemBuilder: (context, index) {
 //                Welcome product= _filteredProducts[index];
-                      return GridItem(_filteredProducts[index]);
-                    },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                        return GridItem(_filteredProducts[index]);
+                      },
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                      ),
                     ),
                   ),
                 ),
               ),
-            )
           ],
         ));
   }

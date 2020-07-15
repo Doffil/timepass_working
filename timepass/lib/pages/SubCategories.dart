@@ -16,6 +16,7 @@ import 'package:timepass/services/Service.dart';
 import 'package:timepass/themes/light_color.dart';
 import 'package:timepass/themes/theme.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class GridItem extends StatelessWidget {
   GridItem(this.model);
@@ -36,7 +37,7 @@ class GridItem extends StatelessWidget {
           alignment: Alignment.center,
           child: InkWell(
             splashColor: Colors.orange,
-            onTap: (){
+            onTap: () {
               print(this.model.id);
 //              Navigator.push(
 //                context,
@@ -61,13 +62,23 @@ class GridItem extends StatelessWidget {
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10.0),
                         topRight: Radius.circular(10.0)),
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/shopping.jpeg',
-                      image: this.model.imageUrl,
-                      fit: BoxFit.fill,
-                      height: 130,
-                      width: 220,
-                    ),
+//                    child: FadeInImage.assetNetwork(
+//                      placeholder: 'assets/images/shopping.jpeg',
+//                      image: this.model.imageUrl,
+//                      fit: BoxFit.fill,
+//                      height: 130,
+//                      width: 220,
+//                    ),
+                  child: CachedNetworkImage(
+//                    placeholder: (context, url) => CircularProgressIndicator(),
+                    imageUrl:this.model.imageUrl,
+                    placeholder: (context, url){
+                      return Icon(Icons.shopping_cart);
+                    },
+                    fit: BoxFit.fill,
+                    height: 130,
+                    width: 220,
+                  ),
                   ),
                 ),
                 Padding(
@@ -130,8 +141,8 @@ class _SubCategoriesState extends State<SubCategories> {
     });
   }
 
-  int cartLength=0;
-  _getMoreData() async{
+  int cartLength = 0;
+  _getMoreData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       cartLength = prefs.getInt('cartLength') ?? 0;
@@ -166,30 +177,24 @@ class _SubCategoriesState extends State<SubCategories> {
                 leading: Icon(Icons.home),
                 title: Text('Home'),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SearchList()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SearchList()));
                 },
               ),
               ListTile(
                 leading: FaIcon(FontAwesomeIcons.shoppingBag),
                 title: Text('Shopping-Cart'),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ShoppingCart()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ShoppingCart()));
                 },
               ),
               ListTile(
                 leading: FaIcon(FontAwesomeIcons.userCircle),
                 title: Text('Profile'),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProfilePage()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ProfilePage()));
                 },
               ),
               ListTile(
@@ -211,7 +216,7 @@ class _SubCategoriesState extends State<SubCategories> {
         ),
 //      backgroundColor: Color(0xF6F5F5),
 //    backgroundColor: Colors.black12,
-        body:Column(
+        body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
@@ -229,8 +234,7 @@ class _SubCategoriesState extends State<SubCategories> {
                                 scaffoldKey.currentState.openDrawer(),
                           ),
                           Text(
-                            _loading?'Loading...':
-                            'Sub-Categories',
+                            _loading ? 'Loading...' : 'Sub-Categories',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w800,
@@ -249,14 +253,13 @@ class _SubCategoriesState extends State<SubCategories> {
                                 icon: FaIcon(FontAwesomeIcons.shoppingBag,
                                     size: 20),
                                 color: Colors.black,
-                                onPressed: () =>{
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ShoppingCart()))
-                                }
-
-                            ),
+                                onPressed: () => {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ShoppingCart()))
+                                    }),
 //      list.length ==0 ? new Container() :
                             new Positioned(
                               right: 2,
@@ -335,13 +338,13 @@ class _SubCategoriesState extends State<SubCategories> {
                             contentPadding: EdgeInsets.only(
                                 left: 10, right: 10, bottom: 0, top: 5),
                             prefixIcon:
-                            Icon(Icons.search, color: Colors.black54)),
+                                Icon(Icons.search, color: Colors.black54)),
                         onChanged: (string) {
                           setState(() {
                             _filteredProducts = _products
                                 .where((u) => (u.name
-                                .toLowerCase()
-                                .contains(string.toLowerCase())))
+                                    .toLowerCase()
+                                    .contains(string.toLowerCase())))
                                 .toList();
                           });
                           if (string.length == null) {
@@ -355,28 +358,37 @@ class _SubCategoriesState extends State<SubCategories> {
                 ],
               ),
             ),
-            _loading?Center(child: spinkit,):
-            Expanded(
-              child: MediaQuery.removePadding(
-                context: context,
-                removeTop: true,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                    child: new GridView.builder(
-                      itemCount: null == _filteredProducts
-                          ? 0
-                          : _filteredProducts.length,
-                      itemBuilder: (context, index) {
+            _loading
+                ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Center(
+                        child: spinkit,
+                      )
+                    ],
+                  )
+                : Expanded(
+                    child: MediaQuery.removePadding(
+                      context: context,
+                      removeTop: true,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: new GridView.builder(
+                          itemCount: null == _filteredProducts
+                              ? 0
+                              : _filteredProducts.length,
+                          itemBuilder: (context, index) {
 //                Welcome product= _filteredProducts[index];
-                        return GridItem(_filteredProducts[index]);
-                      },
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
+                            return GridItem(_filteredProducts[index]);
+                          },
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
           ],
         ));
   }

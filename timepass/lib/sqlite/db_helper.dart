@@ -62,6 +62,10 @@ class DatabaseHelper{
     return await db.delete(_tableName,where: '$columnSubId = ?',whereArgs: [id]);
   }
 
+  Future<List<Map<String,dynamic>>> isPresent(int id) async{
+    Database db = await instance.database;
+    return await db.rawQuery("select * from $_tableName where $columnSubId = $id");
+  }
 
   Future deleteAll() async{
     Database db = await instance.database;

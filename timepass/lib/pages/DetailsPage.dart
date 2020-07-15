@@ -327,9 +327,9 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timepass/Model.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
-import 'package:timepass/pages/ShoppingCartScreen.dart';
 import 'package:timepass/sqlite/db_helper.dart';
 
 class DetailsPage extends StatefulWidget {
@@ -372,7 +372,7 @@ class _DetailsPageState extends State<DetailsPage> {
               child:Hero(
                   tag: heroTag,
                   child: Container(
-                    height: 250.0,
+                    height: 240.0,
                     width: 400.0,
                     child: Carousel(
                       images: [
@@ -407,7 +407,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.only(left: 10,top: 20,right: 10),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -415,13 +415,15 @@ class _DetailsPageState extends State<DetailsPage> {
                         Text(
                           widget.details.subName,
                           style: TextStyle(
-                              fontSize: 30.0
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                            'Rs. '+(widget.details.subPrice.toString())+'/g',
                           style: TextStyle(
-                              fontSize: 30.0
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
 
@@ -436,41 +438,60 @@ class _DetailsPageState extends State<DetailsPage> {
                   SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      'Total Price : Rs.$sum',
-                      style: TextStyle(
-                          fontSize: 25.0
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Total Price: ',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          'Rs.$sum',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(height: 20,),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      'Description : ',
-                      style: TextStyle(
-                          fontSize: 25.0
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          'Description : ',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'There are three reasons why I prefer jogging to other sports. '
+                              'One reason is that jogging is a cheap sport. I can practise it anywhere at'
+                              'any time with no need for a ball or any other equipment. '
+                              'Another reason why I prefer jogging is that it is friendly to my heart. '
+                              'I don’t have to exhaust myself or do excessive efforts while jogging.'
+                              'Finally, I prefer this sport because it is safe. '
+                              'It isn’t as risky as other sports like gymnastics, racing or horseback riding.'
+                              'For all these reasons, I consider jogging the best sport of all.',
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 20,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(right: 23.0,left: 20.0),
-                        child: ButtonTheme(
-                          minWidth:20.0,
-                          height: 45,
-                          child: OutlineButton(
-                            onPressed: (){},
-                            child: Icon(Icons.favorite_border),
-                            shape:RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6.0)
-                            ),
-                          ),
-                        ),
-                      ),
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child:ButtonTheme(
@@ -504,7 +525,6 @@ class _DetailsPageState extends State<DetailsPage> {
                       ),
                     ],
                   )
-
                 ],
               ),
             ),
@@ -522,7 +542,7 @@ class _DetailsPageState extends State<DetailsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context)=>ShoppingCartScreen(),
+        builder: (context)=>ShoppingCart(),
 //      builder: (context)=>ShoppingCart(),
       ),
     );
@@ -559,47 +579,52 @@ class _DetailsPageState extends State<DetailsPage> {
 
 
   Widget _quantity(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'Qty : ',
-            style: TextStyle(
-                fontSize: 25
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 36,
-          width: 36,
-          child: FloatingActionButton(
-            heroTag: "btn1",
-            onPressed: add,
-            child: Icon(Icons.add),
-          ),
-        ),
-        Text(
-          '$_n',
-          style: TextStyle(
-              fontSize: 25
-          ),
-        ),
-        SizedBox(
-          height: 36,
-          width: 36,
-          child: FloatingActionButton(
-            heroTag: "btn2",
-            onPressed: minus,
-            child: Icon(
-              IconData(
-                  0xe15b, fontFamily: 'MaterialIcons'
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Qty : ',
+              style: TextStyle(
+                fontSize: 18,
               ),
             ),
           ),
-        ),
-      ],
+          Row(
+            children: <Widget>[
+              Container(
+                width: 30,
+                height: 30,
+                child: OutlineButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: add,
+                  child: Icon(Icons.add),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20,right: 20),
+                child: Text(
+                  '$_n',
+                  style: TextStyle(
+                      fontSize: 18
+                  ),
+                ),
+              ),
+              Container(
+                width: 30,
+                height: 30,
+                child: OutlineButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: minus,
+                  child: FaIcon(FontAwesomeIcons.minus,size: 14,),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

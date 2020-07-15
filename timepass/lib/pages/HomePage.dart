@@ -109,6 +109,7 @@ class SearchList extends StatefulWidget {
 class _SearchListState extends State<SearchList> {
   List<Welcome> _products;
   List<Welcome> _filteredProducts;
+  var _controller = TextEditingController();
   bool _loading=true;
   var scaffoldKey = GlobalKey<ScaffoldState>();
   final spinkit = SpinKitWave(
@@ -155,151 +156,154 @@ class _SearchListState extends State<SearchList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        key: scaffoldKey,
-        drawer: Drawer(
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              Container(
-                height: 100,
-                child: DrawerHeader(
-                  child: Text(
-                    'Grocery',
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: Scaffold(
+          key: scaffoldKey,
+          drawer: Drawer(
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                Container(
+                  height: 100,
+                  child: DrawerHeader(
+                    child: Text(
+                      'Grocery',
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                    ),
                   ),
                 ),
-              ),
-              ListTile(
-                leading: Icon(Icons.home),
-                title: Text('Home'),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SearchList()));
-                },
-              ),
-              ListTile(
-                leading: FaIcon(FontAwesomeIcons.shoppingBag),
-                title: Text('Shopping-Cart'),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ShoppingCart()));
-                },
-              ),
-              ListTile(
-                leading: FaIcon(FontAwesomeIcons.userCircle),
-                title: Text('Profile'),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProfilePage()));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.language),
-                title: Text('Language'),
-                onTap: () {
-                  //yet to implement
-                },
-              ),
-              ListTile(
-                leading: FaIcon(FontAwesomeIcons.signOutAlt),
-                title: Text('Sign-Out'),
-                onTap: () {
-                  //add at the last
-                },
-              ),
-            ],
+                ListTile(
+                  leading: Icon(Icons.home),
+                  title: Text('Home'),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SearchList()));
+                  },
+                ),
+                ListTile(
+                  leading: FaIcon(FontAwesomeIcons.shoppingBag),
+                  title: Text('Shopping-Cart'),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ShoppingCart()));
+                  },
+                ),
+                ListTile(
+                  leading: FaIcon(FontAwesomeIcons.userCircle),
+                  title: Text('Profile'),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfilePage()));
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.language),
+                  title: Text('Language'),
+                  onTap: () {
+                    //yet to implement
+                  },
+                ),
+                ListTile(
+                  leading: FaIcon(FontAwesomeIcons.signOutAlt),
+                  title: Text('Sign-Out'),
+                  onTap: () {
+                    //add at the last
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
 //      backgroundColor: Color(0xF6F5F5),
 //    backgroundColor: Colors.black12,
-        body:_loading?Center(child: spinkit,):
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-                padding: EdgeInsets.only(top: 50.0, bottom: 2.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          IconButton(
-//                    icon: Icon(Icons.menu,size: 30,),
-                            icon: FaIcon(FontAwesomeIcons.alignLeft),
-                            color: Colors.black87,
-                            onPressed: () =>
-                                scaffoldKey.currentState.openDrawer(),
-                          ),
-                          Text(
-                            'Categories',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.orangeAccent),
-                        child: Stack(
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(top: 50.0, bottom: 2.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Row(
                           children: <Widget>[
                             IconButton(
 //                    icon: Icon(Icons.menu,size: 30,),
-                              icon: FaIcon(FontAwesomeIcons.shoppingBag,
-                                  size: 20),
-                              color: Colors.black,
-                              onPressed: () =>{
-                              Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                              builder: (context) => ShoppingCart()))
-                              }
-
+                              icon: FaIcon(FontAwesomeIcons.alignLeft),
+                              color: Colors.black87,
+                              onPressed: () =>
+                                  scaffoldKey.currentState.openDrawer(),
                             ),
-//      list.length ==0 ? new Container() :
-                            new Positioned(
-                              right: 2,
-                              bottom: 4,
-                              child: new Stack(
-                                children: <Widget>[
-                                  new Icon(Icons.brightness_1,
-                                      size: 21.0, color: Colors.green[800]),
-                                  new Positioned(
-                                      top: 2.0,
-                                      right: 6.2,
-                                      bottom: 1,
-                                      child: new Center(
-                                        child: new Text(
-                                         cartLength.toString(),
-                                          style: new TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 11.0,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      )),
-                                ],
+                            Text(
+                              'Categories',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ])),
+                        Container(
+                          margin: EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.orangeAccent),
+                          child: Stack(
+                            children: <Widget>[
+                              IconButton(
+//                    icon: Icon(Icons.menu,size: 30,),
+                                icon: FaIcon(FontAwesomeIcons.shoppingBag,
+                                    size: 20),
+                                color: Colors.black,
+                                onPressed: () =>{
+                                Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                builder: (context) => ShoppingCart()))
+                                }
+
+                              ),
+//      list.length ==0 ? new Container() :
+                              new Positioned(
+                                right: 2,
+                                bottom: 4,
+                                child: new Stack(
+                                  children: <Widget>[
+                                    new Icon(Icons.brightness_1,
+                                        size: 21.0, color: Colors.green[800]),
+                                    new Positioned(
+                                        top: 2.0,
+                                        right: 6.2,
+                                        bottom: 1,
+                                        child: new Center(
+                                          child: new Text(
+                                           cartLength.toString(),
+                                            style: new TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 11.0,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ])),
 //            Padding(
 //              padding: const EdgeInsets.only(
 //                  top: 1.0, left: 9, right: 9, bottom: 10),
@@ -331,68 +335,75 @@ class _SearchListState extends State<SearchList> {
 //                ),
 //              ),
 //            ),
-            Container(
-              width: AppTheme.fullWidth(context),
-              margin: EdgeInsets.all(10),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      height: 40,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: LightColor.lightGrey.withAlpha(100),
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Search Products",
-                            hintStyle: TextStyle(fontSize: 12),
-                            contentPadding: EdgeInsets.only(
-                                left: 10, right: 10, bottom: 0, top: 5),
-                            prefixIcon:
-                                Icon(Icons.search, color: Colors.black54)),
-                        onChanged: (string) {
-                          setState(() {
-                            _filteredProducts = _products
-                                .where((u) => (u.name
-                                    .toLowerCase()
-                                    .contains(string.toLowerCase())))
-                                .toList();
-                          });
-                          if (string.length == null) {
-                            FocusScope.of(context).unfocus();
-                          }
-                        },
+              Container(
+                width: AppTheme.fullWidth(context),
+                margin: EdgeInsets.all(10),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        height: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color: LightColor.lightGrey.withAlpha(100),
+                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                        child: TextField(
+                          controller: _controller,
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Search Products",
+                              hintStyle: TextStyle(fontSize: 12),
+                              contentPadding: EdgeInsets.only(
+                                  left: 10, right: 10, bottom: 0, top: 5),
+                              prefixIcon:
+                                  Icon(Icons.search, color: Colors.black54),
+                              suffixIcon: IconButton(
+                                icon: Icon(Icons.clear),
+                                onPressed: (){
+                                  _controller.clear();
+                                },
+                              )
+                          ),
+                          onChanged: (string) {
+                            setState(() {
+                              _filteredProducts = _products
+                                  .where((u) => (u.name
+                                      .toLowerCase()
+                                      .contains(string.toLowerCase())))
+                                  .toList();
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+//                  _icon(Icons.filter_list, color: Colors.black54)
+                  ],
+                ),
+              ),
+              _loading?Center(child: spinkit,):
+              Expanded(
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: new GridView.builder(
+                      itemCount: null == _filteredProducts
+                          ? 0
+                          : _filteredProducts.length,
+                      itemBuilder: (context, index) {
+//                Welcome product= _filteredProducts[index];
+                        return GridItem(_filteredProducts[index]);
+                      },
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
                       ),
                     ),
                   ),
-//                  _icon(Icons.filter_list, color: Colors.black54)
-                ],
-              ),
-            ),
-            Expanded(
-              child: MediaQuery.removePadding(
-                context: context,
-                removeTop: true,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: new GridView.builder(
-                    itemCount: null == _filteredProducts
-                        ? 0
-                        : _filteredProducts.length,
-                    itemBuilder: (context, index) {
-//                Welcome product= _filteredProducts[index];
-                      return GridItem(_filteredProducts[index]);
-                    },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                    ),
-                  ),
                 ),
-              ),
-            )
-          ],
-        ));
+              )
+            ],
+          )),
+    );
   }
 }

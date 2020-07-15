@@ -25,6 +25,7 @@ class SubProduct extends StatefulWidget {
 
 class _SubProductState extends State<SubProduct> {
   int _selectedItem = 0;
+  int count1=0;
   List<SubCategory> _subproducts;
   List<SubCategory> cart = [];
   List<SubCategory> _subfilteredProducts;
@@ -43,21 +44,33 @@ class _SubProductState extends State<SubProduct> {
   }
   @override
   void initState() {
+    super.initState();
     setState(() {
       _subproducts = widget.id1.subCategory;
       _subfilteredProducts = _subproducts;
       _getMoreData();
     });
-    super.initState();
+
   }
   int cartLength=0;
   _getMoreData() async{
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      cartLength = prefs.getInt('cartLength') ?? 0;
+      cartLength = prefs.getInt('cartLength');
+      cartLength+=count1;
     });
-
   }
+
+  Future isDataPresent(int id) async {
+    List<Map<String, dynamic>> presentArray =
+    await DatabaseHelper.instance.isPresent(id);
+      if(presentArray.length==0){
+        count1++;
+      }
+      print("count1:"+count1.toString());
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -265,7 +278,7 @@ class _SubProductState extends State<SubProduct> {
                                     image: NetworkImage(widget.id1.imageUrl),
                                     fit: BoxFit.cover),
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
+                                    BorderRadius.only(topLeft: Radius.circular(10.0),bottomLeft: Radius.circular(10.0)),
 //                                  boxShadow: [
 //                                    BoxShadow(blurRadius: 2.0)
 //                                  ]
@@ -343,6 +356,7 @@ class _SubProductState extends State<SubProduct> {
                                         child: RaisedButton.icon(
                                           onPressed: () async{
 //                                            cart.add(widget.id1.subCategory[i]);
+                                              count1++;
                                             int i1= await DatabaseHelper.instance.insert({
                                               DatabaseHelper.columnName : widget.id1.subCategory[i].subName,
                                               DatabaseHelper.columnSubId : widget.id1.subCategory[i].subId,
@@ -350,6 +364,7 @@ class _SubProductState extends State<SubProduct> {
                                               DatabaseHelper.columnQuantity : widget.id1.subCategory[i].subQuantity,
                                               DatabaseHelper.columnImageUrl : widget.id1.subCategory[i].subImageUrl,
                                             });
+//                                            isDataPresent(widget.id1.subCategory[i].subId);
                                             final snackBar = SnackBar(
                                               content: Text('Yay! Item added to the cart.'),
                                               action: SnackBarAction(
@@ -424,3 +439,5 @@ class _SubProductState extends State<SubProduct> {
     );
   }
 }
+
+

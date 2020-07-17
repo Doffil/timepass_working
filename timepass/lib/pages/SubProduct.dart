@@ -57,7 +57,6 @@ class _SubProductState extends State<SubProduct> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       cartLength = prefs.getInt('cartLength');
-      cartLength+=count1;
     });
   }
 

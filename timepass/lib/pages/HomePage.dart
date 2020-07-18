@@ -19,90 +19,6 @@ import 'package:timepass/themes/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:page_transition/page_transition.dart';
 
-class GridItem extends StatelessWidget {
-  GridItem(this.model);
-
-  @required
-  final Welcome model;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      color: Colors.white,
-      margin: EdgeInsets.fromLTRB(7, 7, 10, 10),
-      elevation: 3.0,
-      child: Container(
-          alignment: Alignment.center,
-          child: InkWell(
-            splashColor: Colors.orange,
-            onTap: () {
-              print(this.model.id);
-//              Navigator.push(
-//                context,
-//                MaterialPageRoute(
-//                  builder: (context) => SubProduct(id1: model),
-//                ),
-//              );
-
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SubCategories()));
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Flexible(
-                  child: ClipRRect(
-//                  borderRadius: BorderRadius.circular(10.0),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        topRight: Radius.circular(10.0)),
-                    child: CachedNetworkImage(
-//                    placeholder: (context, url) => CircularProgressIndicator(),
-                      imageUrl: this.model.imageUrl,
-                      placeholder: (context, url) {
-                        return Icon(Icons.shopping_cart);
-                      },
-                      fit: BoxFit.fill,
-                      height: 130,
-                      width: 220,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 9.0),
-                  child: Opacity(
-                    opacity: 0.8,
-                    child: Text(
-                      this.model.name,
-                      softWrap: true,
-//                        textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 9.0, bottom: 6.0),
-                  child: Text(
-                    '(40)',
-                    style: TextStyle(
-                      fontSize: 12.0,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          )),
-    );
-  }
-}
 
 class SearchList extends StatefulWidget {
   @override
@@ -110,8 +26,8 @@ class SearchList extends StatefulWidget {
 }
 
 class _SearchListState extends State<SearchList> {
-  List<Welcome> _products;
-  List<Welcome> _filteredProducts;
+  Welcome _products;
+  List<Datum> _filteredProducts;
   var _controller = TextEditingController();
   bool _loading = true;
   var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -140,7 +56,7 @@ class _SearchListState extends State<SearchList> {
     Service.getProducts().then((products) {
       setState(() {
         _products = products;
-        _filteredProducts = _products;
+//        _filteredProducts = _products;
         _loading = false;
         _getMoreData();
       });
@@ -399,19 +315,19 @@ class _SearchListState extends State<SearchList> {
                                   icon: Icon(Icons.clear),
                                   onPressed: () {
                                     setState(() {
-                                      _filteredProducts = _products;
+//                                      _filteredProducts = _products;
                                       _controller.clear();
                                     });
                                   },
                                 )),
                             onChanged: (string) {
-                              setState(() {
-                                _filteredProducts = _products
-                                    .where((u) => (u.name
-                                        .toLowerCase()
-                                        .contains(string.toLowerCase())))
-                                    .toList();
-                              });
+//                              setState(() {
+//                                _filteredProducts = _products
+//                                    .where((u) => (u.name
+//                                        .toLowerCase()
+//                                        .contains(string.toLowerCase())))
+//                                    .toList();
+//                              });
                             },
                           ),
                         ),
@@ -431,12 +347,90 @@ class _SearchListState extends State<SearchList> {
                           child: Padding(
                             padding: const EdgeInsets.only(left: 10),
                             child: new GridView.builder(
-                              itemCount: null == _filteredProducts
+                              itemCount: null == _products.data
                                   ? 0
-                                  : _filteredProducts.length,
+                                  : _products.data.length,
                               itemBuilder: (context, index) {
 //                Welcome product= _filteredProducts[index];
-                                return GridItem(_filteredProducts[index]);
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  color: Colors.white,
+                                  margin: EdgeInsets.fromLTRB(7, 7, 10, 10),
+                                  elevation: 3.0,
+                                  child: Container(
+                                      alignment: Alignment.center,
+                                      child: InkWell(
+                                        splashColor: Colors.orange,
+                                        onTap: () {
+                                          print(this._products.data[index].id);
+//                                          if(this._products.data[index].isActive==1 &&
+//                                          this._products.data[index].productSubCategory.length >0){
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SubCategories(id1: this._products.data[index].productSubCategory,
+                                                    id2:this._products.data[index]),
+                                              ),
+                                            );
+//                                          }
+
+//              Navigator.push(context,
+//                  MaterialPageRoute(builder: (context) => SubCategories()));
+                                        },
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: <Widget>[
+                                            Flexible(
+                                              child: ClipRRect(
+//                  borderRadius: BorderRadius.circular(10.0),
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(10.0),
+                                                    topRight: Radius.circular(10.0)),
+                                                child: CachedNetworkImage(
+//                    placeholder: (context, url) => CircularProgressIndicator(),
+                                                  imageUrl: this._products.data[index].productCategoryImageUrl,
+                                                  placeholder: (context, url) {
+                                                    return Icon(Icons.shopping_cart);
+                                                  },
+                                                  fit: BoxFit.fill,
+                                                  height: 130,
+                                                  width: 220,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 9.0),
+                                              child: Opacity(
+                                                opacity: 0.8,
+                                                child: Text(
+                                                  this._products.data[index].productCategoryName,
+                                                  softWrap: true,
+//                        textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 15.0,
+                                                      fontWeight: FontWeight.w600,
+                                                      letterSpacing: 0.5),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 9.0, bottom: 6.0),
+                                              child: Text(
+                                                '(40)',
+                                                style: TextStyle(
+                                                  fontSize: 12.0,
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )),
+                                );
                               },
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(

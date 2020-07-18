@@ -1,73 +1,113 @@
-// To parse this JSON data, do
-//
-//     final welcome = welcomeFromJson(jsonString);
-
 import 'dart:convert';
 
-List<Welcome> welcomeFromJson(String str) => List<Welcome>.from(json.decode(str).map((x) => Welcome.fromJson(x)));
+Welcome welcomeFromJson(String str) => Welcome.fromJson(json.decode(str));
 
-String welcomeToJson(List<Welcome> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String welcomeToJson(Welcome data) => json.encode(data.toJson());
 
 class Welcome {
     Welcome({
-        this.name,
-        this.imageUrl,
-        this.haveSubCategory,
-        this.id,
-        this.subCategory,
+        this.success,
+        this.data,
     });
 
-    String name;
-    String imageUrl;
-    String haveSubCategory;
-    String id;
-    List<SubCategory> subCategory;
+    bool success;
+    List<Datum> data;
 
     factory Welcome.fromJson(Map<String, dynamic> json) => Welcome(
-        name: json["name"],
-        imageUrl: json["imageUrl"],
-        haveSubCategory: json["haveSubCategory"],
-        id: json["id"],
-        subCategory: List<SubCategory>.from(json["subCategory"].map((x) => SubCategory.fromJson(x))),
+        success: json["success"],
+        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
-        "name": name,
-        "imageUrl": imageUrl,
-        "haveSubCategory": haveSubCategory,
-        "id": id,
-        "subCategory": List<dynamic>.from(subCategory.map((x) => x.toJson())),
+        "success": success,
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
     };
 }
 
-class SubCategory {
-    SubCategory({
-        this.subName,
-        this.subId,
-        this.subPrice,
-        this.subQuantity,
-        this.subImageUrl,
+class Datum {
+    Datum({
+        this.id,
+        this.createdAt,
+        this.updatedAt,
+        this.deletedAt,
+        this.productCategoryName,
+        this.productCategoryImageUrl,
+        this.isActive,
+        this.productSubCategory,
     });
 
-    String subName;
-    int subId;
-    int subPrice;
-    int subQuantity;
-    String subImageUrl;
+    int id;
+    DateTime createdAt;
+    DateTime updatedAt;
+    dynamic deletedAt;
+    String productCategoryName;
+    String productCategoryImageUrl;
+    int isActive;
+    List<ProductSubCategory> productSubCategory;
 
-    factory SubCategory.fromJson(Map<String, dynamic> json) => SubCategory(
-        subName: json["subName"],
-        subId: json["subId"],
-        subPrice: json["subPrice"],
-        subQuantity: json["subQuantity"],
-        subImageUrl: json["subImageUrl"],
+    factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+        id: json["id"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+        deletedAt: json["deleted_at"],
+        productCategoryName: json["product_category_name"],
+        productCategoryImageUrl: json["product_category_image_url"],
+        isActive: json["is_active"],
+        productSubCategory: List<ProductSubCategory>.from(json["product_sub_category"].map((x) => ProductSubCategory.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
-        "subName": subName,
-        "subId": subId,
-        "subPrice": subPrice,
-        "subQuantity": subQuantity,
-        "subImageUrl": subImageUrl,
+        "id": id,
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+        "deleted_at": deletedAt,
+        "product_category_name": productCategoryName,
+        "product_category_image_url": productCategoryImageUrl,
+        "is_active": isActive,
+        "product_sub_category": List<dynamic>.from(productSubCategory.map((x) => x.toJson())),
+    };
+}
+
+class ProductSubCategory {
+    ProductSubCategory({
+        this.id,
+        this.createdAt,
+        this.updatedAt,
+        this.deletedAt,
+        this.productSubcategoryName,
+        this.productSubcategoryImageUrl,
+        this.productCategoryId,
+        this.isActive,
+    });
+
+    int id;
+    DateTime createdAt;
+    DateTime updatedAt;
+    dynamic deletedAt;
+    String productSubcategoryName;
+    String productSubcategoryImageUrl;
+    int productCategoryId;
+    int isActive;
+
+    factory ProductSubCategory.fromJson(Map<String, dynamic> json) => ProductSubCategory(
+        id: json["id"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+        deletedAt: json["deleted_at"],
+        productSubcategoryName: json["product_subcategory_name"],
+        productSubcategoryImageUrl: json["product_subcategory_image_url"],
+        productCategoryId: json["product_category_id"],
+        isActive: json["is_active"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+        "deleted_at": deletedAt,
+        "product_subcategory_name": productSubcategoryName,
+        "product_subcategory_image_url": productSubcategoryImageUrl,
+        "product_category_id": productCategoryId,
+        "is_active": isActive,
     };
 }

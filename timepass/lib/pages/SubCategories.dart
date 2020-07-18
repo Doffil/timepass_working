@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'package:timepass/Model.dart';
 import 'package:timepass/pages/HomePage.dart';
 import 'package:timepass/pages/ProfilePage.dart';
@@ -18,101 +19,30 @@ import 'package:timepass/themes/theme.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class GridItem extends StatelessWidget {
-  GridItem(this.model);
+Future<ProductSubCategory> createAlbum(int id1) async {
+  final http.Response response = await http.get(
+    'http://192.168.43.41:8000/api/v1/productCategory?subcategory_id='+id1.toString(),
+  );
+ print(response.statusCode);
+  if (response.statusCode == 200) {
+    var responseData=json.decode(response.body);
+    print(responseData["success"]);
+    if(responseData["success"]){
 
-  @required
-  final Welcome model;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      color: Colors.white,
-      margin: EdgeInsets.fromLTRB(7, 7, 10, 10),
-      elevation: 3.0,
-      child: Container(
-          alignment: Alignment.center,
-          child: InkWell(
-            splashColor: Colors.orange,
-            onTap: () {
-              print(this.model.id);
-//              Navigator.push(
-//                context,
-//                MaterialPageRoute(
-//                  builder: (context) => SubProduct(id1: model),
-//                ),
-//              );
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SubProduct(id1: model)));
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Flexible(
-                  child: ClipRRect(
-//                  borderRadius: BorderRadius.circular(10.0),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        topRight: Radius.circular(10.0)),
-//                    child: FadeInImage.assetNetwork(
-//                      placeholder: 'assets/images/shopping.jpeg',
-//                      image: this.model.imageUrl,
-//                      fit: BoxFit.fill,
-//                      height: 130,
-//                      width: 220,
-//                    ),
-                  child: CachedNetworkImage(
-//                    placeholder: (context, url) => CircularProgressIndicator(),
-                    imageUrl:this.model.imageUrl,
-                    placeholder: (context, url){
-                      return Icon(Icons.shopping_cart);
-                    },
-                    fit: BoxFit.fill,
-                    height: 130,
-                    width: 220,
-                  ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 9.0),
-                  child: Opacity(
-                    opacity: 0.8,
-                    child: Text(
-                      this.model.name,
-                      softWrap: true,
-//                        textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 9.0, bottom: 6.0),
-                  child: Text(
-                    '(40)',
-                    style: TextStyle(
-                      fontSize: 12.0,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          )),
-    );
+    }else{
+      print('something went wrong');
+    }
+  } else {
+    throw Exception('Failed to pass data.');
   }
 }
 
+
 class SubCategories extends StatefulWidget {
+  final List<ProductSubCategory> id1;
+  final Datum id2;
+
+  const SubCategories({Key key, this.id1,this.id2}) : super(key: key);
   @override
   _SubCategoriesState createState() => _SubCategoriesState();
 }
@@ -130,15 +60,15 @@ class _SubCategoriesState extends State<SubCategories> {
   @override
   void initState() {
     super.initState();
-    _loading = true;
-    Service.getProducts().then((products) {
-      setState(() {
-        _products = products;
-        _filteredProducts = _products;
-        _loading = false;
-        _getMoreData();
-      });
-    });
+    _loading = false;
+//    Service.getProducts().then((products) {
+//      setState(() {
+//        _products = products;
+//        _filteredProducts = _products;
+//        _loading = false;
+//        _getMoreData();
+//      });
+//    });
   }
 
   int cartLength = 0;
@@ -234,7 +164,7 @@ class _SubCategoriesState extends State<SubCategories> {
                                 scaffoldKey.currentState.openDrawer(),
                           ),
                           Text(
-                            _loading ? 'Loading...' : 'Sub-Categories',
+                            _loading ? 'Loading...' : widget.id2.productCategoryName,
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w800,
@@ -340,16 +270,16 @@ class _SubCategoriesState extends State<SubCategories> {
                             prefixIcon:
                                 Icon(Icons.search, color: Colors.black54)),
                         onChanged: (string) {
-                          setState(() {
-                            _filteredProducts = _products
-                                .where((u) => (u.name
-                                    .toLowerCase()
-                                    .contains(string.toLowerCase())))
-                                .toList();
-                          });
-                          if (string.length == null) {
-                            FocusScope.of(context).unfocus();
-                          }
+//                          setState(() {
+//                            _filteredProducts = _products
+//                                .where((u) => (u.name
+//                                    .toLowerCase()
+//                                    .contains(string.toLowerCase())))
+//                                .toList();
+//                          });
+//                          if (string.length == null) {
+//                            FocusScope.of(context).unfocus();
+//                          }
                         },
                       ),
                     ),
@@ -374,12 +304,90 @@ class _SubCategoriesState extends State<SubCategories> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10),
                         child: new GridView.builder(
-                          itemCount: null == _filteredProducts
+                          itemCount: null == widget.id1.length
                               ? 0
-                              : _filteredProducts.length,
+                              : widget.id1.length,
                           itemBuilder: (context, index) {
 //                Welcome product= _filteredProducts[index];
-                            return GridItem(_filteredProducts[index]);
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              color: Colors.white,
+                              margin: EdgeInsets.fromLTRB(7, 7, 10, 10),
+                              elevation: 3.0,
+                              child: Container(
+                                  alignment: Alignment.center,
+                                  child: InkWell(
+                                    splashColor: Colors.orange,
+                                    onTap: () {
+                                      print(widget.id1[index].productCategoryId);
+                                      if(this.widget.id1[index].isActive ==1){
+                                        createAlbum(widget.id1[index].productCategoryId);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                SubCategories(id1: this._products.data[index]),
+                                          ),
+                                        );
+
+                                      }
+
+//              Navigator.push(context,
+//                  MaterialPageRoute(builder: (context) => SubCategories()));
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: <Widget>[
+                                        Flexible(
+                                          child: ClipRRect(
+//                  borderRadius: BorderRadius.circular(10.0),
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10.0),
+                                                topRight: Radius.circular(10.0)),
+                                            child: CachedNetworkImage(
+//                    placeholder: (context, url) => CircularProgressIndicator(),
+                                              imageUrl: widget.id1[index].productSubcategoryImageUrl,
+                                              placeholder: (context, url) {
+                                                return Icon(Icons.shopping_cart);
+                                              },
+                                              fit: BoxFit.fill,
+                                              height: 130,
+                                              width: 220,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 9.0),
+                                          child: Opacity(
+                                            opacity: 0.8,
+                                            child: Text(
+                                              widget.id1[index].productSubcategoryName,
+                                              softWrap: true,
+//                        textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 15.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  letterSpacing: 0.5),
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 9.0, bottom: 6.0),
+                                          child: Text(
+                                            '(40)',
+                                            style: TextStyle(
+                                              fontSize: 12.0,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )),
+                            );
                           },
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(

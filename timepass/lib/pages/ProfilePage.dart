@@ -167,20 +167,31 @@ class _ProfilePageState extends State<ProfilePage> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          height: 130.0,
-                          width: 120.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(90.0),
-                            boxShadow: [
-                              BoxShadow(
-                                  blurRadius: 3.0,
-                                  offset: Offset(0, 4.0),
-                                  color: Colors.black38),
-                            ]),
-                              child:_image==null?Image.asset("assets/images/profileuser.png")
-                                  :Image.file(_image)
+//                        Container(
+//                          height: 130.0,
+//                          width: 120.0,
+//                          decoration: BoxDecoration(
+//                            borderRadius: BorderRadius.circular(90.0),
+//                            boxShadow: [
+//                              BoxShadow(
+//                                  blurRadius: 3.0,
+//                                  offset: Offset(0, 4.0),
+//                                  color: Colors.black38),
+//                            ]),
+//                              child:_image==null?Image.asset("assets/images/profileuser.png")
+//                                  :Image.file(_image)
+//                        ),
+
+                        CircleAvatar(
+                          radius: 55,
+//                          backgroundColor: Color(0xffFDCF09),
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundImage: _image==null ?AssetImage("assets/images/profileuser.png")
+                                :FileImage(_image),
+                          ),
                         ),
+
                         Padding(
                           padding: const EdgeInsets.only(top: 50,left: 12),
                           child: ButtonTheme(
@@ -250,7 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 ),
                                 Text(
-                                  'ghodkerohit999@gmail.com',
+                                  'ghodke',
                                   style: TextStyle(
                                     fontSize: 18
                                   ),

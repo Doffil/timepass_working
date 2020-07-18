@@ -485,11 +485,14 @@ class _DetailsPageState extends State<DetailsPage> {
           ),
         ),
       ]),
-      bottomNavigationBar: RaisedButton(
-        onPressed: () {},
-        color: Colors.blue,
-        textColor: Colors.white,
-        child: Text('ADD TO CART'),
+      bottomNavigationBar: Container(
+        height: 54,
+        child: RaisedButton(
+          onPressed: () {},
+          color: Colors.blue,
+          textColor: Colors.white,
+          child: Text('ADD TO CART'),
+        ),
       ),
     );
   }

@@ -12,13 +12,16 @@ import 'package:geocoder/geocoder.dart';
 import 'package:timepass/widgets/custom_list_tile.dart';
 
 class CheckOutPage extends StatefulWidget {
+  final String currentAddress;
+
+  const CheckOutPage({Key key, this.currentAddress}) : super(key: key);
   @override
   _CheckOutPageState createState() => _CheckOutPageState();
 }
 
 class _CheckOutPageState extends State<CheckOutPage> {
   String _locationMessage = "";
-  String _currentAddress = "";
+  String _currentAddress ="";
   bool turnOnNotification = false;
   bool turnOnLocation = false;
   String getCurrentAddress='Pruthvi House,Plot no.3,Chankya Nagar,Ambad ITI Link Road,Nashik';
@@ -197,6 +200,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                               'Address : ',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
+                            SizedBox(
+                              width: 10,
+                            ),
                             Flexible(
                               child: Text(
                                   _currentAddress.length==0?
@@ -205,42 +211,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
 //                              overflow:TextOverflow.ellipsis,
                               ),
                             ),
-                            IconButton(
-                              icon: Icon(Icons.gps_fixed),
-                              onPressed: (){
-                                _getCurrentLocation();
-                              },
-                            ),
+
                           ],
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            Container(
-                              height: 30,
-                              margin: EdgeInsets.only(right: 7, top: 15),
-                              child: RaisedButton.icon(
-                                onPressed: () {
-                                 Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => GoogleMapPage()));
-                                },
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0)),
-                                color: Colors.green,
-                                textColor: Colors.white,
-                                icon: Icon(
-                                  Icons.add_location,
-                                  size: 14,
-                                ),
-                                label: Text(
-                                  'ADD ADDRESS',
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                              ),
-                            ),
-
                             Container(
                               height: 30,
                               margin: EdgeInsets.only(right: 7, top: 15),
@@ -257,16 +233,34 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                         title: Center(
                                             child: const Text(
                                           "All Addresses",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600
+                                              ),
                                         )),
                                         content: getAddresses(),
                                         actions: <Widget>[
+                                          FlatButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) => GoogleMapPage()));
+                                              },
+                                              child: const Text(
+                                                "ADD",
+                                                style: TextStyle(
+                                                    color: Colors.green),
+                                              )
+                                          ),
                                           FlatButton(
                                               onPressed: () {},
                                               child: const Text(
                                                 "SELECT",
                                                 style: TextStyle(
-                                                    color: Colors.green),
-                                              )),
+                                                    color: Colors.blue),
+                                              )
+                                          ),
                                           FlatButton(
                                             onPressed: () =>
                                                 Navigator.of(context)
@@ -279,16 +273,16 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                   );
                                 },
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0)),
-                                color: Colors.green,
-                                textColor: Colors.white,
+                                    borderRadius: BorderRadius.circular(0.0)),
+                                color: Colors.white,
+                                textColor: Colors.red,
                                 icon: Icon(
                                   Icons.location_on,
                                   size: 14,
                                 ),
                                 label: Text(
                                   'CHANGE ADDRESS',
-                                  style: TextStyle(fontSize: 10),
+                                  style: TextStyle(fontSize: 12,fontWeight: FontWeight.w600),
                                 ),
                               ),
                             ),
@@ -391,7 +385,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                           children: <Widget>[
                             Flexible(
                               child: Container(
-                                width: 150,
+                                width: MediaQuery.of(context).size.width/1.2,
+                                padding: EdgeInsets.only(right: 10),
                                 height: 30,
                                 child: TextFormField(
                                   style: TextStyle(
@@ -412,9 +407,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
                               ),
                             ),
                             Container(
+                              width: MediaQuery.of(context).size.width/4,
                               height: 30,
                               child: RaisedButton(
-                                child: Text('APPLY PROMOCODE',style: TextStyle(fontSize: 10),),
+                                child: Text('APPLY',style: TextStyle(fontSize: 13),),
                                 onPressed: () {
 
                                 },
@@ -431,44 +427,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                           height: 25,
                           color: Colors.grey,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              'Total Price :',
-                              style: TextStyle(
-                                  decoration: TextDecoration.lineThrough),
-                            ),
-                            Text(
-                              'Rs.120',
-                              style: TextStyle(
-                                  decoration: TextDecoration.lineThrough),
-                            )
-                          ],
-                        ),
-                        Divider(
-                          height: 25,
-                          color: Colors.grey,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              'Final Amount :',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
-                            ),
-                            Text(
-                              'Rs.100',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
-                        Divider(
-                          height: 25,
-                          color: Colors.grey,
-                        ),
+
                       ],
                     ),
                   ),
@@ -477,11 +436,15 @@ class _CheckOutPageState extends State<CheckOutPage> {
             ),
           ),
         ),
-        bottomNavigationBar: RaisedButton(
-          onPressed: () {},
-          color: Colors.blue,
-          textColor: Colors.white,
-          child: Text('PROCEED TO PAYMENT'),
+        bottomNavigationBar: Container(
+          height: 54,
+          child: RaisedButton(
+            onPressed: () {},
+
+            color: Colors.blue,
+            textColor: Colors.white,
+            child: Text('PROCEED TO PAYMENT'),
+          ),
         ),
       ),
     );

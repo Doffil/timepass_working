@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -16,6 +17,7 @@ import 'package:timepass/services/Service.dart';
 import 'package:timepass/themes/light_color.dart';
 import 'package:timepass/themes/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:page_transition/page_transition.dart';
 
 class GridItem extends StatelessWidget {
   GridItem(this.model);
@@ -45,10 +47,8 @@ class GridItem extends StatelessWidget {
 //                ),
 //              );
 
-               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SubCategories()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SubCategories()));
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -61,9 +61,12 @@ class GridItem extends StatelessWidget {
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10.0),
                         topRight: Radius.circular(10.0)),
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/shopping.jpeg',
-                      image: this.model.imageUrl,
+                    child: CachedNetworkImage(
+//                    placeholder: (context, url) => CircularProgressIndicator(),
+                      imageUrl: this.model.imageUrl,
+                      placeholder: (context, url) {
+                        return Icon(Icons.shopping_cart);
+                      },
                       fit: BoxFit.fill,
                       height: 130,
                       width: 220,
@@ -110,7 +113,7 @@ class _SearchListState extends State<SearchList> {
   List<Welcome> _products;
   List<Welcome> _filteredProducts;
   var _controller = TextEditingController();
-  bool _loading=true;
+  bool _loading = true;
   var scaffoldKey = GlobalKey<ScaffoldState>();
   final spinkit = SpinKitWave(
     color: Colors.lightBlue,
@@ -132,10 +135,9 @@ class _SearchListState extends State<SearchList> {
 //    });
 //  }
 
-
   @override
   void initState() {
-     Service.getProducts().then((products) {
+    Service.getProducts().then((products) {
       setState(() {
         _products = products;
         _filteredProducts = _products;
@@ -143,11 +145,11 @@ class _SearchListState extends State<SearchList> {
         _getMoreData();
       });
     });
-     super.initState();
+    super.initState();
   }
 
-  int cartLength=0;
-  _getMoreData() async{
+  int cartLength = 0;
+  _getMoreData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       cartLength = prefs.getInt('cartLength') ?? 0;
@@ -156,29 +158,33 @@ class _SearchListState extends State<SearchList> {
 
   Future<bool> _onBackPressed() {
     return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
-          ),
-          title: const Text("Are you Sure?",),
-          content: const Text("Do you want to exit the app?"),
-          actions: <Widget>[
-            FlatButton(
-                onPressed: (){
-                  Navigator.of(context).pop(true);
-                },
-                child: const Text("YES",style: TextStyle(color: Colors.red),)
-            ),
-            FlatButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text("NO"),
-            ),
-          ],
-        );
-      },
-    ) ??
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              title: const Text(
+                "Are you Sure?",
+              ),
+              content: const Text("Do you want to exit the app?"),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: const Text(
+                      "YES",
+                      style: TextStyle(color: Colors.red),
+                    )),
+                FlatButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text("NO"),
+                ),
+              ],
+            );
+          },
+        ) ??
         false;
   }
 
@@ -290,22 +296,23 @@ class _SearchListState extends State<SearchList> {
                           Container(
                             margin: EdgeInsets.only(right: 8),
                             decoration: BoxDecoration(
-                                shape: BoxShape.circle, color: Colors.orangeAccent),
+                                shape: BoxShape.circle,
+                                color: Colors.orangeAccent),
                             child: Stack(
                               children: <Widget>[
                                 IconButton(
 //                    icon: Icon(Icons.menu,size: 30,),
-                                  icon: FaIcon(FontAwesomeIcons.shoppingBag,
-                                      size: 20),
-                                  color: Colors.black,
-                                  onPressed: () =>{
-                                  Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                  builder: (context) => ShoppingCart()))
-                                  }
-
-                                ),
+                                    icon: FaIcon(FontAwesomeIcons.shoppingBag,
+                                        size: 20),
+                                    color: Colors.black,
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          PageTransition(
+                                              type: PageTransitionType
+                                                  .rightToLeft,duration: Duration(seconds: 3),
+                                              child: ShoppingCart()));
+                                    }),
 //      list.length ==0 ? new Container() :
                                 new Positioned(
                                   right: 2,
@@ -320,7 +327,7 @@ class _SearchListState extends State<SearchList> {
                                           bottom: 1,
                                           child: new Center(
                                             child: new Text(
-                                             cartLength.toString(),
+                                              cartLength.toString(),
                                               style: new TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 11.0,
@@ -376,7 +383,8 @@ class _SearchListState extends State<SearchList> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                               color: LightColor.lightGrey.withAlpha(100),
-                              borderRadius: BorderRadius.all(Radius.circular(10))),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
                           child: TextField(
                             controller: _controller,
                             decoration: InputDecoration(
@@ -389,11 +397,13 @@ class _SearchListState extends State<SearchList> {
                                     Icon(Icons.search, color: Colors.black54),
                                 suffixIcon: IconButton(
                                   icon: Icon(Icons.clear),
-                                  onPressed: (){
-                                    _controller.clear();
+                                  onPressed: () {
+                                    setState(() {
+                                      _filteredProducts = _products;
+                                      _controller.clear();
+                                    });
                                   },
-                                )
-                            ),
+                                )),
                             onChanged: (string) {
                               setState(() {
                                 _filteredProducts = _products
@@ -410,28 +420,32 @@ class _SearchListState extends State<SearchList> {
                     ],
                   ),
                 ),
-                _loading?Center(child: spinkit,):
-                Expanded(
-                  child: MediaQuery.removePadding(
-                    context: context,
-                    removeTop: true,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: new GridView.builder(
-                        itemCount: null == _filteredProducts
-                            ? 0
-                            : _filteredProducts.length,
-                        itemBuilder: (context, index) {
+                _loading
+                    ? Center(
+                        child: spinkit,
+                      )
+                    : Expanded(
+                        child: MediaQuery.removePadding(
+                          context: context,
+                          removeTop: true,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: new GridView.builder(
+                              itemCount: null == _filteredProducts
+                                  ? 0
+                                  : _filteredProducts.length,
+                              itemBuilder: (context, index) {
 //                Welcome product= _filteredProducts[index];
-                          return GridItem(_filteredProducts[index]);
-                        },
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
+                                return GridItem(_filteredProducts[index]);
+                              },
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                )
+                      )
               ],
             )),
       ),

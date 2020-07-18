@@ -149,51 +149,49 @@ class _ShoppingCartState extends State<ShoppingCart> {
                         ),
                       ])),
               getData(),
-              SafeArea(
-                child: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(blurRadius: 1.0, offset: Offset(0.0, 0.75)),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8, top: 2, right: 6),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          'Rs.1200',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                        RaisedButton.icon(
-                          color: Colors.white,
-                          textColor: Colors.white,
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CheckOutPage(),
-                              ),
-                            );
-                          },
-                          label: Text(
-                            'Place Order',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black87,
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(blurRadius: 1.0, offset: Offset(0.0, 0.75)),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, top: 2, right: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Rs.1200',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                      RaisedButton.icon(
+                        color: Colors.white,
+                        textColor: Colors.white,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CheckOutPage(),
                             ),
-                          ),
-                          icon: FaIcon(
-                            FontAwesomeIcons.shoppingCart,
-                            size: 15,
+                          );
+                        },
+                        label: Text(
+                          'Place Order',
+                          style: TextStyle(
+                            fontSize: 15,
                             color: Colors.black87,
                           ),
-                          shape: RoundedRectangleBorder(
-//                        borderRadius: BorderRadius.circular(8.0),
-                              ),
                         ),
-                      ],
-                    ),
+                        icon: FaIcon(
+                          FontAwesomeIcons.shoppingCart,
+                          size: 15,
+                          color: Colors.black87,
+                        ),
+                        shape: RoundedRectangleBorder(
+//                        borderRadius: BorderRadius.circular(8.0),
+                            ),
+                      ),
+                    ],
                   ),
                 ),
               )

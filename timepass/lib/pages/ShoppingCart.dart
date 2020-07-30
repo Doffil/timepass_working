@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timepass/pages/CheckOutPage.dart';
-import 'package:timepass/pages/HomePage.dart';
+import 'package:timepass/pages/Categories.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/sqlite/db_helper.dart';
@@ -19,7 +19,12 @@ class ShoppingCart extends StatefulWidget {
 class _ShoppingCartState extends State<ShoppingCart> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
   bool isPresent = true;
-  int count1=0;
+  int count1 = 0;
+
+  void initState(){
+    super.initState();
+  }
+
 //  var sum=0;
   noItemsInCart() {
     return Expanded(
@@ -58,7 +63,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 title: Text('Home'),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SearchList()));
+                      MaterialPageRoute(builder: (context) => Categories()));
                 },
               ),
               ListTile(
@@ -149,62 +154,77 @@ class _ShoppingCartState extends State<ShoppingCart> {
                         ),
                       ])),
               getData(),
-              Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(blurRadius: 1.0, offset: Offset(0.0, 0.75)),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 2, right: 6),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        'Rs.1200',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                      RaisedButton.icon(
-                        color: Colors.white,
-                        textColor: Colors.white,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CheckOutPage(),
-                            ),
-                          );
-                        },
-                        label: Text(
-                          'Place Order',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        icon: FaIcon(
-                          FontAwesomeIcons.shoppingCart,
-                          size: 15,
-                          color: Colors.black87,
-                        ),
-                        shape: RoundedRectangleBorder(
-//                        borderRadius: BorderRadius.circular(8.0),
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
+              getBottom(),
+
             ]));
   }
 
   Future getAllItems() async {
     List<Map<String, dynamic>> queryRows =
-        await DatabaseHelper.instance.queryAll();
+    await DatabaseHelper.instance.queryAll();
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('cartLength', queryRows.length);
     print(queryRows.length);
     return queryRows;
+  }
+
+  Widget getBottom(){
+    return FutureBuilder(
+      future: DatabaseHelper.instance.getTotalPrice(),
+      builder:(context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.none &&
+            snapshot.hasData == null) {
+          return CircularProgressIndicator();
+        }else{
+          return Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(blurRadius: 1.0, offset: Offset(0.0, 0.75)),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8, top: 2, right: 6),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Rs. ${snapshot.data}',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                  RaisedButton.icon(
+                    color: Colors.white,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CheckOutPage(),
+                        ),
+                      );
+                    },
+                    label: Text(
+                      'Place Order',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    icon: FaIcon(
+                      FontAwesomeIcons.shoppingCart,
+                      size: 15,
+                      color: Colors.black87,
+                    ),
+                    shape: RoundedRectangleBorder(
+//                        borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      },
+    );
   }
 
   Widget getData() {
@@ -224,23 +244,22 @@ class _ShoppingCartState extends State<ShoppingCart> {
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   itemBuilder: (BuildContext context, int index) {
-//                  SubCategory subCategory = snapshot.data[index];
-//                sum=sum+snapshot.data[index]["subPrice"];
                     return Dismissible(
                       key: UniqueKey(),
                       direction: DismissDirection.horizontal,
                       background: Container(
                         color: Colors.red,
-                        child: Icon(Icons.delete,color: Colors.white,size: 30,),
+                        child: Icon(
+                          Icons.delete, color: Colors.white, size: 30,),
                       ),
-//
-//                      onDismissed: (direction) async {
-//                        int rowAffected = await DatabaseHelper.instance
-//                            .delete(snapshot.data[index]["subId"]);
-//                        setState(() {
-//                          getAllItems();
-//                        });
-//                      },
+
+                      onDismissed: (direction) async {
+                        int rowAffected = await DatabaseHelper.instance
+                            .delete(snapshot.data[index]["_id"]);
+                        setState(() {
+                          getAllItems();
+                        });
+                      },
                       confirmDismiss: (DismissDirection direction) async {
                         return await showDialog(
                           context: context,
@@ -250,12 +269,20 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               title: const Text("Confirm",),
-                              content: const Text("Are you sure you wish to delete this item?"),
+                              content: const Text(
+                                  "Are you sure you wish to delete this item?"),
                               actions: <Widget>[
                                 FlatButton(
-                                    onPressed: ()async{
-                                      int rowAffected = await DatabaseHelper.instance
-                                          .delete(snapshot.data[index]["subId"]);
+                                    onPressed: () async {
+                                      int rowAffected = await DatabaseHelper
+                                          .instance
+                                          .delete(snapshot
+                                          .data[index]["productVariableId"]);
+                                      if (rowAffected > 0) {
+                                        print('we have deleted');
+                                      } else {
+                                        print('not deleted');
+                                      }
                                       setState(() {
                                         getAllItems();
                                       });
@@ -267,12 +294,15 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                         flushbarPosition: FlushbarPosition.TOP,
                                         message: "You have successfully removed the item from cart!!!",
                                         duration: Duration(seconds: 3),
-                                      )..show(context);
-                                   },
-                                    child: const Text("DELETE",style: TextStyle(color: Colors.red),)
+                                      )
+                                        ..show(context);
+                                    },
+                                    child: const Text("DELETE",
+                                      style: TextStyle(color: Colors.red),)
                                 ),
                                 FlatButton(
-                                  onPressed: () => Navigator.of(context).pop(false),
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
                                   child: const Text("CANCEL"),
                                 ),
                               ],
@@ -282,14 +312,13 @@ class _ShoppingCartState extends State<ShoppingCart> {
                       },
 
 
-
                       child: GestureDetector(
                         onTap: () {},
                         child: Align(
                           alignment: Alignment.center,
                           child: Container(
                             margin:
-                                EdgeInsets.only(left: 7, right: 7, bottom: 5),
+                            EdgeInsets.only(left: 7, right: 7, bottom: 5),
                             child: Card(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.0)),
@@ -303,10 +332,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       color: Colors.red,
                                       image: DecorationImage(
                                           image: NetworkImage(snapshot
-                                              .data[index]["subImageUrl"]),
+                                              .data[index]["productImageUrl"]),
                                           fit: BoxFit.cover),
                                       borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),bottomLeft: Radius.circular(10)),
+                                          topLeft: Radius.circular(10),
+                                          bottomLeft: Radius.circular(10)),
                                     ),
                                   ),
                                   Expanded(
@@ -316,17 +346,22 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                           left: 9, right: 3, top: 0),
                                       child: Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                        MainAxisAlignment.spaceEvenly,
                                         children: <Widget>[
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
 //                                          crossAxisAlignment: CrossAxisAlignment.start,
                                             children: <Widget>[
                                               Text(
-                                                snapshot.data[index]["subName"],
+                                                snapshot
+                                                    .data[index]["productName"] +
+                                                    '(' +
+                                                    snapshot
+                                                        .data[index]["productVName"] +
+                                                    ')',
                                                 style: TextStyle(
                                                   fontSize: 15.0,
                                                   fontWeight: FontWeight.w500,
@@ -341,11 +376,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 ),
                                                 onPressed: () async {
                                                   int rowAffected =
-                                                      await DatabaseHelper
-                                                          .instance
-                                                          .delete(snapshot
-                                                                  .data[index]
-                                                              ["subId"]);
+                                                  await DatabaseHelper
+                                                      .instance
+                                                      .delete(snapshot
+                                                      .data[index]
+                                                  ["_id"]);
                                                   setState(() {
                                                     getAllItems();
                                                   });
@@ -359,11 +394,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 bottom: 8, right: 5),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: <Widget>[
                                                 Text(
-                                                  'Rs.100',
+                                                  'Rs.'+getSum(snapshot.data[index]["productQuantity"],
+                                                      snapshot.data[index]["productSPrice"]),
                                                   style: TextStyle(
                                                     fontSize: 12.0,
                                                     fontWeight: FontWeight.w700,
@@ -372,15 +408,15 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
+                                                  MainAxisAlignment
+                                                      .spaceAround,
                                                   children: <Widget>[
                                                     Container(
                                                       width: 30,
                                                       height: 30,
                                                       child: OutlineButton(
                                                           padding:
-                                                              EdgeInsets.zero,
+                                                          EdgeInsets.zero,
                                                           child: FaIcon(
                                                             FontAwesomeIcons
                                                                 .plus,
@@ -388,22 +424,43 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           ),
                                                           shape: RoundedRectangleBorder(
                                                               borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          2.0)),
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  2.0)),
                                                           onPressed: () {
                                                             setState(() {
-                                                              count1++;
+                                                              if (snapshot
+                                                                  .data[index]["productQuantity"] <
+                                                                  snapshot
+                                                                      .data[index]["productAvailableQuantity"] -
+                                                                      1) {
+                                                                var check1 = DatabaseHelper
+                                                                    .instance
+                                                                    .insertProductInCart(
+                                                                    snapshot
+                                                                        .data[index]["productId"],
+                                                                    snapshot
+                                                                        .data[index]["productVariableId"],
+                                                                    snapshot
+                                                                        .data[index]["productQuantity"]);
+                                                                sum = snapshot
+                                                                    .data[index]["productQuantity"] *
+                                                                    snapshot
+                                                                        .data[index]["productAPrice"];
+                                                                print(check1);
+                                                              }
                                                             });
                                                           }),
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets.only(
-                                                              left: 7,
-                                                              right: 7),
+                                                      const EdgeInsets.only(
+                                                          left: 7,
+                                                          right: 7),
                                                       child: Text(
-                                                        '$count1',
+                                                        snapshot
+                                                            .data[index]["productQuantity"]
+                                                            .toString(),
                                                         style: TextStyle(
                                                             fontSize: 16),
                                                       ),
@@ -413,7 +470,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                       height: 30,
                                                       child: OutlineButton(
                                                           padding:
-                                                              EdgeInsets.zero,
+                                                          EdgeInsets.zero,
                                                           child: FaIcon(
                                                             FontAwesomeIcons
                                                                 .minus,
@@ -421,13 +478,29 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           ),
                                                           shape: RoundedRectangleBorder(
                                                               borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          2.0)),
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  2.0)),
                                                           onPressed: () {
                                                             setState(() {
-                                                              if(count1!=1)
-                                                                count1--;
+                                                              if (snapshot
+                                                                  .data[index]["productQuantity"] >
+                                                                  1) {
+                                                                var check1 = DatabaseHelper
+                                                                    .instance
+                                                                    .minusProductInCart(
+                                                                    snapshot
+                                                                        .data[index]["productId"],
+                                                                    snapshot
+                                                                        .data[index]["productVariableId"],
+                                                                    snapshot
+                                                                        .data[index]["productQuantity"]);
+                                                                sum = snapshot
+                                                                    .data[index]["productQuantity"] *
+                                                                    snapshot
+                                                                        .data[index]["productAPrice"];
+                                                                print(check1);
+                                                              }
                                                             });
                                                           }),
                                                     ),
@@ -454,16 +527,13 @@ class _ShoppingCartState extends State<ShoppingCart> {
       },
     );
   }
-}
 
-//
-//IconButton(
-////                    icon: Icon(Icons.menu,size: 30,),
-//icon: FaIcon(FontAwesomeIcons.trashAlt,color:Colors.red,),
-//onPressed: ()async{
-//await DatabaseHelper.instance.deleteAll();
-//setState(() {
-//getAllItems();
-//});
-//},
-//),
+  double sum = 0;
+  var totalPrice=DatabaseHelper.instance.getTotalPrice();
+
+  String getSum(qty,sprice) {
+    sum=0;
+    sum=qty*sprice;
+    return sum.toString();
+  }
+}

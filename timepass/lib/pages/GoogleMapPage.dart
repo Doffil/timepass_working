@@ -5,10 +5,14 @@ import 'package:google_map_location_picker/google_map_location_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:timepass/pages/CheckOutPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timepass/pages/HomeDemo.dart';
 //import 'package:location/location.dart';
 
 class GoogleMapPage extends StatefulWidget {
+  final customerName,customerEmailId,customerId,customerMobileNo;
+
+  const GoogleMapPage({Key key, this.customerName, this.customerEmailId, this.customerId, this.customerMobileNo}) : super(key: key);
   @override
   _GoogleMapPageState createState() => _GoogleMapPageState();
 }
@@ -249,12 +253,16 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
       bottomNavigationBar:  Container(
         height: 54,
         child: RaisedButton(
-          onPressed: () {
+          onPressed: () async{
             print(_currentAddress);
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.setString('customerAddress', _currentAddress);
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => CheckOutPage(currentAddress:_currentAddress)));
+                    builder: (context) => HomeDemo(currentAddress:_currentAddress,
+                      customerName: widget.customerName,customerEmailId: widget.customerEmailId,
+                        customerMobile: widget.customerMobileNo,customerId: widget.customerId,)));
           },
 
           color: Colors.blue,

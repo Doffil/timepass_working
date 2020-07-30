@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,6 +12,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:timepass/widgets/custom_list_tile.dart';
+import 'package:http/http.dart' as http;
+
 
 class CheckOutPage extends StatefulWidget {
   final String currentAddress;
@@ -20,6 +24,21 @@ class CheckOutPage extends StatefulWidget {
 }
 
 class _CheckOutPageState extends State<CheckOutPage> {
+
+  Future<http.Response> createAlbum(String title) {
+    return http.post(
+      'https://jsonplaceholder.typicode.com/albums',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'title': title,
+      }),
+    );
+  }
+
+
+
   String _locationMessage = "";
   String _currentAddress ="";
   bool turnOnNotification = false;
@@ -560,18 +579,18 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           6.0)),
-                                              onPressed: () async {
-                                                int rowAffected =
-                                                    await DatabaseHelper
-                                                        .instance
-                                                        .delete(
-                                                            snapshot.data[index]
-                                                                ["subId"]);
-                                                setState(() {
-                                                  getAllItems();
-                                                });
-//                                           widget.valueSetter(widget.id1.subCategory[i]);
-                                              },
+//                                              onPressed: () async {
+//                                                int rowAffected =
+//                                                    await DatabaseHelper
+//                                                        .instance
+//                                                        .delete(
+//                                                            snapshot.data[index]
+//                                                                ["subId"],snapshot.data[index]["varId"]);
+//                                                setState(() {
+//                                                  getAllItems();
+//                                                });
+////                                           widget.valueSetter(widget.id1.subCategory[i]);
+//                                              },
                                             ),
                                           )
                                         ],

@@ -13,7 +13,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   TextEditingController phoneController = TextEditingController();
-
+  String mobile;
   @override
   Widget build(BuildContext context) {
     return Consumer<LoginStore>(
@@ -109,7 +109,8 @@ class _LoginPageState extends State<LoginPage> {
                                 child: RaisedButton(
                                   onPressed: () {
                                     if (phoneController.text.isNotEmpty) {
-                                      loginStore.getCodeWithPhoneNumber(context, phoneController.text.toString());
+                                      mobile="+91"+phoneController.text.toString();
+                                      loginStore.getCodeWithPhoneNumber(context,mobile);
                                     } else {
                                       loginStore.loginScaffoldKey.currentState.showSnackBar(SnackBar(
                                         behavior: SnackBarBehavior.floating,
@@ -129,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                                       children: <Widget>[
                                         Text(
                                           'Next',
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(color: Colors.purple),
                                         ),
                                         Container(
                                           padding: const EdgeInsets.all(8),

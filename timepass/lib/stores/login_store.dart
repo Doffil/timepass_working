@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:timepass/pages/HomeScreen.dart';
 import 'package:timepass/pages/LoginPage.dart';
 import 'package:timepass/pages/otp_page.dart';
+import 'package:http/http.dart'as http;
 
 part 'login_store.g.dart';
 
@@ -36,10 +39,29 @@ abstract class LoginStoreBase with Store {
     }
   }
 
+  Future<bool> createUser(int mobileNo) async {
+    final http.Response response = await http.get(
+      'http://192.168.43.41:8000/api/v1/customer?isNewUser='+mobileNo.toString(),
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      var responseData=json.decode(response.body);
+      print(responseData["success"]);
+      if(responseData["success"]){
+        return true;
+//        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => HomeScreen()), (Route<dynamic> route) => false);
+      }else{
+        print('something went wrong');
+      }
+    } else {
+      throw Exception('Failed to pass data.');
+    }
+  }
+  List m2;
+  int m1;
   @action
   Future<void> getCodeWithPhoneNumber(BuildContext context, String phoneNumber) async {
     isLoginLoading = true;
-
     await _auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         timeout: const Duration(seconds: 60),
@@ -83,6 +105,8 @@ abstract class LoginStoreBase with Store {
           actualCode = verificationId;
         }
     );
+    m2= phoneNumber.split("+91");
+    m1= int.parse(m2[1]);
   }
 
   @action
@@ -112,7 +136,7 @@ abstract class LoginStoreBase with Store {
 
     firebaseUser = result.user;
 
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => HomeScreen()), (Route<dynamic> route) => false);
+    createUser(m1);
 
     isLoginLoading = false;
     isOtpLoading = false;

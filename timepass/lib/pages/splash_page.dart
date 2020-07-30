@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:timepass/pages/HomePage.dart';
+import 'package:timepass/pages/Categories.dart';
 import 'package:timepass/pages/HomeScreen.dart';
 import 'package:timepass/pages/LoginPage.dart';
 import 'package:timepass/stores/login_store.dart';

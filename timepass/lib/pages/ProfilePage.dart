@@ -6,7 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:timepass/pages/HomePage.dart';
+import 'package:timepass/pages/Categories.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
 import 'package:timepass/stores/login_store.dart';
 import 'package:timepass/widgets/custom_list_tile.dart';
@@ -96,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SearchList()));
+                              builder: (context) => Categories()));
                     },
                   ),
                   ListTile(

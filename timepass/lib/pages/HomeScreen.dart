@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timepass/Model.dart';
-import 'package:timepass/pages/HomePage.dart';
+import 'package:timepass/pages/Categories.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/pages/ShoppingCart.dart';
-import 'package:timepass/pages/SubProduct.dart';
+import 'package:timepass/pages/Product.dart';
 import 'package:timepass/pages/home_page.dart';
 import 'package:timepass/stores/login_store.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
@@ -19,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedItem = 0;
-  List<Widget> _pages = [SearchList(), ShoppingCart(), ProfilePage()];
+  List<Widget> _pages = [Categories(), ShoppingCart(), ProfilePage()];
   var pagecontroller = PageController();
 
   @override

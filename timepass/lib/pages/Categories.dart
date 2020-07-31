@@ -13,6 +13,7 @@ import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/pages/SubCategories.dart';
 import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/services/Service.dart';
+import 'package:timepass/sqlite/db_helper.dart';
 import 'package:timepass/themes/light_color.dart';
 import 'package:timepass/themes/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -176,6 +177,7 @@ class _CategoriesState extends State<Categories> {
                         title: Text('Sign-Out'),
                         onTap: ()async {
                           //add at the last
+                          await DatabaseHelper.instance.deleteAll();
                           SharedPreferences prefs = await SharedPreferences.getInstance();
                           FirebaseAuth.instance.signOut();
                           prefs.setString('customerName', null);

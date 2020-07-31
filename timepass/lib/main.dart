@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   transfer(){
-    Timer(Duration(seconds: 5),(){
+    Timer(Duration(seconds: 4),(){
       navigateUser();
     });
   }
@@ -80,16 +80,8 @@ class _MyAppState extends State<MyApp> {
     print(studentEmail);
     boolValue = prefs.getBool('isLoggedIn')??false;
     print(boolValue);
-    setState(() {
-      print('googd');
-    });
-    if(boolValue==true && studentEmail!=null && studentEmail.length>2){
-//      String customerName=prefs.getString('customerName');
-//      String customerEmailId=prefs.getString('customerEmailId');
-//      int customerPhoneNo=prefs.getInt('customerPhoneNo');
-//      int customerId=prefs.getInt('customerId');
-//      String customerAddress = prefs.getString('customerAddress');
-//      print(customerAddress);
+    if(boolValue==true){
+      print('sdnfasnfs');
       Navigator.pushReplacement(context, new MaterialPageRoute(
           builder: (context) => Categories()));
 

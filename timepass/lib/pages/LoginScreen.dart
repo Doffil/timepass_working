@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
           prefs.setString('customerName',customerName);
           prefs.setString('customerEmailId', customerEmailId);
           prefs.setInt('customerMobileNo',int.parse( mobile_no));
-
+          prefs.setBool('isLoggedIn', true);
           Navigator.push(context, MaterialPageRoute(builder: (context)=>Categories()));
         }else{
           loginUser(phone, context,mobile);

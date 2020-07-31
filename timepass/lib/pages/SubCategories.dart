@@ -11,6 +11,7 @@ import 'package:timepass/pages/Categories.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/pages/Product.dart';
 import 'package:timepass/pages/shopping-copy.dart';
+import 'package:timepass/sqlite/db_helper.dart';
 import 'package:timepass/themes/light_color.dart';
 import 'package:timepass/themes/theme.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -128,6 +129,7 @@ class _SubCategoriesState extends State<SubCategories> {
                   title: Text('Sign-Out'),
                   onTap: ()async {
                     //add at the last
+                    await DatabaseHelper.instance.deleteAll();
                     SharedPreferences prefs = await SharedPreferences.getInstance();
                     FirebaseAuth.instance.signOut();
                     prefs.setString('customerName', null);

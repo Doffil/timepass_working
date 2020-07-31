@@ -105,12 +105,14 @@ class _ShoppingCartCopyState extends State<ShoppingCartCopy> {
                 title: Text('Sign-Out'),
                 onTap: ()async {
                   //add at the last
+                  await DatabaseHelper.instance.deleteAll();
                   SharedPreferences prefs = await SharedPreferences.getInstance();
                   FirebaseAuth.instance.signOut();
                   prefs.setString('customerName', null);
                   prefs.setString('customerEmailId', null);
                   prefs.setString('customerId', null);
                   prefs.setBool("isLoggedIn", false);
+
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>MyApp()));
                 },
               ),
@@ -224,7 +226,7 @@ class _ShoppingCartCopyState extends State<ShoppingCartCopy> {
                     int mobile_no=prefs.getInt('customerMobileNo');
 
                     Service.getAddress(mobile_no).then((value){
-                      if(value["success"]==false){
+                      if(value["success"]==false && snapshot.data>0){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>GoogleMapPage()));
 
                       }else if(snapshot.data>0 && value["success"]==true){
@@ -239,8 +241,16 @@ class _ShoppingCartCopyState extends State<ShoppingCartCopy> {
                           }else{
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>GoogleMapPage()));
                           }
-
-
+                      }else{
+                        Flushbar(
+                          margin: EdgeInsets.all(8),
+                          borderRadius: 8,
+                          backgroundColor: Colors.red,
+                          flushbarPosition: FlushbarPosition.TOP,
+                          message: "Please add item to cart to proceed!!!",
+                          duration: Duration(seconds: 2),
+                        )
+                          ..show(context);
                       }
                     });
                   },

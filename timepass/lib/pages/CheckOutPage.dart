@@ -1,8 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/pages/GoogleMapPage.dart';
+import 'package:timepass/pages/RazorpayHome.dart';
 import 'package:timepass/pages/shopping-copy.dart';
+import 'package:timepass/payment/check.dart';
+import 'package:timepass/services/Service.dart';
 import 'package:timepass/sqlite/db_helper.dart';
 
 import 'package:http/http.dart' as http;
@@ -18,47 +23,63 @@ class CheckOutPage extends StatefulWidget {
 
 class _CheckOutPageState extends State<CheckOutPage> {
 
-  Future<http.Response> createAlbum(String title) {
-    return http.post(
-      'https://jsonplaceholder.typicode.com/albums',
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'title': title,
-      }),
-    );
-  }
-
-
-
-  String _locationMessage = "";
-  String _currentAddress ="";
+  String _currentAddress;
   bool turnOnNotification = false;
   bool turnOnLocation = false;
-  String getCurrentAddress='Pruthvi House,Plot no.3,Chankya Nagar,Ambad ITI Link Road,Nashik';
   int sum = 0;
-
+  int get_address_id;
+  var rateData;
+  bool _loading=true;
+  String promocode="";
+  List queryRows=[];
+  int mobile_no;
+  var razorpay_id;
 
   @override
   void initState() {
+    print('loaded');
+    _loading=true;
+    _currentAddress=widget.list_of_addresses[widget.list_of_addresses.length-1]
+    ["address_line_1"].toString()+","
+        +widget.list_of_addresses[widget.list_of_addresses.length-1]
+        ["address_line_2"].toString();
+    get_address_id=widget.list_of_addresses[widget.list_of_addresses.length-1]["id"];
+    getRate();
     super.initState();
-
-//    getMobileNo();
   }
 
-//  getMobileNo()async{
-//    SharedPreferences prefs = await SharedPreferences.getInstance();
-//    int mobile_no=prefs.getInt('customerMobileNo');
-//    print('mobile no in checkout page is:'+mobile_no.toString());
-//    Service.getAddress(mobile_no).then((value){
-//      if(value["success"]&& value["data"].length!=0){
-//        list_of_addresses=value["data"];
-//        setState(() {
-//          _loading=false;
-//        });
-//      }
-//    });
+  getRate()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    mobile_no=prefs.getInt('customerMobileNo');
+    queryRows=await DatabaseHelper.instance.queryAll();
+    if(queryRows.length!=0){
+      promocode=promocodeText.text;
+      if(promocode.length>0){
+        Service.getRates(queryRows, get_address_id, mobile_no,promocode).then((value){
+          if(value["success"]==true){
+            rateData=value["data"];
+            setState(() {
+              _loading=false;
+            });
+            print('discount is:'+rateData["discount"].toString());
+          }
+        });
+      }else{
+        Service.getRates(queryRows, get_address_id, mobile_no).then((value){
+          if(value["success"]==true){
+            rateData=value["data"];
+            setState(() {
+              _loading=false;
+            });
+            print('amount is:'+rateData["amount"].toString());
+          }
+        });
+      }
+
+    }else{
+      print('could not get data from database');
+    }
+  }
 
   Widget getAddresses() {
     return Container(
@@ -71,8 +92,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
           return GestureDetector(
             onTap: (){
               setState(() {
-                getCurrentAddress= widget.list_of_addresses[index];
-                _currentAddress="";
+                _currentAddress=widget.list_of_addresses[index]["address_line_1"].toString()+","+widget.list_of_addresses[index]["address_line_2"].toString();
+                get_address_id=widget.list_of_addresses[index]["id"];
+                print('address id to be send: '+get_address_id.toString());
+                _loading=true;
+                getRate();
                 Navigator.of(context).pop();
               });
             },
@@ -92,7 +116,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
       ),
     );
   }
-  bool _loading =true;
+
+  final spinkit = SpinKitWave(
+    color: Colors.lightBlue,
+    size: 30,
+  );
+  TextEditingController promocodeText= TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -100,7 +130,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Scaffold(
-        body: SingleChildScrollView(
+        body: _loading
+            ? Center(
+          child: spinkit,
+        ):
+        SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.only(top: 50),
             margin: EdgeInsets.only(left: 5, right: 5),
@@ -191,8 +225,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
                             ),
                             Flexible(
                               child: Text(
-//                                _loading? Center(child: CircularProgressIndicator(),):
-                                  widget.list_of_addresses[widget.list_of_addresses.length-1]["address_line_1"].toString()+","+widget.list_of_addresses[widget.list_of_addresses.length-1]["address_line_2"].toString(),
+                                _currentAddress.length==0?
+                                  widget.list_of_addresses[widget.list_of_addresses.length-1]
+                                  ["address_line_1"].toString()+","
+                                      +widget.list_of_addresses[widget.list_of_addresses.length-1]
+                                  ["address_line_2"].toString(): _currentAddress,
 //                              maxLines: 5,
 //                              overflow:TextOverflow.ellipsis,
                               ),
@@ -234,17 +271,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                         builder: (context) => GoogleMapPage()));
                                               },
                                               child: const Text(
-                                                "ADD",
+                                                "ADD ADDRESS",
                                                 style: TextStyle(
                                                     color: Colors.green),
-                                              )
-                                          ),
-                                          FlatButton(
-                                              onPressed: () {},
-                                              child: const Text(
-                                                "SELECT",
-                                                style: TextStyle(
-                                                    color: Colors.blue),
                                               )
                                           ),
                                           FlatButton(
@@ -300,8 +329,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text('Item Price :'),
-                            Text('Rs.100')
+                            Text('Subtotal:'),
+                            Text(rateData["sub_total"].toString())
                           ],
                         ),
                         Divider(
@@ -310,7 +339,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[Text('SGST(5%) :'), Text('Rs.10')],
+                          children: <Widget>[Text('Tax :'), Text(rateData["tax"].toString())],
                         ),
                         Divider(
                           height: 25,
@@ -318,7 +347,15 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[Text('CGST(5%) :'), Text('Rs.10')],
+                          children: <Widget>[Text('Discount :'), Text(rateData["discount"].toString())],
+                        ),
+                        Divider(
+                          height: 25,
+                          color: Colors.grey,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[Text('Delivery Charges :'), Text(rateData["delivery_charge"].toString())],
                         ),
                         Divider(
                           height: 25,
@@ -333,7 +370,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
                             Text(
-                              'Rs.120',
+                              rateData["total"].toString(),
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             )
@@ -375,6 +412,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                 padding: EdgeInsets.only(right: 10),
                                 height: 30,
                                 child: TextFormField(
+                                  controller: promocodeText,
                                   style: TextStyle(
                                     fontSize: 15
                                   ),
@@ -398,7 +436,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
                               child: RaisedButton(
                                 child: Text('APPLY',style: TextStyle(fontSize: 13),),
                                 onPressed: () {
-
+                                  setState(() {
+                                    _loading=true;
+                                    getRate();
+                                  });
                                 },
                                 shape: RoundedRectangleBorder(
 //                                    borderRadius: BorderRadius.circular(8.0)
@@ -425,7 +466,29 @@ class _CheckOutPageState extends State<CheckOutPage> {
         bottomNavigationBar: Container(
           height: 54,
           child: RaisedButton(
-            onPressed: () {},
+            onPressed: () async{
+              if(promocode.length>0){
+                Service.placeOrder(queryRows, get_address_id,mobile_no,promocode).then((value){
+                  if(value["success"]==true){
+                    razorpay_id=value["data"]["razorpay_order_id"];
+                  }
+                });
+              }else{
+                Service.placeOrder(queryRows, get_address_id,mobile_no).then((value){
+                  if(value["success"]==true){
+                    razorpay_id=value["data"]["razorpay_order_id"];
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => CheckRazor(razorpay_id: razorpay_id,),
+                      ),
+                          (Route<dynamic> route) => false,
+                    );
+                  }
+                });
+              }
+
+//              Navigator.push(context, MaterialPageRoute(builder: (context)=>RazorpayHome(razorpay_id:razorpay_id)));
+            },
 
             color: Colors.blue,
             textColor: Colors.white,

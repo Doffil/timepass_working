@@ -34,8 +34,8 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
       'Pruthvi House,Plot no.3,Chankya Nagar,Ambad ITI Link Road,Nashik';
   int sum = 0;
   var first;
-  var lat = 0.0;
-  var long = 0.0;
+  double lat;
+  double long;
 
   void _getCurrentLocation() async {
     final position = await Geolocator()
@@ -214,7 +214,8 @@ List list_of_addresses=new List();
                                       width: 10,
                                     ),
                                     Flexible(
-                                      child: Text(first.postalCode
+                                      child: Text(
+                                          first.postalCode.length>0?first.postalCode:""
 //                              maxLines: 5,
 //                              overflow:TextOverflow.ellipsis,
                                           ),
@@ -236,7 +237,8 @@ List list_of_addresses=new List();
                                       width: 10,
                                     ),
                                     Flexible(
-                                      child: Text(first.locality
+                                      child: Text(
+                                          first?.locality?.length>0?first.locality:" "
 //                              maxLines: 5,
 //                              overflow:TextOverflow.ellipsis,
                                           ),
@@ -289,6 +291,9 @@ List list_of_addresses=new List();
                 int mobile_no=prefs.getInt('customerMobileNo');
                 print('mobile_no in googlemap page is:'+mobile_no.toString());
 
+                print('lat is :');
+                print(lat);
+
                 Service.registerAddress(mobile_no,myController.text,
                     first.addressLine,first.postalCode,lat,long).then((value){
                       if(value["success"] && value["data"].length!=0){
@@ -321,7 +326,8 @@ List list_of_addresses=new List();
     print(' ${first.locality}, ${first.adminArea},${first.subLocality}, '
         '${first.subAdminArea},${first.addressLine}, ${first.featureName},'
         '${first.thoroughfare}');
-
+      lat=tappedPoint.latitude;
+      long=tappedPoint.longitude;
     _currentAddress =
         '${myController.text},${first.addressLine},${first.locality},'
         '${first.postalCode}, ${first.adminArea}';

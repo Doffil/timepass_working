@@ -174,6 +174,7 @@ class _ProductState extends State<Product> {
               title: Text('Sign-Out'),
               onTap: ()async {
                 //add at the last
+                await DatabaseHelper.instance.deleteAll();
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 FirebaseAuth.instance.signOut();
                 prefs.setString('customerName', null);

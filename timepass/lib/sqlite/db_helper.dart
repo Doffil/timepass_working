@@ -94,15 +94,20 @@ class DatabaseHelper{
       print('quantity is : ' + anyquery[0]["productQuantity"].toString());
       var newQuantity = anyquery[0]["productQuantity"]+qty;
       print('new qty : ' + newQuantity.toString());
-      var check2 = await db.rawUpdate(
-          '''UPDATE $_tableName SET productQuantity = ? WHERE _id = ? ''',
-          [newQuantity, anyquery[0]["_id"]]);
-      var anyquery1 = await db.rawQuery(
-          "select * from $_tableName where $productId = $id and $varId = $vId");
-      if (anyquery1.length != 0)
-        print('updated quantity is : ' +
-            anyquery1[0]["productQuantity"].toString());
-      return check2;
+      var availableQty = anyquery[0]["productAvailableQuantity"];
+
+      if(newQuantity<=availableQty) {
+        var check2 = await db.rawUpdate(
+            '''UPDATE $_tableName SET productQuantity = ? WHERE _id = ? ''',
+            [newQuantity, anyquery[0]["_id"]]);
+        var anyquery1 = await db.rawQuery(
+            "select * from $_tableName where $productId = $id and $varId = $vId");
+        if (anyquery1.length != 0)
+          print('updated quantity is : ' +
+              anyquery1[0]["productQuantity"].toString());
+        return check2;
+      }
+      return 0;
     }
   }
 

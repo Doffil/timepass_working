@@ -2,98 +2,130 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timepass/pages/Categories.dart';
 import 'package:timepass/pages/HomeDemo.dart';
 import 'package:http/http.dart' as http;
 import 'package:timepass/pages/RegisterPage.dart';
 import 'package:timepass/services/Service.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
+
   final _phoneController = TextEditingController();
+
   final _codeController = TextEditingController();
+
   final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+
   var isNewUser;
+  bool alreadyRegistered=false;
 
-  Future<bool> loginUser(String phone, BuildContext context,int mobile) async{
-    FirebaseAuth _auth = FirebaseAuth.instance;
-
+  checkUser(String phone,BuildContext context,int mobile)async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     Service.checkUser(mobile).then((value){
       isNewUser=value;
       if(isNewUser["success"]==true){
-        print(isNewUser["data"]["userExist"]);
+        print('is user registered : '+isNewUser["data"]["userExist"].toString());
+
         if(isNewUser["data"]["userExist"]==true){
-          var customerName,customerEmailId,id;
+          var customerName,customerEmailId;
+          var mobile_no;
           customerName = isNewUser["data"]["userDetails"]["name"];
           customerEmailId = isNewUser["data"]["userDetails"]["email"];
-          id = isNewUser["data"]["userDetails"]["id"];
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeDemo(customerName:customerName,
-          customerEmailId:customerEmailId,customerMobile:mobile,customerId:id)));
+          mobile_no = isNewUser["data"]["userDetails"]["mobile_no"];
+          prefs.setString('customerName',customerName);
+          prefs.setString('customerEmailId', customerEmailId);
+          prefs.setInt('customerMobileNo',int.parse( mobile_no));
+
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>Categories()));
+        }else{
+          loginUser(phone, context,mobile);
         }
+      }else{
+        loginUser(phone, context,mobile);
       }
     });
+  }
 
-    _auth.verifyPhoneNumber(
-        phoneNumber: phone,
-        timeout: Duration(seconds: 60),
-        verificationCompleted: (AuthCredential credential) async{
-          Navigator.of(context).pop();
+  Future<bool> loginUser(String phone, BuildContext context,int mobile) async{
 
-          AuthResult result = await _auth.signInWithCredential(credential);
+    FirebaseAuth _auth = FirebaseAuth.instance;
 
-          FirebaseUser user = result.user;
-          if(user!=null){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>RegisterPage(customerMobile:mobile)));
-          }else{
-            print('error in logging/no otp is checked');
-          }
-        },
-        verificationFailed: (AuthException exception){
-          print(exception);
-        },
-        codeSent: (String verificationId, [int forceResendingToken]){
-          showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text("Give the code?"),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      TextField(
-                        controller: _codeController,
-                      ),
+      _auth.verifyPhoneNumber(
+          phoneNumber: phone,
+          timeout: Duration(seconds: 110),
+          verificationCompleted: (AuthCredential credential) async{
+            Navigator.of(context).pop();
+
+            AuthResult result = await _auth.signInWithCredential(credential);
+            print('verify phone number:'+mobile.toString());
+            FirebaseUser user = result.user;
+            if(user!=null){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>RegisterPage(customerMobile:mobile)));
+            }else{
+              print('error in logging/no otp is checked');
+            }
+          },
+          verificationFailed: (AuthException exception){
+            print(exception);
+          },
+          codeSent: (String verificationId, [int forceResendingToken]){
+            showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("Give the code?"),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        TextField(
+                          controller: _codeController,
+                        ),
+                      ],
+                    ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("Confirm"),
+                        textColor: Colors.white,
+                        color: Colors.blue,
+                        onPressed: () async{
+                          final code = _codeController.text.trim();
+                          AuthCredential credential = PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: code);
+
+                          AuthResult result = await _auth.signInWithCredential(credential);
+
+                          FirebaseUser user = result.user;
+
+                          if(user != null) {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) =>
+                                    RegisterPage(customerMobile: mobile,)
+                            ));
+                          }
+                        },
+                      )
                     ],
-                  ),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text("Confirm"),
-                      textColor: Colors.white,
-                      color: Colors.blue,
-                      onPressed: () async{
-                        final code = _codeController.text.trim();
-                        AuthCredential credential = PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: code);
+                  );
+                }
+            );
+          },
+          codeAutoRetrievalTimeout: null
+      );
 
-                        AuthResult result = await _auth.signInWithCredential(credential);
-
-                        FirebaseUser user = result.user;
-
-
-                        if(user != null){
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => RegisterPage(customerMobile: mobile,)
-                          ));
-                        }else{
-                          print("Error");
-                        }
-                      },
-                    )
-                  ],
-                );
-              }
-          );
-        },
-        codeAutoRetrievalTimeout: null
-    );
   }
 
   @override
@@ -152,7 +184,7 @@ class LoginScreen extends StatelessWidget {
                       onPressed: () {
                         final phone = _phoneController.text.trim();
                         final mobile = "+91"+phone.toString();
-                        loginUser(mobile, context,int.parse(phone));
+                        checkUser(mobile,context,int.parse(phone));
                       },
                       color: Colors.blue,
                     ),

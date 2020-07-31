@@ -1,22 +1,27 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:timepass/main.dart';
 import 'package:timepass/pages/CheckOutPage.dart';
 import 'package:timepass/pages/Categories.dart';
 import 'package:flushbar/flushbar.dart';
+import 'package:timepass/pages/GoogleMapPage.dart';
 import 'package:timepass/pages/ProfilePage.dart';
+import 'package:timepass/services/Service.dart';
 import 'package:timepass/sqlite/db_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-class ShoppingCart extends StatefulWidget {
+class ShoppingCartCopy extends StatefulWidget {
   @override
-  _ShoppingCartState createState() => _ShoppingCartState();
+  _ShoppingCartCopyState createState() => _ShoppingCartCopyState();
 }
 
-class _ShoppingCartState extends State<ShoppingCart> {
+class _ShoppingCartCopyState extends State<ShoppingCartCopy> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
   bool isPresent = true;
   int count1 = 0;
@@ -25,7 +30,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
     super.initState();
   }
 
-//  var sum=0;
   noItemsInCart() {
     return Expanded(
       child: Center(
@@ -70,8 +74,15 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 leading: FaIcon(FontAwesomeIcons.shoppingBag),
                 title: Text('Shopping-Cart'),
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ShoppingCart()));
+                  Navigator.push(
+                      context,
+                      PageTransition(
+
+                          type: PageTransitionType
+                              .rightToLeft,
+                          duration:
+                          Duration(milliseconds: 500),
+                          child: ShoppingCartCopy()));
                 },
               ),
               ListTile(
@@ -92,8 +103,15 @@ class _ShoppingCartState extends State<ShoppingCart> {
               ListTile(
                 leading: FaIcon(FontAwesomeIcons.signOutAlt),
                 title: Text('Sign-Out'),
-                onTap: () {
+                onTap: ()async {
                   //add at the last
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  FirebaseAuth.instance.signOut();
+                  prefs.setString('customerName', null);
+                  prefs.setString('customerEmailId', null);
+                  prefs.setString('customerId', null);
+                  prefs.setBool("isLoggedIn", false);
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>MyApp()));
                 },
               ),
             ],
@@ -155,8 +173,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                       ])),
               getData(),
               getBottom(),
-
-            ]));
+            ]),
+   );
   }
 
   Future getAllItems() async {
@@ -167,6 +185,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
     print(queryRows.length);
     return queryRows;
   }
+  List list_of_addresses=new List();
 
   Widget getBottom(){
     return FutureBuilder(
@@ -177,49 +196,69 @@ class _ShoppingCartState extends State<ShoppingCart> {
           return CircularProgressIndicator();
         }else{
           return Container(
+            height:54,
+            width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(blurRadius: 1.0, offset: Offset(0.0, 0.75)),
-              ],
+              color: Colors.blue
             ),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8, top: 2, right: 6),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Rs. ${snapshot.data}',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                  RaisedButton.icon(
-                    color: Colors.white,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CheckOutPage(),
-                        ),
-                      );
-                    },
-                    label: Text(
-                      'Place Order',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black87,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  color: Colors.white,
+                  width: MediaQuery.of(context).size.width/2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'Rs. ${snapshot.data}',
+                        style: TextStyle(fontSize: 18, color: Colors.black),
                       ),
-                    ),
-                    icon: FaIcon(
-                      FontAwesomeIcons.shoppingCart,
-                      size: 15,
-                      color: Colors.black87,
-                    ),
-                    shape: RoundedRectangleBorder(
-//                        borderRadius: BorderRadius.circular(8.0),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: ()async{
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    int mobile_no=prefs.getInt('customerMobileNo');
+
+                    Service.getAddress(mobile_no).then((value){
+                      if(value["success"]==false){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>GoogleMapPage()));
+
+                      }else if(snapshot.data>0 && value["success"]==true){
+
+                        int mobile_no=prefs.getInt('customerMobileNo');
+                        print('mobile no in checkout page is:'+mobile_no.toString());
+
+                          if(value["success"]&& value["data"].length!=0){
+                            list_of_addresses=value["data"];
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>CheckOutPage(list_of_addresses:
+                            list_of_addresses)));
+                          }else{
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>GoogleMapPage()));
+                          }
+
+
+                      }
+                    });
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width/2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Place Order',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         }
@@ -229,7 +268,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   Widget getData() {
     return FutureBuilder(
-      future: getAllItems(),
+      future: DatabaseHelper.instance.queryAll(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.none &&
             snapshot.hasData == null) {
@@ -293,7 +332,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                         backgroundColor: Colors.red,
                                         flushbarPosition: FlushbarPosition.TOP,
                                         message: "You have successfully removed the item from cart!!!",
-                                        duration: Duration(seconds: 3),
+                                        duration: Duration(seconds: 2),
                                       )
                                         ..show(context);
                                     },
@@ -317,8 +356,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
                         child: Align(
                           alignment: Alignment.center,
                           child: Container(
-                            margin:
-                            EdgeInsets.only(left: 7, right: 7, bottom: 5),
+                            margin: EdgeInsets.only(left: 5, right: 5, bottom: 5),
+                            width: MediaQuery.of(context).size.width,
+                            height: 130,
                             child: Card(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.0)),
@@ -326,8 +366,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                               child: Row(
                                 children: <Widget>[
                                   Container(
-                                    width: 130.0,
-                                    height: 86.0,
+                                  width: MediaQuery.of(context).size.width/3,
+                                    height: MediaQuery.of(context).size.height,
                                     decoration: BoxDecoration(
                                       color: Colors.red,
                                       image: DecorationImage(
@@ -340,80 +380,109 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                     ),
                                   ),
                                   Expanded(
-                                    child: Container(
-//                                    margin: EdgeInsets.zero,
-                                      padding: EdgeInsets.only(
-                                          left: 9, right: 3, top: 0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
 //                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 5),
+                                              child: Text(
                                                 snapshot
                                                     .data[index]["productName"] +
-                                                    '(' +
+                                                    ' (' +
                                                     snapshot
                                                         .data[index]["productVName"] +
                                                     ')',
                                                 style: TextStyle(
                                                   fontSize: 15.0,
-                                                  fontWeight: FontWeight.w500,
+                                                  fontWeight: FontWeight.w400,
                                                   letterSpacing: 0.8,
                                                 ),
                                               ),
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.close,
-                                                  size: 15,
-                                                  color: Colors.black,
-                                                ),
-                                                onPressed: () async {
-                                                  int rowAffected =
-                                                  await DatabaseHelper
-                                                      .instance
-                                                      .delete(snapshot
-                                                      .data[index]
-                                                  ["_id"]);
-                                                  setState(() {
-                                                    getAllItems();
-                                                  });
-//                                           widget.valueSetter(widget.id1.subCategory[i]);
-                                                },
-                                              )
-                                            ],
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 8, right: 5),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .spaceBetween,
-                                              children: <Widget>[
-                                                Text(
-                                                  'Rs.'+getSum(snapshot.data[index]["productQuantity"],
-                                                      snapshot.data[index]["productSPrice"]),
-                                                  style: TextStyle(
-                                                    fontSize: 12.0,
-                                                    fontWeight: FontWeight.w700,
-                                                    letterSpacing: 0.8,
+                                            ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 42),
+                                                child: IconButton(
+                                                  icon: Icon(
+                                                    Icons.close,
+                                                    size: 27,
+                                                    color: Colors.black,
                                                   ),
+                                                  onPressed: () async{
+                                                    int rowAffected = await DatabaseHelper
+                                                        .instance
+                                                        .delete(snapshot
+                                                        .data[index]["productVariableId"]);
+                                                    if (rowAffected > 0) {
+                                                      print('we have deleted');
+                                                    } else {
+                                                      print('not deleted');
+                                                    }
+
+                                                    print('rowaffected'+rowAffected.toString());
+                                                    setState(() {
+                                                      getAllItems();
+                                                    });
+
+//                                                      Navigator.of(context).pop(true);
+                                                    Flushbar(
+                                                      margin: EdgeInsets.all(8),
+                                                      borderRadius: 8,
+                                                      backgroundColor: Colors.red,
+                                                      flushbarPosition: FlushbarPosition.TOP,
+                                                      message: "You have successfully removed the item from cart!!!",
+                                                      duration: Duration(seconds: 2),
+                                                    )
+                                                      ..show(context);
+                                                  },
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceAround,
+                                              )
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 6),
+                                          child: Text(
+                                            getSum1(snapshot.data[index]["productQuantity"],
+                                                snapshot.data[index]["productSPrice"]),
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.w700,
+                                              letterSpacing: 0.8,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(bottom: 5,right: 4),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                            children: <Widget>[
+                                              Text(
+                                                getSum(snapshot.data[index]["productQuantity"],
+                                                    snapshot.data[index]["productSPrice"],
+                                                    snapshot.data[index]["productAPrice"]),
+                                                style: TextStyle(
+                                                  fontSize: 14.0,
+                                                  fontWeight: FontWeight.w700,
+                                                  letterSpacing: 0.8,
+                                                  decoration: TextDecoration.lineThrough,
+                                                  color: Colors.grey
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 15),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                   children: <Widget>[
                                                     Container(
-                                                      width: 30,
-                                                      height: 30,
+                                                      width: 34,
+                                                      height: 34,
                                                       child: OutlineButton(
                                                           padding:
                                                           EdgeInsets.zero,
@@ -432,8 +501,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               if (snapshot
                                                                   .data[index]["productQuantity"] <
                                                                   snapshot
-                                                                      .data[index]["productAvailableQuantity"] -
-                                                                      1) {
+                                                                      .data[index]["productAvailableQuantity"]) {
                                                                 var check1 = DatabaseHelper
                                                                     .instance
                                                                     .insertProductInCart(
@@ -455,8 +523,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                     Padding(
                                                       padding:
                                                       const EdgeInsets.only(
-                                                          left: 7,
-                                                          right: 7),
+                                                          left: 10,
+                                                          right: 10),
                                                       child: Text(
                                                         snapshot
                                                             .data[index]["productQuantity"]
@@ -466,8 +534,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                       ),
                                                     ),
                                                     Container(
-                                                      width: 30,
-                                                      height: 30,
+                                                      width: 34,
+                                                      height: 34,
                                                       child: OutlineButton(
                                                           padding:
                                                           EdgeInsets.zero,
@@ -506,11 +574,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                     ),
                                                   ],
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -531,9 +599,17 @@ class _ShoppingCartState extends State<ShoppingCart> {
   double sum = 0;
   var totalPrice=DatabaseHelper.instance.getTotalPrice();
 
-  String getSum(qty,sprice) {
+  String getSum(qty,sprice,aprice) {
     sum=0;
     sum=qty*sprice;
-    return sum.toString();
+    if(sprice==aprice){
+      return '';
+    }
+    return 'Rs.'+sum.toString();
+  }
+  String getSum1(qty,sprice) {
+    sum=0;
+    sum=qty*sprice;
+    return 'Rs.'+sum.toString();
   }
 }

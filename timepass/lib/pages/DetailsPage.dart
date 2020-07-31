@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timepass/Model.dart';
-import 'package:timepass/pages/ShoppingCart.dart';
+import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/sqlite/db_helper.dart';
 
 class DetailsPage extends StatefulWidget {
@@ -183,8 +183,8 @@ class _DetailsPageState extends State<DetailsPage> {
                 detail_variable[current_index].value
             );
             print(check1);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ShoppingCart()));
+//            Navigator.push(context,
+//                MaterialPageRoute(builder: (context) => ShoppingCartCopy()));
           },
           color: Colors.blue,
           textColor: Colors.white,
@@ -198,7 +198,7 @@ class _DetailsPageState extends State<DetailsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ShoppingCart(),
+        builder: (context) => ShoppingCartCopy(),
 //      builder: (context)=>ShoppingCart(),
       ),
     );

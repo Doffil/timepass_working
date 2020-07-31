@@ -84,28 +84,21 @@ class _MyAppState extends State<MyApp> {
       print('googd');
     });
     if(boolValue==true && studentEmail!=null && studentEmail.length>2){
-      String customerName=prefs.getString('customerName');
-      String customerEmailId=prefs.getString('customerEmailId');
-      int customerPhoneNo=prefs.getInt('customerPhoneNo');
-      int customerId=prefs.getInt('customerId');
-      String customerAddress = prefs.getString('customerAddress');
-      print(customerAddress);
+//      String customerName=prefs.getString('customerName');
+//      String customerEmailId=prefs.getString('customerEmailId');
+//      int customerPhoneNo=prefs.getInt('customerPhoneNo');
+//      int customerId=prefs.getInt('customerId');
+//      String customerAddress = prefs.getString('customerAddress');
+//      print(customerAddress);
       Navigator.pushReplacement(context, new MaterialPageRoute(
-          builder: (context) => HomeDemo(customerName:customerName,customerId: customerId,
-          customerMobile: customerPhoneNo,customerEmailId: customerEmailId,
-          currentAddress: customerAddress,)));
+          builder: (context) => Categories()));
 
     }else{
-//      Navigator.pushReplacement(
-//          context,
-//          MaterialPageRoute(
-//              builder: (context) =>
-//                  LoginScreen()));
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  Categories()));
+                  LoginScreen()));
     }
 
   }

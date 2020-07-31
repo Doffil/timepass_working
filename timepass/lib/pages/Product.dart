@@ -1,16 +1,17 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timepass/Model.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:timepass/main.dart';
 import 'package:timepass/pages/DetailsPage.dart';
-import 'package:timepass/pages/HomeScreen.dart';
 import 'package:timepass/pages/ProfilePage.dart';
-import 'package:timepass/pages/ShoppingCart.dart';
+import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/services/Service.dart';
 import 'package:timepass/sqlite/db_helper.dart';
 import 'package:timepass/themes/light_color.dart';
@@ -47,6 +48,8 @@ class _ProductState extends State<Product> {
   List original_product_list=new List();
   List duplicate_product_list=new List();
   List<String> selectedItemValue = List<String>();
+  var _controller = TextEditingController();
+
   List<Region> temp=[];
   String aprice,aqty;
   String sprice;
@@ -141,8 +144,14 @@ class _ProductState extends State<Product> {
               leading: FaIcon(FontAwesomeIcons.shoppingBag),
               title: Text('Shopping-Cart'),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ShoppingCart()));
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        type: PageTransitionType
+                            .rightToLeft,
+                        duration:
+                        Duration(milliseconds: 500),
+                        child: ShoppingCartCopy()));
               },
             ),
             ListTile(
@@ -163,8 +172,15 @@ class _ProductState extends State<Product> {
             ListTile(
               leading: FaIcon(FontAwesomeIcons.signOutAlt),
               title: Text('Sign-Out'),
-              onTap: () {
+              onTap: ()async {
                 //add at the last
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                FirebaseAuth.instance.signOut();
+                prefs.setString('customerName', null);
+                prefs.setString('customerEmailId', null);
+                prefs.setString('customerId', null);
+                prefs.setBool("isLoggedIn", false);
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>MyApp()));
               },
             ),
           ],
@@ -210,8 +226,12 @@ class _ProductState extends State<Product> {
                             onPressed: () {
                               Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ShoppingCart()));
+                                  PageTransition(
+                                      type: PageTransitionType
+                                          .rightToLeft,
+                                      duration:
+                                      Duration(milliseconds: 500),
+                                      child: ShoppingCartCopy()));
                             },
                           ),
 //      list.length ==0 ? new Container() :
@@ -254,6 +274,7 @@ class _ProductState extends State<Product> {
                         color: LightColor.lightGrey.withAlpha(100),
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                     child: TextField(
+                      controller: _controller,
                       onChanged: (string) {
                         setState(() {
                           duplicate_product_list = original_product_list
@@ -273,7 +294,18 @@ class _ProductState extends State<Product> {
                           contentPadding: EdgeInsets.only(
                               left: 10, right: 10, bottom: 0, top: 5),
                           prefixIcon:
-                              Icon(Icons.search, color: Colors.black54)),
+                              Icon(Icons.search, color: Colors.black54),
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.clear),
+                            onPressed: (){
+                              setState(() {
+                                duplicate_product_list=original_product_list;
+                                _controller.clear();
+                              });
+                            },
+                          )
+
+                      ),
                     ),
                   ),
                 ),
@@ -305,8 +337,9 @@ class _ProductState extends State<Product> {
                             );
                           },
                           child: Container(
-                            margin:
-                                EdgeInsets.only(left: 10, right: 10, bottom: 5),
+                            margin: EdgeInsets.only(left: 6, right: 6, bottom: 5),
+                            width: MediaQuery.of(context).size.width,
+                            height:130,
 //                      width: 330,
                             child: Card(
                               shape: RoundedRectangleBorder(
@@ -316,8 +349,8 @@ class _ProductState extends State<Product> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   Container(
-                                    width: 130.0,
-                                    height: 120.0,
+                                    width: MediaQuery.of(context).size.width/3,
+                                    height: MediaQuery.of(context).size.height,
                                     decoration: BoxDecoration(
                                       color: Colors.red,
                                       image: DecorationImage(
@@ -334,15 +367,15 @@ class _ProductState extends State<Product> {
                                     padding: EdgeInsets.only(left: 11),
                                     child: Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                          MainAxisAlignment.spaceAround,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
                                           duplicate_product_list[index]["name"],
                                           style: TextStyle(
-                                            fontSize: 15.0,
-                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w400,
                                             letterSpacing: 0.8,
                                           ),
                                           overflow: TextOverflow.ellipsis,
@@ -351,11 +384,31 @@ class _ProductState extends State<Product> {
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(top: 3.0),
-                                          child: Text(
-                                            'Rs'+duplicate_product_list[index]["product_variable"][selectedVariableIndex[index]]["variable_original_price"].toString(),
-                                            style: TextStyle(
-                                                fontSize: 15.0,
-                                                fontWeight: FontWeight.w600),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Text(
+                                                getSum(double.parse(duplicate_product_list[index]["product_variable"][selectedVariableIndex[index]]["variable_original_price"]),
+                                                 double.parse(duplicate_product_list[index]["product_variable"][selectedVariableIndex[index]]["variable_selling_price"].toString())),
+                                                style: TextStyle(
+                                                    fontSize: 15.0,
+                                                    fontWeight: FontWeight.w600,
+                                                    letterSpacing: 0.6,
+                                                  decoration: TextDecoration.lineThrough,
+                                                  color: Colors.grey
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 3),
+                                                child: Text(
+                                                  'Rs.'+duplicate_product_list[index]["product_variable"][selectedVariableIndex[index]]["variable_selling_price"].toString(),
+                                                  style: TextStyle(
+                                                      fontSize: 18.0,
+                                                      fontWeight: FontWeight.w600,
+                                                      letterSpacing: 0.6
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         Row(
@@ -456,16 +509,16 @@ class _ProductState extends State<Product> {
 //                                                      DatabaseHelper.varId :vid,
 //                                                      DatabaseHelper.vName :vname,
 //                                                    });
-                                                    final snackBar = SnackBar(
-                                                      content: Text('Yay! Item added to the cart.'),
-                                                      action: SnackBarAction(
-                                                        label: 'Undo',
-                                                        textColor: Colors.white,
-                                                        onPressed: (){},
-                                                      ),
-                                                      backgroundColor: Colors.green,
-                                                    );
-                                                    Scaffold.of(context).showSnackBar(snackBar);
+//                                                    final snackBar = SnackBar(
+//                                                      content: Text('Yay! Item added to the cart.'),
+//                                                      action: SnackBarAction(
+//                                                        label: 'Undo',
+//                                                        textColor: Colors.white,
+//                                                        onPressed: (){},
+//                                                      ),
+//                                                      backgroundColor: Colors.green,
+//                                                    );
+//                                                    Scaffold.of(context).showSnackBar(snackBar);
 //                                                    print('inserted id is $i1');
                                                 },
                                                 shape: RoundedRectangleBorder(
@@ -515,7 +568,15 @@ class _ProductState extends State<Product> {
     return a;
   }
 
- }
+  String getSum(aprice, sprice) {
+    if(aprice==sprice){
+      print('equal price now dont display it');
+      return '';
+    }
+    return 'Rs.'+aprice.toString();
+  }
+}
+
 
 
 class Region {

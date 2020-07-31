@@ -1,24 +1,17 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timepass/pages/GoogleMapPage.dart';
-import 'package:timepass/pages/HomeScreen.dart';
-import 'package:timepass/pages/RegisterPage.dart';
-import 'package:timepass/pages/ShoppingCart.dart';
+import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/sqlite/db_helper.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:provider/provider.dart';
-import 'package:geocoder/geocoder.dart';
-import 'package:timepass/widgets/custom_list_tile.dart';
+
 import 'package:http/http.dart' as http;
 
 
 class CheckOutPage extends StatefulWidget {
   final String currentAddress;
-
-  const CheckOutPage({Key key, this.currentAddress}) : super(key: key);
+  final list_of_addresses;
+  const CheckOutPage({Key key, this.currentAddress, this.list_of_addresses}) : super(key: key);
   @override
   _CheckOutPageState createState() => _CheckOutPageState();
 }
@@ -45,53 +38,27 @@ class _CheckOutPageState extends State<CheckOutPage> {
   bool turnOnLocation = false;
   String getCurrentAddress='Pruthvi House,Plot no.3,Chankya Nagar,Ambad ITI Link Road,Nashik';
   int sum = 0;
-   List<String> list_of_addresses = <String>[
-    ' 1st Flr, 190, Haroon Bldg, Shamaldas Gandhim Marg, Princess Street, Mumbai-400002,Maharashtra',
-    'Unit No B/6, Grd Floor, Sussex Indl Est, Dadoji Kondeo Cross Marg, Bangalore-560053,Maharashtra',
-    'Sadani Dhabi, Narol Vatva Road, Nr Sonia Hospital, Vatva,Ahmedabad-382445,Gujarat',
-    'Pruthvi House,Plot no.3,Chankya Nagar,Ambad ITI Link Road,Nashik',
-  ];
+
 
   @override
   void initState() {
     super.initState();
+
+//    getMobileNo();
   }
 
-  void _getCurrentLocation() async {
-    final position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print(position);
-    var lat;
-    var long;
-    lat = position.latitude;
-    long = position.longitude;
-    final coordinates = new Coordinates(
-        position.latitude, position.longitude);
-    var addresses = await Geocoder.local.findAddressesFromCoordinates(
-        coordinates);
-    List<Placemark> placemark =
-        await Geolocator().placemarkFromCoordinates(lat, long);
-    Placemark place = placemark[0];
-
-    var first = addresses.first;
-    print(' ${first.locality}, ${first.adminArea},${first.subLocality}, '
-        '${first.subAdminArea},${first.addressLine}, ${first.featureName},'
-        '${first.thoroughfare}');
-
-    _currentAddress ='${first.locality}, ${first.adminArea},${first.subLocality}, '
-    '${first.subAdminArea},${first.addressLine}, ${first.featureName},'
-    '${first.thoroughfare}, ${first.subThoroughfare}';
-
-    setState(() {
-      _locationMessage = "${position.latitude}, ${position.longitude}";
-//      _currentAddress =
-//          "${place.locality}, ${place.postalCode}, ${place.country}";
-    });
-  }
-//
-//  ${place.locality}, ${place.adminArea},${place.subLocality},
-//${place.subAdminArea},${place.addressLine}, ${place.featureName},
-//${place.thoroughfare}, ${place.subThoroughfare}
+//  getMobileNo()async{
+//    SharedPreferences prefs = await SharedPreferences.getInstance();
+//    int mobile_no=prefs.getInt('customerMobileNo');
+//    print('mobile no in checkout page is:'+mobile_no.toString());
+//    Service.getAddress(mobile_no).then((value){
+//      if(value["success"]&& value["data"].length!=0){
+//        list_of_addresses=value["data"];
+//        setState(() {
+//          _loading=false;
+//        });
+//      }
+//    });
 
   Widget getAddresses() {
     return Container(
@@ -99,12 +66,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
       width: 300.0, // Change as per your requirement
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: list_of_addresses.length,
+        itemCount: widget.list_of_addresses.length,
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: (){
               setState(() {
-                getCurrentAddress= list_of_addresses[index];
+                getCurrentAddress= widget.list_of_addresses[index];
                 _currentAddress="";
                 Navigator.of(context).pop();
               });
@@ -112,7 +79,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
             child: Column(
               children: <Widget>[
                 ListTile(
-                  title: Text(list_of_addresses[index]),
+                  title: Text(widget.list_of_addresses[index]["address_line_1"].toString()+","+widget.list_of_addresses[index]["address_line_2"].toString()),
                 ),
                 Divider(
                   height: 25,
@@ -125,7 +92,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
       ),
     );
   }
-
+  bool _loading =true;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -151,7 +118,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ShoppingCart()));
+                                builder: (context) => ShoppingCartCopy()));
                       }
                     ),
                     Text(
@@ -224,8 +191,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                             ),
                             Flexible(
                               child: Text(
-                                  _currentAddress.length==0?
-                                  getCurrentAddress : _currentAddress
+//                                _loading? Center(child: CircularProgressIndicator(),):
+                                  widget.list_of_addresses[widget.list_of_addresses.length-1]["address_line_1"].toString()+","+widget.list_of_addresses[widget.list_of_addresses.length-1]["address_line_2"].toString(),
 //                              maxLines: 5,
 //                              overflow:TextOverflow.ellipsis,
                               ),

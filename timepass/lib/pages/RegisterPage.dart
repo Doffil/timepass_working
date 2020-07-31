@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timepass/pages/Categories.dart';
 import 'package:timepass/pages/GoogleMapPage.dart';
 import 'package:timepass/pages/HomeDemo.dart';
 import 'package:timepass/services/Service.dart';
@@ -51,17 +52,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 print("values assigned using shared preferences");
 
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                    GoogleMapPage(customerName:name.text,customerEmailId:email.text,
-                    customerMobileNo:widget.customerMobile,customerId:check["data"]["customerDetails"]["id"])));
+                    Categories()));
 
-//                Navigator.push(
-//                    context,
-//                    MaterialPageRoute(
-//                        builder: (context) =>
-//                            HomeDemo(customerName:name.text,
-//                              customerMobile:widget.customerMobile,
-//                            customerEmailId:email.text,
-//                              customerId: check["data"]["customerDetails"]["id"],)));
               }else{
                 print('no user register');
               }
@@ -176,7 +168,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       primaryColorDark: Color(0xFF4E35EA),
                     ),
                     child: TextFormField(
-//                      enabled: false,
+                      enabled: false,
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 10),

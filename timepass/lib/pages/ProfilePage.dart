@@ -1,16 +1,15 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timepass/main.dart';
 import 'package:timepass/pages/Categories.dart';
-import 'package:timepass/pages/ShoppingCart.dart';
-import 'package:timepass/stores/login_store.dart';
+import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/widgets/custom_list_tile.dart';
-import 'package:timepass/widgets/small_button.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -106,7 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ShoppingCart()));
+                              builder: (context) => ShoppingCartCopy()));
                     },
                   ),
                   ListTile(
@@ -369,10 +368,21 @@ class _ProfilePageState extends State<ProfilePage> {
                                 height: 25.0,
                                 color: Colors.grey,
                               ),
-                               Text('Sign Out',
-                                  style: TextStyle(
-                                      fontSize: 18.0)
-                                  ,),
+                               InkWell(
+                                 onTap: ()async{
+                                   SharedPreferences prefs = await SharedPreferences.getInstance();
+                                   FirebaseAuth.instance.signOut();
+                                   prefs.setString('customerName', null);
+                                   prefs.setString('customerEmailId', null);
+                                   prefs.setString('customerId', null);
+                                   prefs.setBool("isLoggedIn", false);
+                                   Navigator.push(context, MaterialPageRoute(builder: (context)=>MyApp()));
+                                 },
+                                 child: Text('Sign Out',
+                                    style: TextStyle(
+                                        fontSize: 18.0)
+                                    ,),
+                               ),
                               // SizedBox(height: 10.0,),
 
                             ],

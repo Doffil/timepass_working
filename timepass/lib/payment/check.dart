@@ -89,7 +89,6 @@ class _CheckRazorState extends State<CheckRazor> {
       'name': 'ShreeKakaJiMasale',
       'order_id':razorpay_order_id,
       'currency': "INR",
-      'theme.color': "#F37254",
       'buttontext': "Pay with Razorpay",
       'description': '',
       'prefill': {

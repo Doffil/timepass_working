@@ -130,70 +130,89 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.all(32),
-            child: Form(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text("Login", style: TextStyle(color: Colors.lightBlue, fontSize: 36, fontWeight: FontWeight.w500),),
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: Scaffold(
+          body: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(32),
+              child: Form(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+//                  Text("Login", style: TextStyle(color: Colors.lightBlue, fontSize: 36, fontWeight: FontWeight.w500),),
 
-                  SizedBox(height: 16,),
-
-                  TextFormField(
-                    decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            borderSide: BorderSide(color: Colors.grey[200])
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            borderSide: BorderSide(color: Colors.grey[300])
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[100],
-                        hintText: "Mobile Number"
-
+                    SizedBox(height: 18,),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height/3,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage('assets/images/loginfinal.png')
+                          )
+                      ),
                     ),
-                    controller: _phoneController,
-                    validator: (value) {
-                      String patttern = '^[6-9]{1}[0-9]{9}';
-                      RegExp regExp = new RegExp(patttern);
-                      if(!regExp.hasMatch(value)){
-                        return 'Please enter valid mobile number';
-                      }else if(value.length==0){
-                        return 'Please enter mobile Number';
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.number,
-                  ),
+                    SizedBox(
+                      height: 18,
+                    ),
 
-                  SizedBox(height: 16,),
+                    TextFormField(
+                      decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                              borderSide: BorderSide(color: Colors.grey[200])
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                              borderSide: BorderSide(color: Colors.grey[300])
+                          ),
+                          filled: true,
+                          prefixIcon: Icon(Icons.call),
+                          fillColor: Colors.grey[100],
+                          hintText: "Enter Mobile Number",
+                        labelText: 'Mobile No.'
 
-
-                  Container(
-                    width: double.infinity,
-                    child: FlatButton(
-                      child: Text("LOGIN"),
-                      textColor: Colors.white,
-                      padding: EdgeInsets.all(16),
-                      onPressed: () {
-                        final phone = _phoneController.text.trim();
-                        final mobile = "+91"+phone.toString();
-                        checkUser(mobile,context,int.parse(phone));
+                      ),
+                      controller: _phoneController,
+                      validator: (value) {
+                        String patttern = '^[6-9]{1}[0-9]{9}';
+                        RegExp regExp = new RegExp(patttern);
+                        if(!regExp.hasMatch(value)){
+                          return 'Please enter valid mobile number';
+                        }else if(value.length==0){
+                          return 'Please enter mobile Number';
+                        }
+                        return null;
                       },
-                      color: Colors.blue,
+                      keyboardType: TextInputType.number,
                     ),
-                  )
-                ],
+
+                    SizedBox(height: 18,),
+
+
+                    Container(
+                      width: double.infinity,
+                      child: FlatButton(
+                        child: Text("LOGIN"),
+                        textColor: Colors.white,
+                        padding: EdgeInsets.all(16),
+                        onPressed: () {
+                          final phone = _phoneController.text.trim();
+                          final mobile = "+91"+phone.toString();
+                          checkUser(mobile,context,int.parse(phone));
+                        },
+                        color: Colors.blue,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-        )
+          )
+      ),
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/pages/CheckOutPage.dart';
 import 'package:timepass/pages/HomeDemo.dart';
+import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/services/Service.dart';
 //import 'package:location/location.dart';
 
@@ -26,7 +27,6 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
   final myController = TextEditingController();
 
   Marker marker;
-  String _locationMessage = "";
   String _currentAddress = "";
   bool turnOnNotification = false;
   bool turnOnLocation = false;
@@ -70,9 +70,7 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
         '${first.postalCode}, ${first.adminArea}';
 
     setState(() {
-      _locationMessage = "${position.latitude}, ${position.longitude}";
-//      _currentAddress =
-//          "${place.locality}, ${place.postalCode}, ${place.country}";
+      var _locationMessage = "${position.latitude}, ${position.longitude}";
     });
   }
 
@@ -86,230 +84,239 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
 List list_of_addresses=new List();
   final _formKey = GlobalKey<FormState>();
   LocationResult _pickedLocation;
+
+  Future<bool> _onBackPressed() {
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCartCopy()));
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(new FocusNode());
-      },
-      child: Scaffold(
-        body: first == null
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : ListView(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Container(
-                        height: MediaQuery.of(context).size.height / 2.8,
-                        width: MediaQuery.of(context).size.width,
-                        child: GoogleMap(
-                            initialCameraPosition: CameraPosition(
-                              target: LatLng(lat, long),
-                              zoom: 15,
-                            ),
-                            markers: Set.from(allMarkers),
-                            onTap: _handleTap,
-                            scrollGesturesEnabled: true,
-                            zoomGesturesEnabled: true,
-                            myLocationEnabled: true,
-                            zoomControlsEnabled: true,
-                            myLocationButtonEnabled: true,
-                            gestureRecognizers:
-                                <Factory<OneSequenceGestureRecognizer>>[
-                              new Factory<OneSequenceGestureRecognizer>(
-                                () => new EagerGestureRecognizer(),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: Scaffold(
+          body: first == null
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : ListView(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Container(
+                          height: MediaQuery.of(context).size.height / 2.8,
+                          width: MediaQuery.of(context).size.width,
+                          child: GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(lat, long),
+                                zoom: 15,
                               ),
-                            ].toSet()),
-                      ),
-                      Card(
-                        elevation: 2.0,
-                        margin: EdgeInsets.all(9),
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'Address Details',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16),
-                                    ),
-                                  ],
+                              markers: Set.from(allMarkers),
+                              onTap: _handleTap,
+                              scrollGesturesEnabled: true,
+                              zoomGesturesEnabled: true,
+                              myLocationEnabled: true,
+                              zoomControlsEnabled: true,
+                              myLocationButtonEnabled: true,
+                              gestureRecognizers:
+                                  <Factory<OneSequenceGestureRecognizer>>[
+                                new Factory<OneSequenceGestureRecognizer>(
+                                  () => new EagerGestureRecognizer(),
                                 ),
-                                Divider(
-                                  height: 25,
-                                  color: Colors.grey,
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'Address Line 1: ',
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    Flexible(
-                                      child: TextFormField(
-                                        controller: myController,
-                                        validator: (value) {
-                                          if (value.length < 10) {
-                                            return 'Please enter valid address!!!';
-                                          }
-                                          return null;
-                                        },
-                                        decoration: InputDecoration(
-                                          hintText:
-                                              'Enter Flat no./Building Name/city/country etc.',
-                                          fillColor: Colors.blue,
-                                          border: InputBorder.none,
-                                        errorText: validateAddress(myController.text),
-                                        ),
-                                        keyboardType: TextInputType.text,
-                                        style: TextStyle(fontSize: 14),
+                              ].toSet()),
+                        ),
+                        Card(
+                          elevation: 2.0,
+                          margin: EdgeInsets.all(9),
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        'Address Details',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  height: 25,
-                                  color: Colors.grey,
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'Street Name: ',
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Flexible(
-                                      child: Text(first.addressLine
+                                    ],
+                                  ),
+                                  Divider(
+                                    height: 25,
+                                    color: Colors.grey,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        'Address Line 1: ',
+                                        style:
+                                            TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      Flexible(
+                                        child: TextFormField(
+                                          controller: myController,
+                                          validator: (value) {
+                                            if (value.length < 10) {
+                                              return 'Please enter valid address!!!';
+                                            }
+                                            return null;
+                                          },
+                                          decoration: InputDecoration(
+                                            hintText:
+                                                'Enter Flat no./Building Name/city/country etc.',
+                                            fillColor: Colors.blue,
+                                            border: InputBorder.none,
+                                          errorText: validateAddress(myController.text),
+                                          ),
+                                          keyboardType: TextInputType.text,
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(
+                                    height: 25,
+                                    color: Colors.grey,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        'Street Name: ',
+                                        style:
+                                            TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Flexible(
+                                        child: Text(first.addressLine
 //                              maxLines: 5,
 //                              overflow:TextOverflow.ellipsis,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  height: 25,
-                                  color: Colors.grey,
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'Pincode: ',
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                          first.postalCode.length>0?first.postalCode:""
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(
+                                    height: 25,
+                                    color: Colors.grey,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        'Pincode: ',
+                                        style:
+                                            TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Flexible(
+                                        child: Text(
+                                            first.postalCode.length>0?first.postalCode:""
 //                              maxLines: 5,
 //                              overflow:TextOverflow.ellipsis,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  height: 25,
-                                  color: Colors.grey,
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'City: ',
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                          first?.locality?.length>0?first.locality:" "
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(
+                                    height: 25,
+                                    color: Colors.grey,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        'City: ',
+                                        style:
+                                            TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Flexible(
+                                        child: Text(
+                                            first?.locality?.length>0?first.locality:" "
 //                              maxLines: 5,
 //                              overflow:TextOverflow.ellipsis,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  height: 25,
-                                  color: Colors.grey,
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'State: ',
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Flexible(
-                                      child: Text(first.adminArea
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(
+                                    height: 25,
+                                    color: Colors.grey,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        'State: ',
+                                        style:
+                                            TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Flexible(
+                                        child: Text(first.adminArea
 //                              maxLines: 5,
 //                              overflow:TextOverflow.ellipsis,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  height: 25,
-                                  color: Colors.grey,
-                                ),
-                              ],
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(
+                                    height: 25,
+                                    color: Colors.grey,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-        bottomNavigationBar: Container(
-          height: 54,
-          child: RaisedButton(
-            onPressed: () async {
-              if (_formKey.currentState.validate()) {
-                print(_currentAddress);
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setString('customerAddress', _currentAddress);
-                int mobile_no=prefs.getInt('customerMobileNo');
-                print('mobile_no in googlemap page is:'+mobile_no.toString());
+                      ],
+                    ),
+                  ],
+                ),
+          bottomNavigationBar: Container(
+            height: 54,
+            child: RaisedButton(
+              onPressed: () async {
+                if (_formKey.currentState.validate()) {
+                  print(_currentAddress);
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  prefs.setString('customerAddress', _currentAddress);
+                  int mobile_no=prefs.getInt('customerMobileNo');
+                  print('mobile_no in googlemap page is:'+mobile_no.toString());
 
-                print('lat is :');
-                print(lat);
+                  print('lat is :');
+                  print(lat);
 
-                Service.registerAddress(mobile_no,myController.text,
-                    first.addressLine,first.postalCode,lat,long).then((value){
-                      if(value["success"] && value["data"].length!=0){
-                        print(value["data"][0]["customer_id"].toString());
-                        Navigator.push(context, MaterialPageRoute(builder:
-                            (context)=>CheckOutPage(list_of_addresses: value["data"])));
-                      }else{
-                        print('something went wrong');
-                      }
-                });
+                  Service.registerAddress(mobile_no,myController.text,
+                      first.addressLine,first.postalCode,lat,long).then((value){
+                        if(value["success"] && value["data"].length!=0){
+                          print(value["data"][0]["customer_id"].toString());
+                          Navigator.push(context, MaterialPageRoute(builder:
+                              (context)=>CheckOutPage(list_of_addresses: value["data"])));
+                        }else{
+                          print('something went wrong');
+                        }
+                  });
 
-              }
-            },
-            color: Colors.blue,
-            textColor: Colors.white,
-            child: Text('ADD ADDRESS'),
+                }
+              },
+              color: Colors.blue,
+              textColor: Colors.white,
+              child: Text('ADD ADDRESS'),
+            ),
           ),
         ),
       ),

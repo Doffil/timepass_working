@@ -10,6 +10,7 @@ import 'package:timepass/pages/CheckOutPage.dart';
 import 'package:timepass/pages/Categories.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:timepass/pages/GoogleMapPage.dart';
+import 'package:timepass/pages/Product.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/services/Service.dart';
 import 'package:timepass/sqlite/db_helper.dart';
@@ -36,6 +37,10 @@ class _ShoppingCartCopyState extends State<ShoppingCartCopy> {
         child: Text('No items in cart'),
       ),
     );
+  }
+
+  Future<bool> _onBackPressed() {
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>Product()));
   }
 
   @override

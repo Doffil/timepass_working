@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart'as http;
 
 class urls{
-  static const String base_url = "http://192.168.43.50:8000/api/v1";
+  static const String base_url = "http://192.168.43.96:8000/api/v1";
   static int save_mobile_no;
 }
 

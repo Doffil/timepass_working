@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/pages/paymentFailed.dart';
 import 'package:timepass/pages/paymentSuccess.dart';
-
-
+import 'package:timepass/services/Service.dart';
 import 'razorpay_flutter.dart';
 
-class CheckRazor extends StatefulWidget {
-  final razorpay_id;
 
-  const CheckRazor({Key key, this.razorpay_id}) : super(key: key);
+class CheckRazor extends StatefulWidget {
+  final razorpay_id,amount,order_id;
+
+  const CheckRazor({Key key, this.razorpay_id,this.amount,this.order_id}) : super(key: key);
   @override
   _CheckRazorState createState() => _CheckRazorState();
 }
@@ -34,15 +34,30 @@ class _CheckRazorState extends State<CheckRazor> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     print("payment has succedded");
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (BuildContext context) => SuccessPage(
-              response: response,
+
+    Service.checkPaymentStatus(int.parse(widget.order_id), response.orderId).then((value){
+      if(value["success"]){
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => SuccessPage(
+                response: response,amount:widget.amount,order_id:widget.order_id
             ),
-      ),
-      (Route<dynamic> route) => false,
-    );
+          ),
+              (Route<dynamic> route) => false,
+        );
+      }else{
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => FailedPage(
+                response: response,razorpay_id:widget.razorpay_id
+            ),
+          ),
+              (Route<dynamic> route) => false,
+        );
+      }
+    });
     _razorpay.clear();
     // Do something when payment succeeds
   }
@@ -54,7 +69,7 @@ class _CheckRazorState extends State<CheckRazor> {
       context,
       MaterialPageRoute(
         builder: (BuildContext context) => FailedPage(
-              response: response,
+              response: response,razorpay_id:widget.razorpay_id
             ),
       ),
       (Route<dynamic> route) => false,
@@ -85,7 +100,7 @@ class _CheckRazorState extends State<CheckRazor> {
     options = {
       'key': "rzp_test_xIfd2l0ht4arnh", // Enter the Key ID generated from the Dashboard
 
-      'amount': 100, //in the smallest currency sub-unit.
+      'amount': widget.amount*100, //in the smallest currency sub-unit.
       'name': 'ShreeKakaJiMasale',
       'order_id':razorpay_order_id,
       'currency': "INR",

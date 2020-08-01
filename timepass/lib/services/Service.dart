@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart'as http;
 
 class urls{
-  static const String base_url = "http://192.168.43.41:8000/api/v1";
+  static const String base_url = "http://192.168.43.152:8000/api/v1";
   static int save_mobile_no;
 }
 
@@ -168,6 +168,28 @@ class Service{
     }
   }
 
+
+  static Future checkPaymentStatus(int order_id,String razorpay_id) async{
+    var body=jsonEncode({
+      'order_id': order_id,
+      'razorpay_order_id': razorpay_id,
+    });
+//    print(body);
+    final http.Response response = await http.post(
+      urls.base_url+'/customer/checkPaymentStatus',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body:body,
+    );
+    if (response.statusCode == 200) {
+//      final Welcome standards = welcomeFromJson(response.body);
+      print(response.body);
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load response of standards');
+    }
+  }
 
 
 }

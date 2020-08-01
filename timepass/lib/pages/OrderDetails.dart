@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/main.dart';
+import 'package:timepass/pages/OrderFurtherDetails.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/services/Service.dart';
@@ -174,29 +175,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                             ),
                           ],
                         ),
-                        Container(
-                          margin: EdgeInsets.only(right: 8),
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.blue),
-                          child: Stack(
-                            children: <Widget>[
-                              IconButton(
-//                    icon: Icon(Icons.menu,size: 30,),
-                                icon: FaIcon(FontAwesomeIcons.shoppingBag,
-                                    size: 20),
-                                color: Colors.white,
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      PageTransition(
-                                          type: PageTransitionType.rightToLeft,
-                                          duration: Duration(milliseconds: 500),
-                                          child: ShoppingCartCopy()));
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
                       ])),
               Expanded(
               child: MediaQuery.removePadding(
@@ -205,22 +183,22 @@ class _OrderDetailsState extends State<OrderDetails> {
                 child: FutureBuilder(
                   future: Service.getOrders(mobile_no),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.data["success"] == false) {
-                      return Container(
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.only(left: 30, right: 30),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              snapshot.data["msg"].toString(),
-                              style: TextStyle(fontSize: 20,fontWeight: FontWeight.w200),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+//                    if (snapshot.connectionState == ConnectionState.done && snapshot?.data?.length==0&&
+//                        snapshot.data["success"] == false) {
+//                      return Container(
+//                        alignment: Alignment.center,
+//                        margin: EdgeInsets.only(left: 30, right: 30),
+//                        child: Column(
+//                          mainAxisAlignment: MainAxisAlignment.center,
+//                          children: <Widget>[
+//                            Text(
+//                              snapshot.data["msg"].toString(),
+//                              style: TextStyle(fontSize: 20,fontWeight: FontWeight.w200),
+//                            ),
+//                          ],
+//                        ),
+//                      );
+//                    }
                     if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.hasData &&
                         snapshot.data["success"] == true) {
@@ -228,74 +206,74 @@ class _OrderDetailsState extends State<OrderDetails> {
                       print(orderDetails);
                       return ListView.builder(
                         itemBuilder: (context, index) {
-                          return Card(
-                            elevation: 4,
-                            color: Colors.white,
-                            margin: EdgeInsets.only(left: 9,right: 9,bottom: 7,top: 5),
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              width: MediaQuery.of(context).size.width,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Row(
+                          return GestureDetector(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder:
+                                  (context)=>OrderFurtherDetails(details:orderDetails[index])));
+                            },
+                            child: Card(
+                              elevation: 4,
+                              color: Colors.white,
+                              margin: EdgeInsets.only(left: 9,right: 9,bottom: 7,top: 5),
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                width: MediaQuery.of(context).size.width,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                            'Order No.',
+                                            style: GoogleFonts.inter(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 14,
+                                                fontStyle: FontStyle.normal,
+                                                color: Colors.black),
+                                          ),
+                                          Text(
+                                            'Order Creation Date',
+                                            style: GoogleFonts.inter(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 14,
+                                                fontStyle: FontStyle.normal,
+                                                color: Colors.grey),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
-                                        Text(
-                                          'Order No.',
-                                          style: GoogleFonts.inter(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 14,
-                                              fontStyle: FontStyle.normal,
-                                              color: Colors.black),
+                                        Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: Text(
+                                            orderDetails[index]["Invoice_No"],
+                                            style: TextStyle(color: Colors.blue),
+                                          ),
                                         ),
                                         Text(
-                                          'Order Creation Date',
-                                          style: GoogleFonts.inter(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 14,
-                                              fontStyle: FontStyle.normal,
-                                              color: Colors.grey),
-                                        ),
+                                          orderDetails[index]["created_at"],
+                                          style: TextStyle(color: Colors.grey),
+                                        )
                                       ],
                                     ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.all(5.0),
-                                        child: Text(
-                                          orderDetails[index]["Invoice_No"],
-                                          style: TextStyle(color: Colors.blue),
-                                        ),
-                                      ),
-                                      Text(
-                                        orderDetails[index]["created_at"],
-                                        style: TextStyle(color: Colors.grey),
-                                      )
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(5),
-                                    child: Text(orderDetails[index]["order_status"]["status_name"],
-                                        style: TextStyle(color: Colors.orange)),
-                                  ),
-                                ],
+                                    Padding(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Text(orderDetails[index]["order_status"]["status_name"],
+                                          style: TextStyle(color: Colors.orange)),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           );
                         },
-//                      separatorBuilder: (context, index) {
-//                        return Divider(
-//                          height: 2,
-//                          color: Colors.black,
-//                        );
-//                      },
                         itemCount: orderDetails?.length ?? 0,
                       );
                     }

@@ -73,6 +73,8 @@ class _LoginScreenState extends State<LoginScreen> {
             AuthResult result = await _auth.signInWithCredential(credential);
             print('verify phone number:'+mobile.toString());
             FirebaseUser user = result.user;
+            print('user in main function is :'+user.toString());
+
             if(user!=null){
               Navigator.push(context, MaterialPageRoute(builder: (context)=>RegisterPage(customerMobile:mobile)));
             }else{
@@ -99,6 +101,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     actions: <Widget>[
                       FlatButton(
+                        child: Text("Resend"),
+                        textColor: Colors.white,
+                        color: Colors.blue,
+                        onPressed: () async{
+                        },
+                      ),
+                      FlatButton(
                         child: Text("Confirm"),
                         textColor: Colors.white,
                         color: Colors.blue,
@@ -109,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           AuthResult result = await _auth.signInWithCredential(credential);
 
                           FirebaseUser user = result.user;
-
+                          print('user in dialog box is :'+user.toString());
                           if(user != null) {
                             Navigator.push(context, MaterialPageRoute(
                                 builder: (context) =>

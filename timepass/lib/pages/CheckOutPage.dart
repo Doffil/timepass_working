@@ -34,7 +34,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
   List queryRows=[];
   int mobile_no;
   var razorpay_id;
-
+  var order_id;
   @override
   void initState() {
     print('loaded');
@@ -477,22 +477,31 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   Service.placeOrder(queryRows, get_address_id,mobile_no,promocode).then((value){
                     if(value["success"]==true){
                       razorpay_id=value["data"]["razorpay_order_id"];
+                      order_id=value["data"]["order_id"];
+                      print('order id in checkout is '+order_id.toString());
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => CheckRazor(razorpay_id: razorpay_id,amount:rateData["total"],order_id:order_id),
+                        ),
+                            (Route<dynamic> route) => false,
+                      );
                     }
                   });
                 }else{
                   Service.placeOrder(queryRows, get_address_id,mobile_no).then((value){
                     if(value["success"]==true){
                       razorpay_id=value["data"]["razorpay_order_id"];
-
+                      order_id=value["data"]["order_id"].toString();
+                      print('order id in checkout is '+order_id.toString());
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => CheckRazor(razorpay_id: razorpay_id,amount:rateData["total"],order_id:order_id),
+                        ),
+                            (Route<dynamic> route) => false,
+                      );
                     }
                   });
                 }
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) => CheckRazor(razorpay_id: razorpay_id,),
-                  ),
-                      (Route<dynamic> route) => false,
-                );
 //              Navigator.push(context, MaterialPageRoute(builder: (context)=>RazorpayHome(razorpay_id:razorpay_id)));
               },
 

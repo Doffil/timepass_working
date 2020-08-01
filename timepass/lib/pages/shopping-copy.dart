@@ -10,6 +10,7 @@ import 'package:timepass/pages/CheckOutPage.dart';
 import 'package:timepass/pages/Categories.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:timepass/pages/GoogleMapPage.dart';
+import 'package:timepass/pages/OrderDetails.dart';
 import 'package:timepass/pages/Product.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/services/Service.dart';
@@ -37,10 +38,6 @@ class _ShoppingCartCopyState extends State<ShoppingCartCopy> {
         child: Text('No items in cart'),
       ),
     );
-  }
-
-  Future<bool> _onBackPressed() {
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>Product()));
   }
 
   @override
@@ -71,8 +68,10 @@ class _ShoppingCartCopyState extends State<ShoppingCartCopy> {
                 leading: Icon(Icons.home),
                 title: Text('Home'),
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Categories()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Categories()));
                 },
               ),
               ListTile(
@@ -90,12 +89,24 @@ class _ShoppingCartCopyState extends State<ShoppingCartCopy> {
                           child: ShoppingCartCopy()));
                 },
               ),
+
+              ListTile(
+                leading: Icon(Icons.language),
+                title: Text('Orders'),
+                onTap: () {
+                  //yet to implement
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => OrderDetails()));
+                },
+              ),
               ListTile(
                 leading: FaIcon(FontAwesomeIcons.userCircle),
-                title: Text('Profile'),
+                title: Text('Support'),
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfilePage()));
                 },
               ),
               ListTile(
@@ -103,6 +114,16 @@ class _ShoppingCartCopyState extends State<ShoppingCartCopy> {
                 title: Text('Language'),
                 onTap: () {
                   //yet to implement
+                },
+              ),
+              ListTile(
+                leading: FaIcon(FontAwesomeIcons.userCircle),
+                title: Text('Profile'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfilePage()));
                 },
               ),
               ListTile(
@@ -117,9 +138,7 @@ class _ShoppingCartCopyState extends State<ShoppingCartCopy> {
                   prefs.setString('customerEmailId', null);
                   prefs.setString('customerId', null);
                   prefs.setBool("isLoggedIn", false);
-
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>MyApp()));
-                },
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>MyApp()));                        },
               ),
             ],
           ),
@@ -404,21 +423,22 @@ class _ShoppingCartCopyState extends State<ShoppingCartCopy> {
                                         Row(
                                           mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
-//                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 5),
-                                              child: Text(
-                                                snapshot
-                                                    .data[index]["productName"] +
-                                                    ' (' +
-                                                    snapshot
-                                                        .data[index]["productVName"] +
-                                                    ')',
-                                                style: TextStyle(
-                                                  fontSize: 15.0,
-                                                  fontWeight: FontWeight.w400,
-                                                  letterSpacing: 0.8,
+                                            Flexible(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 5),
+                                                child: Text(
+                                                  snapshot
+                                                      .data[index]["productName"] +
+                                                      ' (' +
+                                                      snapshot
+                                                          .data[index]["productVName"] +
+                                                      ')',
+                                                  style: TextStyle(
+                                                    fontSize: 15.0,
+                                                    fontWeight: FontWeight.w400,
+                                                    letterSpacing: 0.8,
+                                                  ),
                                                 ),
                                               ),
                                             ),

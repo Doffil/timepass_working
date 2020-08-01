@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:timepass/pages/Categories.dart';
+import 'package:timepass/pages/shopping-copy.dart';
 
 
 class FailedPage extends StatefulWidget {
@@ -32,6 +33,8 @@ class _FailedPageState extends State<FailedPage> {
             child: Column(
               children: <Widget>[
                 Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height/3,
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           image: AssetImage('assets/images/cross.png')
@@ -51,7 +54,7 @@ class _FailedPageState extends State<FailedPage> {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 18,
                 ),
                 Container(
                   height: 30,
@@ -62,7 +65,9 @@ class _FailedPageState extends State<FailedPage> {
                             8.0)),
                     color: Colors.green,
                     textColor: Colors.white,
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCartCopy()));
+                    },
                     child: Text(
                       'Retry payment',
                       style:
@@ -71,7 +76,7 @@ class _FailedPageState extends State<FailedPage> {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 18,
                 ),
                 Container(
                   height: 30,

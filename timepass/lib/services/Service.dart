@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart'as http;
 
 class urls{
-  static const String base_url = "http://192.168.43.96:8000/api/v1";
+  static const String base_url = "http://192.168.43.41:8000/api/v1";
   static int save_mobile_no;
 }
 
@@ -155,6 +155,19 @@ class Service{
       throw Exception('Failed to load response of place orders');
     }
   }
+
+  static Future getOrders(int mobile) async{
+    print('mobile no. in service is'+mobile.toString());
+    final http.Response response = await http.get(
+      urls.base_url+'/customer/getAllOrders?mobile_no='+mobile.toString(),
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to get address from server');
+    }
+  }
+
 
 
 }

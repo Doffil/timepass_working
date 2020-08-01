@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/main.dart';
 import 'package:timepass/pages/Categories.dart';
+import 'package:timepass/pages/OrderDetails.dart';
 import 'package:timepass/pages/shopping-copy.dart';
+import 'package:timepass/sqlite/db_helper.dart';
 import 'package:timepass/widgets/custom_list_tile.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -109,13 +112,28 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () {
                         Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => ShoppingCartCopy()));
+                            PageTransition(
+
+                                type: PageTransitionType
+                                    .rightToLeft,
+                                duration:
+                                Duration(milliseconds: 500),
+                                child: ShoppingCartCopy()));
+                      },
+                    ),
+
+                    ListTile(
+                      leading: Icon(Icons.language),
+                      title: Text('Orders'),
+                      onTap: () {
+                        //yet to implement
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => OrderDetails()));
                       },
                     ),
                     ListTile(
                       leading: FaIcon(FontAwesomeIcons.userCircle),
-                      title: Text('Profile'),
+                      title: Text('Support'),
                       onTap: () {
                         Navigator.push(
                             context,
@@ -131,11 +149,28 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                     ),
                     ListTile(
+                      leading: FaIcon(FontAwesomeIcons.userCircle),
+                      title: Text('Profile'),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProfilePage()));
+                      },
+                    ),
+                    ListTile(
                       leading: FaIcon(FontAwesomeIcons.signOutAlt),
                       title: Text('Sign-Out'),
-                      onTap: () {
+                      onTap: ()async {
                         //add at the last
-                      },
+                        await DatabaseHelper.instance.deleteAll();
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        FirebaseAuth.instance.signOut();
+                        prefs.setString('customerName', null);
+                        prefs.setString('customerEmailId', null);
+                        prefs.setString('customerId', null);
+                        prefs.setBool("isLoggedIn", false);
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>MyApp()));                        },
                     ),
                   ],
                 ),
@@ -288,9 +323,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           padding: EdgeInsets.all(16.0),
                           child: Column(
                             children: <Widget>[
-                              CustomListTile(
-                                icon: Icons.check_circle,
-                                text: "View Orders",
+                              InkWell(
+                                child: CustomListTile(
+                                  icon: Icons.check_circle,
+                                  text: "View Orders",
+                                ),
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderDetails()));
+                                },
                               ),
                             ],
                           ),

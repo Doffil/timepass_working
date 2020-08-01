@@ -2,8 +2,7 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:timepass/Model.dart';
-import 'package:timepass/pages/Product.dart';
+import 'package:timepass/pages/Categories.dart';
 import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/sqlite/db_helper.dart';
 
@@ -36,17 +35,12 @@ class _DetailsPageState extends State<DetailsPage> {
   @override
   void initState() {
     super.initState();
-//    print(widget.details);
     productData = widget.details;
     dropDownDefaultValue = productData["product_variable"][0]["id"].toString();
-//    print(dropDownDefaultValue);
     for (int i = 0; i < productData["product_images"].length; i++) {
       imagesList.add(
           NetworkImage(productData["product_images"][i]["product_image_url"]));
     }
-    // added data to items list
-//    print('length is'+productData["product_variable"].length.toString());
-//    print(productData["product_variable"][0]["variable_selling_price"]);
 
     for (int i = 0; i < productData["product_variable"].length; i++) {
       detail_variable.add(items(
@@ -55,60 +49,55 @@ class _DetailsPageState extends State<DetailsPage> {
           double.parse(productData["product_variable"][i]
                   ["variable_selling_price"]
               .toString())));
-//      print("rohit ");
     }
-//    print('it is: '+ detail_variable[0].sprice.toString());
+    totalPrice =double.parse(productData["product_variable"][0]["variable_selling_price"].toString());
   }
 
   var current_index = 0;
-  Future<bool> _onBackPressed() {
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>Product()));
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
-        body: ListView(padding: EdgeInsets.zero, children: [
-          Container(
-            height: 300.0,
-            width: 400.0,
-            child: Carousel(
-              images: imagesList,
-              showIndicator: true,
-              dotSize: 4.0,
-              dotSpacing: 15.0,
-              indicatorBgPadding: 5.0,
+    return Scaffold(
+      body: ListView(padding: EdgeInsets.zero, children: [
+        Container(
+          height:MediaQuery.of(context).size.height/2,
+          width: MediaQuery.of(context).size.width,
+          child: Carousel(
+            images: imagesList,
+            showIndicator: true,
+            dotSize: 4.0,
+            dotSpacing: 15.0,
+            indicatorBgPadding: 5.0,
 //              borderRadius: true,
-            ),
           ),
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(45.0),
-                  topRight: Radius.circular(45.0),
-                ),
-                color: Colors.white),
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, top: 20, right: 10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        widget.details["name"].toString(),
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                        ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(45.0),
+                topRight: Radius.circular(45.0),
+              ),
+              color: Colors.white),
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 10, top: 20, right: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget.details["name"].toString(),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
                       ),
+                    ),
 //                      Text(
 //                        'Rs. '+(widget.details.subPrice.toString())+'/g',
 //                        style: TextStyle(
@@ -116,86 +105,85 @@ class _DetailsPageState extends State<DetailsPage> {
 //                          fontWeight: FontWeight.w800,
 //                        ),
 //                      ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+//              _availableSize(),
+              dropdown(),
+              SizedBox(
+                height: 20,
+              ),
+//              _availableSize1(),
+              SizedBox(
+                height: 5,
+              ),
+              _quantity(),
+              SizedBox(
+                height: 20,
+              ),
+
+              SizedBox(
+                height: 20,
+              ),
+              Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    side: BorderSide(color: Colors.black, width: .0)),
+                margin: EdgeInsets.only(left: 10, right: 10),
+                elevation: 0.0,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          'Description : ',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      Divider(
+                        height: 10,
+                        color: Colors.black,
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 15, right: 18, top: 8),
+                        child: Text(widget.details["description"]
+//                        'decp'
+                            ),
+                      ),
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 15,
-                ),
-//              _availableSize(),
-                dropdown(),
-                SizedBox(
-                  height: 20,
-                ),
-//              _availableSize1(),
-                SizedBox(
-                  height: 5,
-                ),
-                _quantity(),
-                SizedBox(
-                  height: 20,
-                ),
-
-                SizedBox(
-                  height: 20,
-                ),
-                Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      side: BorderSide(color: Colors.black, width: .0)),
-                  margin: EdgeInsets.only(left: 10, right: 10),
-                  elevation: 0.0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Text(
-                            'Description : ',
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                        Divider(
-                          height: 10,
-                          color: Colors.black,
-                        ),
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(left: 15, right: 18, top: 8),
-                          child: Text(widget.details["description"]
-//                        'decp'
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ]),
-        bottomNavigationBar: Container(
-          height: 54,
-          child: RaisedButton(
-            onPressed: () {
-              var check1 = DatabaseHelper.instance.insertProductFromDetails(
-                  productData["id"],
-                  detail_variable[current_index].id,
-                  detail_variable[current_index].value
-              );
-              print(check1);
+        ),
+      ]),
+      bottomNavigationBar: Container(
+        height: 54,
+        child: RaisedButton(
+          onPressed: () {
+            var check1 = DatabaseHelper.instance.insertProductFromDetails(
+                productData["id"],
+                detail_variable[current_index].id,
+                detail_variable[current_index].value
+            );
+            print(check1);
 //            Navigator.push(context,
 //                MaterialPageRoute(builder: (context) => ShoppingCartCopy()));
-            },
-            color: Colors.blue,
-            textColor: Colors.white,
-            child: Text('ADD TO CART'),
-          ),
+          },
+          color: Colors.blue,
+          textColor: Colors.white,
+          child: Text('ADD TO CART'),
         ),
       ),
     );
@@ -426,7 +414,7 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   List<items> detail_variable = [];
-  double totalPrice = 0.0;
+  double totalPrice;
 }
 
 class items {

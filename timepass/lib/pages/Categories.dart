@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timepass/main.dart';
+import 'package:timepass/pages/OrderDetails.dart';
 import 'package:timepass/pages/ProfilePage.dart';
 import 'package:timepass/pages/SubCategories.dart';
 import 'package:timepass/pages/shopping-copy.dart';
@@ -32,6 +33,7 @@ class _CategoriesState extends State<Categories> {
   var _controller = TextEditingController();
 
   bool _loading = true;
+  bool _showcross =false;
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -54,19 +56,12 @@ class _CategoriesState extends State<Categories> {
           duplicate_categories_list=original_categories_list;
         }
         _loading = false;
-        _getMoreData();
       });
     });
   }
 
   int cartLength = 0;
 
-  _getMoreData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      cartLength = prefs.getInt('cartLength') ?? 0;
-    });
-  }
 
   Future<bool> _onBackPressed() {
     return showDialog(
@@ -155,9 +150,19 @@ class _CategoriesState extends State<Categories> {
                                   child: ShoppingCartCopy()));
                         },
                       ),
+
+                      ListTile(
+                        leading: Icon(Icons.language),
+                        title: Text('Orders'),
+                        onTap: () {
+                          //yet to implement
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => OrderDetails()));
+                        },
+                      ),
                       ListTile(
                         leading: FaIcon(FontAwesomeIcons.userCircle),
-                        title: Text('Profile'),
+                        title: Text('Support'),
                         onTap: () {
                           Navigator.push(
                               context,
@@ -170,6 +175,16 @@ class _CategoriesState extends State<Categories> {
                         title: Text('Language'),
                         onTap: () {
                           //yet to implement
+                        },
+                      ),
+                      ListTile(
+                        leading: FaIcon(FontAwesomeIcons.userCircle),
+                        title: Text('Profile'),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfilePage()));
                         },
                       ),
                       ListTile(
@@ -223,14 +238,14 @@ class _CategoriesState extends State<Categories> {
                                   margin: EdgeInsets.only(right: 8),
                                   decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Colors.orangeAccent),
+                                      color: Colors.blue),
                                   child: Stack(
                                     children: <Widget>[
                                       IconButton(
                                           icon: FaIcon(
                                               FontAwesomeIcons.shoppingBag,
                                               size: 20),
-                                          color: Colors.black,
+                                          color: Colors.white,
                                           onPressed: () {
                                             Navigator.push(
                                                 context,
@@ -242,31 +257,31 @@ class _CategoriesState extends State<Categories> {
                                                     child: ShoppingCartCopy()));
                                           }),
 //      list.length ==0 ? new Container() :
-                                      new Positioned(
-                                        right: 2,
-                                        bottom: 4,
-                                        child: new Stack(
-                                          children: <Widget>[
-                                            new Icon(Icons.brightness_1,
-                                                size: 21.0,
-                                                color: Colors.green[800]),
-                                            new Positioned(
-                                                top: 2.0,
-                                                right: 6.2,
-                                                bottom: 1,
-                                                child: new Center(
-                                                  child: new Text(
-                                                    cartLength.toString(),
-                                                    style: new TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 11.0,
-                                                        fontWeight:
-                                                        FontWeight.w500),
-                                                  ),
-                                                )),
-                                          ],
-                                        ),
-                                      ),
+//                                      new Positioned(
+//                                        right: 2,
+//                                        bottom: 4,
+//                                        child: new Stack(
+//                                          children: <Widget>[
+//                                            new Icon(Icons.brightness_1,
+//                                                size: 21.0,
+//                                                color: Colors.green[800]),
+//                                            new Positioned(
+//                                                top: 2.0,
+//                                                right: 6.2,
+//                                                bottom: 1,
+//                                                child: new Center(
+//                                                  child: new Text(
+//                                                    cartLength.toString(),
+//                                                    style: new TextStyle(
+//                                                        color: Colors.white,
+//                                                        fontSize: 11.0,
+//                                                        fontWeight:
+//                                                        FontWeight.w500),
+//                                                  ),
+//                                                )),
+//                                          ],
+//                                        ),
+//                                      ),
                                     ],
                                   ),
                                 ),
@@ -298,7 +313,8 @@ class _CategoriesState extends State<Categories> {
                                           top: 5),
                                       prefixIcon: Icon(Icons.search,
                                           color: Colors.black54),
-                                      suffixIcon: IconButton(
+                                      suffixIcon:
+                                      IconButton(
                                         icon: Icon(Icons.clear),
                                         onPressed: (){
                                           setState(() {
@@ -306,7 +322,8 @@ class _CategoriesState extends State<Categories> {
                                             _controller.clear();
                                           });
                                         },
-                                      )),
+                                      )
+                                  ),
                                   onChanged: (string) {
                                     setState(() {
                                       duplicate_categories_list = original_categories_list

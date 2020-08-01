@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/pages/Categories.dart';
-import 'package:timepass/pages/GoogleMapPage.dart';
-import 'package:timepass/pages/HomeDemo.dart';
 import 'package:timepass/services/Service.dart';
 import 'package:timepass/widgets/bezierContainer.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key, this.title, this.customerMobile}) : super(key: key);
@@ -30,9 +26,10 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _submitButton() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 15),
-      width: 300,
+      width: MediaQuery.of(context).size.width,
       child: RaisedButton(
-        color: Color(0xFF4E35EA),
+//        color: Color(0xFF4E35EA),
+      color: Colors.blue,
         onPressed: () async {
           if (_formKey.currentState.validate()){
 
@@ -60,9 +57,9 @@ class _RegisterPageState extends State<RegisterPage> {
             });
           }
         },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
+//        shape: RoundedRectangleBorder(
+//          borderRadius: BorderRadius.circular(30),
+//        ),
         child: Padding(
           padding: const EdgeInsets.only(top: 15, bottom: 15),
           child: Text(
@@ -78,7 +75,9 @@ class _RegisterPageState extends State<RegisterPage> {
     return Text(
       'Registration Form',
       style: TextStyle(
-        fontSize: 18
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: Colors.blue
       )
     );
   }
@@ -103,8 +102,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 Container(
                   child: Theme(
                     data: new ThemeData(
-                      primaryColor: Color(0xFF4E35EA),
-                      primaryColorDark: Color(0xFF4E35EA),
+                      primaryColor: Colors.blue,
+                      primaryColorDark: Colors.blue,
                     ),
                     child: TextFormField(
                       decoration: InputDecoration(
@@ -112,9 +111,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Color(0xFF4E35EA))),
+                            borderSide: BorderSide(color: Colors.blue)),
                            hintText: 'Username',
-                        focusColor: Color(0xFF4E35EA),
+                        focusColor: Colors.blue,
                         labelText: 'Name',
 
                       ),
@@ -134,8 +133,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 Container(
                   child: Theme(
                     data: new ThemeData(
-                      primaryColor: Color(0xFF4E35EA),
-                      primaryColorDark: Color(0xFF4E35EA),
+                      primaryColor: Colors.blue,
+                      primaryColorDark: Colors.blue,
                     ),
                     child: TextFormField(
                       decoration: InputDecoration(
@@ -143,9 +142,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             vertical: 10, horizontal: 10),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Color(0xFF4E35EA))),
+                            borderSide: BorderSide(color: Colors.blue)),
                 hintText: 'Email',
-                        focusColor: Color(0xFF4E35EA),
+                        focusColor: Colors.blue,
                         labelText: 'Email ID'
 
                       ),
@@ -164,8 +163,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 Container(
                   child: Theme(
                     data: new ThemeData(
-                      primaryColor: Color(0xFF4E35EA),
-                      primaryColorDark: Color(0xFF4E35EA),
+                      primaryColor: Colors.blue,
+                      primaryColorDark: Colors.blue,
                     ),
                     child: TextFormField(
                       enabled: false,
@@ -174,10 +173,10 @@ class _RegisterPageState extends State<RegisterPage> {
                               vertical: 10, horizontal: 10),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Color(0xFF4E35EA))),
+                              borderSide: BorderSide(color: Colors.blue)),
 //                hintText: title,
-                          focusColor: Color(0xFF4E35EA),
-                        labelText: widget.customerMobile.toString()
+                          focusColor: Colors.blue,
+                        labelText: 'Mobile No.',
                       ),
                       initialValue: widget.customerMobile.toString(),
                     ),
@@ -203,10 +202,13 @@ class _RegisterPageState extends State<RegisterPage> {
             height: height,
             child: Stack(
               children: <Widget>[
-                Positioned(
-                  top: -MediaQuery.of(context).size.height * .15,
-                  right: -MediaQuery.of(context).size.width * .4,
-                  child: BezierContainer(),
+//                Positioned(
+//                  top: -MediaQuery.of(context).size.height * .15,
+//                  right: -MediaQuery.of(context).size.width * .4,
+//                  child: BezierContainer(),
+//                ),
+                SizedBox(
+                  height: 18,
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
@@ -215,17 +217,25 @@ class _RegisterPageState extends State<RegisterPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        SizedBox(height: height * .2),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height/3,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage('assets/images/registerfinal.png')
+                              )
+                          ),
+                        ),
+                        SizedBox(height:10),
                         _title(),
                         SizedBox(
-                          height: 50,
+                          height: 20,
                         ),
                         _emailPasswordWidget(),
                         SizedBox(
                           height: 20,
                         ),
                         _submitButton(),
-                        SizedBox(height: height * .14),
                       ],
                     ),
                   ),

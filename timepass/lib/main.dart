@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/pages/Categories.dart';
-import 'package:timepass/pages/HomeDemo.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:timepass/pages/LoginScreen.dart';
 
 
@@ -29,7 +28,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   transfer(){
-    Timer(Duration(seconds: 4),(){
+    Timer(Duration(milliseconds: 6200),(){
       navigateUser();
     });
   }
@@ -41,7 +40,7 @@ class _MyAppState extends State<MyApp> {
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         print('connected');
 //        navigateUser();
-        Timer(Duration( seconds: 3),() {
+        Timer(Duration( milliseconds: 6300),() {
           navigateUser(); //It will redirect  after 3 seconds
         });
       }
@@ -99,14 +98,41 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       body:
-      Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("assets/images/splashscreen.png"),
-                fit: BoxFit.cover
-            )
+//      Container(
+//        decoration: BoxDecoration(
+//            image: DecorationImage(
+//                image: AssetImage("assets/images/splashscreen.png"),
+//                fit: BoxFit.cover
+//            )
+//        ),
+//      ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              width:MediaQuery.of(context).size.width,
+              child: TyperAnimatedTextKit(
+                  onTap: () {
+                    print("Tap Event");
+                  },
+                  text: [
+                    "Grocery App",
+                  ],
+                  textStyle: TextStyle(
+                      fontSize: 28.0,
+                      fontWeight: FontWeight.w600,
+                    color: Colors.blue,
+                    letterSpacing: 0.6
+                  ),
+                  textAlign: TextAlign.center,
+                  alignment: AlignmentDirectional.topStart,
+                speed: Duration(milliseconds: 360),
+                isRepeatingAnimation: false,// or Alignment.topLeft
+              ),
+            ),
+          ],
         ),
-      ),
     );
   }
 }

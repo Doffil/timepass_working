@@ -2,7 +2,6 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:timepass/pages/Categories.dart';
 import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/sqlite/db_helper.dart';
 
@@ -37,6 +36,7 @@ class _DetailsPageState extends State<DetailsPage> {
     super.initState();
     productData = widget.details;
     dropDownDefaultValue = productData["product_variable"][0]["id"].toString();
+    imagesList.add(NetworkImage(productData["product_image_url"]));
     for (int i = 0; i < productData["product_images"].length; i++) {
       imagesList.add(
           NetworkImage(productData["product_images"][i]["product_image_url"]));
@@ -59,17 +59,22 @@ class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(padding: EdgeInsets.zero, children: [
-        Container(
-          height:MediaQuery.of(context).size.height/2,
-          width: MediaQuery.of(context).size.width,
-          child: Carousel(
-            images: imagesList,
-            showIndicator: true,
-            dotSize: 4.0,
-            dotSpacing: 15.0,
-            indicatorBgPadding: 5.0,
+      body: ListView(
+          children: [
+        MediaQuery.removePadding(
+          context: context,
+          removeBottom: true,
+          child: Container(
+            height:MediaQuery.of(context).size.height/3,
+            width: MediaQuery.of(context).size.width,
+            child: Carousel(
+              images: imagesList,
+              showIndicator: true,
+              dotSize: 4.0,
+              dotSpacing: 15.0,
+              indicatorBgPadding: 5.0,
 //              borderRadius: true,
+            ),
           ),
         ),
         Container(
@@ -98,13 +103,6 @@ class _DetailsPageState extends State<DetailsPage> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-//                      Text(
-//                        'Rs. '+(widget.details.subPrice.toString())+'/g',
-//                        style: TextStyle(
-//                          fontSize: 20,
-//                          fontWeight: FontWeight.w800,
-//                        ),
-//                      ),
                   ],
                 ),
               ),
@@ -157,7 +155,6 @@ class _DetailsPageState extends State<DetailsPage> {
                         padding:
                             const EdgeInsets.only(left: 15, right: 18, top: 8),
                         child: Text(widget.details["description"]
-//                        'decp'
                             ),
                       ),
                     ],
@@ -178,8 +175,6 @@ class _DetailsPageState extends State<DetailsPage> {
                 detail_variable[current_index].value
             );
             print(check1);
-//            Navigator.push(context,
-//                MaterialPageRoute(builder: (context) => ShoppingCartCopy()));
           },
           color: Colors.blue,
           textColor: Colors.white,
@@ -194,7 +189,6 @@ class _DetailsPageState extends State<DetailsPage> {
       context,
       MaterialPageRoute(
         builder: (context) => ShoppingCartCopy(),
-//      builder: (context)=>ShoppingCart(),
       ),
     );
   }

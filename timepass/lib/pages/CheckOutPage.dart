@@ -416,7 +416,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                 child: Container(
                                   width: MediaQuery.of(context).size.width/1.2,
                                   padding: EdgeInsets.only(right: 10),
-                                  height: 30,
+                                  height: 36,
                                   child: TextFormField(
                                     controller: promocodeText,
                                     style: TextStyle(
@@ -438,7 +438,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                               ),
                               Container(
                                 width: MediaQuery.of(context).size.width/4,
-                                height: 30,
+                                height: 35,
                                 child: RaisedButton(
                                   child: Text('APPLY',style: TextStyle(fontSize: 13),),
                                   onPressed: () {

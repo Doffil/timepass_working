@@ -22,6 +22,8 @@ class OrderFurtherDetails extends StatefulWidget {
 class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Widget getData() {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,10 +52,8 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
               leading: Icon(Icons.home),
               title: Text('Home'),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Categories()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Categories()));
               },
             ),
             ListTile(
@@ -63,15 +63,11 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                 Navigator.push(
                     context,
                     PageTransition(
-
-                        type: PageTransitionType
-                            .rightToLeft,
-                        duration:
-                        Duration(milliseconds: 500),
+                        type: PageTransitionType.rightToLeft,
+                        duration: Duration(milliseconds: 500),
                         child: ShoppingCartCopy()));
               },
             ),
-
             ListTile(
               leading: Icon(Icons.language),
               title: Text('Orders'),
@@ -85,10 +81,8 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
               leading: FaIcon(FontAwesomeIcons.userCircle),
               title: Text('Support'),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ProfilePage()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()));
               },
             ),
             ListTile(
@@ -102,16 +96,14 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
               leading: FaIcon(FontAwesomeIcons.userCircle),
               title: Text('Profile'),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ProfilePage()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()));
               },
             ),
             ListTile(
               leading: FaIcon(FontAwesomeIcons.signOutAlt),
               title: Text('Sign-Out'),
-              onTap: ()async {
+              onTap: () async {
                 //add at the last
                 await DatabaseHelper.instance.deleteAll();
                 SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -120,44 +112,42 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                 prefs.setString('customerEmailId', null);
                 prefs.setString('customerId', null);
                 prefs.setBool("isLoggedIn", false);
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>MyApp()));                        },
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => MyApp()));
+              },
             ),
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      body: SafeArea(
+        child: ListView(
           children: <Widget>[
-            Padding(
-                padding: EdgeInsets.only(top: 50.0, bottom: 2.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
                     children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          IconButton(
+                      IconButton(
 //                    icon: Icon(Icons.menu,size: 30,),
-                            icon: FaIcon(FontAwesomeIcons.alignLeft),
-                            color: Colors.black,
-                            onPressed: () =>
-                                scaffoldKey.currentState.openDrawer(),
-                          ),
-                          Text(
-                            widget.details["Invoice_No"],
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ],
+                        icon: FaIcon(FontAwesomeIcons.alignLeft),
+                        color: Colors.black,
+                        onPressed: () =>
+                            scaffoldKey.currentState.openDrawer(),
                       ),
-                    ]
-                )
-            ),
+                      Text(
+                        widget.details["Invoice_No"],
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ]),
             Card(
               elevation: 4,
               color: Colors.white,
-              margin: EdgeInsets.only(left: 9,right: 9,bottom: 7,top: 5),
+              margin: EdgeInsets.only(left: 9, right: 9, top: 5,bottom: 5),
               child: Container(
                 padding: EdgeInsets.all(10),
                 width: MediaQuery.of(context).size.width,
@@ -167,8 +157,7 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                     Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(
                             'Order No.',
@@ -190,8 +179,7 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.all(5.0),
@@ -215,10 +203,96 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                 ),
               ),
             ),
-
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: widget.details["order_details"].length,
+              itemBuilder: (context, index) {
+                return Card(
+                  elevation: 2.0,
+                  margin: EdgeInsets.only(left: 9, right: 9, bottom: 7),
+                  color: Colors.white,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Product Name : ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              widget.details["order_details"][index]
+                                  ["product_variable"]["product"]["name"],
+                            )
+                          ],
+                        ),
+                        Divider(
+                          height: 25,
+                          color: Colors.grey,
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Qty : ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              widget.details["order_details"][index]["quantity"],
+                            )
+                          ],
+                        ),
+                        Divider(
+                          height: 25,
+                          color: Colors.grey,
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Variable Size : ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              widget.details["order_details"][index]
+                                      ["product_variable"]
+                                  ["product_variable_options_name"],
+                            )
+                          ],
+                        ),
+                        Divider(
+                          height: 25,
+                          color: Colors.grey,
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Price : ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                                'Rs.'+(double.parse(widget.details["order_details"][index]["quantity"])*
+                                  widget.details["order_details"][index]["variable_selling_price"]).toString(),
+                            )
+                          ],
+                        ),
+                        Divider(
+                          height: 25,
+                          color: Colors.teal[400],
+                          thickness: 2,
+                        ),
+                        
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
             Card(
               elevation: 2.0,
-              margin: EdgeInsets.only(left: 9,right: 9,bottom: 7,top: 5),
+              margin: EdgeInsets.only(left: 9, right: 9, bottom: 7, top: 5),
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Column(
@@ -226,8 +300,7 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                   children: <Widget>[
                     Text(
                       'Price Details',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     Divider(
                       height: 25,
@@ -246,7 +319,10 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[Text('Tax :'), Text(widget.details["tax"].toString())],
+                      children: <Widget>[
+                        Text('Tax :'),
+                        Text(widget.details["tax"].toString())
+                      ],
                     ),
                     Divider(
                       height: 25,
@@ -254,7 +330,10 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[Text('Discount :'), Text(widget.details["discount"].toString())],
+                      children: <Widget>[
+                        Text('Discount :'),
+                        Text(widget.details["discount"].toString())
+                      ],
                     ),
                     Divider(
                       height: 25,
@@ -262,7 +341,10 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[Text('Delivery Charges :'), Text(widget.details["delivery_charge"].toString())],
+                      children: <Widget>[
+                        Text('Delivery Charges :'),
+                        Text(widget.details["delivery_charge"].toString())
+                      ],
                     ),
                     Divider(
                       height: 25,
@@ -277,7 +359,7 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                               fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'Rs.'+widget.details["total_amount"].toString(),
+                          'Rs.' + widget.details["total_amount"].toString(),
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600),
                         )
@@ -293,7 +375,7 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
             ),
             Card(
               elevation: 2.0,
-              margin: EdgeInsets.only(left: 9,right: 9,bottom: 7,top: 5),
+              margin: EdgeInsets.only(left: 9, right: 9, bottom: 7, top: 5),
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Column(
@@ -301,8 +383,7 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                   children: <Widget>[
                     Text(
                       'Address Details',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     Divider(
                       height: 25,
@@ -313,8 +394,11 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
                       children: <Widget>[
                         Text('Address:'),
                         Flexible(
-                          child: Text(widget.details["address"]["address_line_1"]+','+
-                              widget.details["address"]["address_line_2"]+','+
+                          child: Text(widget.details["address"]
+                                  ["address_line_1"] +
+                              ',' +
+                              widget.details["address"]["address_line_2"] +
+                              ',' +
                               widget.details["address"]["pincode"].toString()),
                         )
                       ],
@@ -354,23 +438,24 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
             ),
             Container(
               height: 40,
-              margin: EdgeInsets.only(left: 20,right: 20),
+              margin: EdgeInsets.only(left: 20, right: 20),
               width: MediaQuery.of(context).size.width,
               child: RaisedButton.icon(
                 shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(
-                        8.0)),
+                    borderRadius: BorderRadius.circular(8.0)),
                 color: Colors.blue,
                 textColor: Colors.white,
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Categories()));
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Categories()));
                 },
-                icon: Icon(Icons.file_download,size: 18,),
+                icon: Icon(
+                  Icons.file_download,
+                  size: 18,
+                ),
                 label: Text(
                   'Download Invoice',
-                  style:
-                  TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ),
@@ -379,23 +464,24 @@ class _OrderFurtherDetailsState extends State<OrderFurtherDetails> {
             ),
             Container(
               height: 40,
-              margin: EdgeInsets.only(left: 20,right: 20),
+              margin: EdgeInsets.only(left: 20, right: 20),
               width: MediaQuery.of(context).size.width,
               child: RaisedButton.icon(
                 shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(
-                        8.0)),
+                    borderRadius: BorderRadius.circular(8.0)),
                 color: Colors.green,
                 textColor: Colors.white,
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderDetails()));
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => OrderDetails()));
                 },
-                icon: FaIcon(FontAwesomeIcons.ticketAlt,size: 18,),
+                icon: FaIcon(
+                  FontAwesomeIcons.ticketAlt,
+                  size: 18,
+                ),
                 label: Text(
                   'Support',
-                  style:
-                  TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ),

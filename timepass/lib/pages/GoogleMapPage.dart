@@ -40,7 +40,7 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
   void _getCurrentLocation() async {
     final position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print(position);
+//    print(position);
 
     lat = position.latitude;
     long = position.longitude;
@@ -61,9 +61,9 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
     Placemark place = placemark[0];
 
     first = addresses.first;
-    print(' ${first.locality}, ${first.adminArea},${first.subLocality}, '
-        '${first.subAdminArea},${first.addressLine}, ${first.featureName},'
-        '${first.thoroughfare}');
+//    print(' ${first.locality}, ${first.adminArea},${first.subLocality}, '
+//        '${first.subAdminArea},${first.addressLine}, ${first.featureName},'
+//        '${first.thoroughfare}');
 
     _currentAddress =
         '${myController.text},${first.addressLine},${first.locality},'
@@ -291,19 +291,20 @@ List list_of_addresses=new List();
             child: RaisedButton(
               onPressed: () async {
                 if (_formKey.currentState.validate()) {
-                  print(_currentAddress);
+//                  print(_currentAddress);
                   SharedPreferences prefs = await SharedPreferences.getInstance();
                   prefs.setString('customerAddress', _currentAddress);
                   int mobile_no=prefs.getInt('customerMobileNo');
-                  print('mobile_no in googlemap page is:'+mobile_no.toString());
+//                  print('mobile_no in googlemap page is:'+mobile_no.toString());
 
-                  print('lat is :');
-                  print(lat);
+//                  print('lat is :');
+//                  print(lat);
 
                   Service.registerAddress(mobile_no,myController.text,
                       first.addressLine,first.postalCode,lat,long).then((value){
                         if(value["success"] && value["data"].length!=0){
-                          print(value["data"][0]["customer_id"].toString());
+                          print('rohit ghodke');
+//                          print(value["data"][0]["customer_id"].toString());
                           Navigator.push(context, MaterialPageRoute(builder:
                               (context)=>CheckOutPage(list_of_addresses: value["data"])));
                         }else{
@@ -324,15 +325,15 @@ List list_of_addresses=new List();
   }
 
   _handleTap(LatLng tappedPoint) async {
-    print(tappedPoint);
+//    print(tappedPoint);
     final coordinates =
         new Coordinates(tappedPoint.latitude, tappedPoint.longitude);
     var addresses =
         await Geocoder.local.findAddressesFromCoordinates(coordinates);
     first = addresses.first;
-    print(' ${first.locality}, ${first.adminArea},${first.subLocality}, '
-        '${first.subAdminArea},${first.addressLine}, ${first.featureName},'
-        '${first.thoroughfare}');
+//    print(' ${first.locality}, ${first.adminArea},${first.subLocality}, '
+//        '${first.subAdminArea},${first.addressLine}, ${first.featureName},'
+//        '${first.thoroughfare}');
       lat=tappedPoint.latitude;
       long=tappedPoint.longitude;
     _currentAddress =
@@ -345,7 +346,7 @@ List list_of_addresses=new List();
           position: tappedPoint,
           draggable: true,
           onDragEnd: (dragEndPosition) {
-            print(dragEndPosition);
+//            print(dragEndPosition);
             isMarked = true;
           }));
     });

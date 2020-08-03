@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart'as http;
 
 class urls{
-  static const String base_url = "http://192.168.43.152:8000/api/v1";
+  static const String base_url = "http://spices.acknowtech.in/public/api/v1";
   static int save_mobile_no;
 }
 
@@ -78,7 +78,13 @@ class Service{
   }
 
   static Future registerAddress(int mobile,String address1,String address2,String pincode,double lat,double long) async{
-    print('lat in service is'+lat.toString());
+//    print('lat in service is'+lat.toString());
+//    print('long in service is'+long.toString());
+//    print('mobile in service is'+mobile.toString());
+//    print('address1 in service is'+address1.toString());
+//    print('address2 in service is'+address2.toString());
+//    print('pincode in service is'+pincode.toString());
+
     var body=jsonEncode({
       'mobile_no': mobile,
       'address_line_1':address1,
@@ -87,7 +93,6 @@ class Service{
       "latitude":lat,
       "longitude":long
     });
-//    print(body);
     final http.Response response = await http.post(
       urls.base_url+'/customer/createAddress',
       headers: <String, String>{
@@ -96,12 +101,10 @@ class Service{
       body:body,
     );
     if (response.statusCode == 200) {
-//      final Welcome standards = welcomeFromJson(response.body);
-      print(response.body);
-      urls.save_mobile_no=mobile;
+//      print(response.body);
       return json.decode(response.body);
     } else {
-      throw Exception('Failed to load response of standards');
+      throw Exception('Failed to load response of google map');
     }
   }
 

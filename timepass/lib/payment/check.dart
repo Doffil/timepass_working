@@ -35,7 +35,7 @@ class _CheckRazorState extends State<CheckRazor> {
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     print("payment has succedded");
 
-    Service.checkPaymentStatus(int.parse(widget.order_id), response.orderId).then((value){
+    Service.checkPaymentStatus(int.parse(widget.order_id.toString()), response.orderId).then((value){
       if(value["success"]){
         Navigator.pushAndRemoveUntil(
           context,
@@ -51,7 +51,7 @@ class _CheckRazorState extends State<CheckRazor> {
           context,
           MaterialPageRoute(
             builder: (BuildContext context) => FailedPage(
-                response: response,razorpay_id:widget.razorpay_id
+                response: response,razorpay_id:widget.razorpay_id,order_id:widget.order_id,amount:widget.amount
             ),
           ),
               (Route<dynamic> route) => false,
@@ -69,7 +69,7 @@ class _CheckRazorState extends State<CheckRazor> {
       context,
       MaterialPageRoute(
         builder: (BuildContext context) => FailedPage(
-              response: response,razorpay_id:widget.razorpay_id
+              response: response,razorpay_id:widget.razorpay_id,order_id:widget.order_id,amount:widget.amount
             ),
       ),
       (Route<dynamic> route) => false,
@@ -100,7 +100,7 @@ class _CheckRazorState extends State<CheckRazor> {
     options = {
       'key': "rzp_test_xIfd2l0ht4arnh", // Enter the Key ID generated from the Dashboard
 
-      'amount': widget.amount*100, //in the smallest currency sub-unit.
+      'amount': widget.amount * 100, //in the smallest currency sub-unit.
       'name': 'ShreeKakaJiMasale',
       'order_id':razorpay_order_id,
       'currency': "INR",

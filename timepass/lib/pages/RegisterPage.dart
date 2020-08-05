@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/pages/Categories.dart';
 import 'package:timepass/services/Service.dart';
-import 'package:timepass/widgets/bezierContainer.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key, this.title, this.customerMobile}) : super(key: key);
@@ -16,7 +16,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
 
   var check;
-
+  bool isLoading=false;
   @override
   void initState() {
     super.initState();
@@ -32,11 +32,15 @@ class _RegisterPageState extends State<RegisterPage> {
       color: Colors.blue,
         onPressed: () async {
           if (_formKey.currentState.validate()){
-
+            setState(() {
+              isLoading=true;
+            });
             SharedPreferences prefs = await SharedPreferences.getInstance();
             Service.registerUser(name.text,widget.customerMobile,email.text).then((value){
 //              prefs.setBool('isLoggedIn', true);
-
+              setState(() {
+                isLoading=false;
+              });
               check=value;
               print(check["success"]);
               if(check["success"]){
@@ -194,57 +198,62 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body:GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: Container(
-            height: height,
-            child: Stack(
-              children: <Widget>[
+      body:LoadingOverlay(
+        child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Container(
+              height: height,
+              child: Stack(
+                children: <Widget>[
 //                Positioned(
 //                  top: -MediaQuery.of(context).size.height * .15,
 //                  right: -MediaQuery.of(context).size.width * .4,
 //                  child: BezierContainer(),
 //                ),
-                SizedBox(
-                  height: 18,
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height/3,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage('assets/images/registerfinal.png')
-                              )
+                  SizedBox(
+                    height: 18,
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height/3,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage('assets/images/registerfinal.png')
+                                )
+                            ),
                           ),
-                        ),
-                        SizedBox(height:10),
-                        _title(),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        _emailPasswordWidget(),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        _submitButton(),
-                      ],
+                          SizedBox(height:10),
+                          _title(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          _emailPasswordWidget(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          _submitButton(),
+                        ],
+                      ),
                     ),
                   ),
-                ),
 //            Positioned(top: 40, left: 0, child: _backButton()),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
+        isLoading: isLoading,
+        opacity: 0.5,
+        progressIndicator: CircularProgressIndicator(),
+      ),
     );
   }
 

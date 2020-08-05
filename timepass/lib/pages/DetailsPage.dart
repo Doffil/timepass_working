@@ -1,4 +1,5 @@
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,18 +16,6 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-  List<bool> isSelected = [
-    true,
-    false,
-    false,
-    false,
-  ];
-  List<bool> isSelected1 = [
-    true,
-    false,
-    false,
-    false,
-  ];
 
   var productData;
   String dropDownDefaultValue;
@@ -43,28 +32,24 @@ class _DetailsPageState extends State<DetailsPage> {
     }
 
     for (int i = 0; i < productData["product_variable"].length; i++) {
-      detail_variable.add(items(
-          productData["product_variable"][i]["id"],
-          1.00,
-          double.parse(productData["product_variable"][i]
-                  ["variable_selling_price"]
-              .toString())));
+      detailVariable.add(Items(productData["product_variable"][i]["id"],1.00,
+          double.parse(productData["product_variable"][i]["variable_selling_price"].toString()),
+          double.parse(productData["product_variable"][i]["variable_original_price"].toString()),
+      productData["product_variable"][i]["product_variable_options_name"], double.parse(productData["product_variable"][i]["quantity"].toString())));
     }
     totalPrice =double.parse(productData["product_variable"][0]["variable_selling_price"].toString());
   }
 
-  var current_index = 0;
+  var currentIndex = 0;
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-          children: [
-        MediaQuery.removePadding(
-          context: context,
-          removeBottom: true,
-          child: Container(
+      body: SingleChildScrollView(
+        child: Column(
+            children:<Widget>[
+          Container(
             height:MediaQuery.of(context).size.height/3,
             width: MediaQuery.of(context).size.width,
             child: Carousel(
@@ -76,105 +61,135 @@ class _DetailsPageState extends State<DetailsPage> {
 //              borderRadius: true,
             ),
           ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(45.0),
-                topRight: Radius.circular(45.0),
-              ),
-              color: Colors.white),
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10, top: 20, right: 10),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.details["name"].toString(),
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-//              _availableSize(),
-              dropdown(),
-              SizedBox(
-                height: 20,
-              ),
-//              _availableSize1(),
-              SizedBox(
-                height: 5,
-              ),
-              _quantity(),
-              SizedBox(
-                height: 20,
-              ),
-
-              SizedBox(
-                height: 20,
-              ),
-              Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    side: BorderSide(color: Colors.black, width: .0)),
-                margin: EdgeInsets.only(left: 10, right: 10),
-                elevation: 0.0,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Container(
+            color: Colors.white,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 20, right: 10),
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          'Description : ',
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        widget.details["name"].toString(),
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
                         ),
-                      ),
-                      Divider(
-                        height: 10,
-                        color: Colors.black,
-                      ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(left: 15, right: 18, top: 8),
-                        child: Text(widget.details["description"]
-                            ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: 15,
+                ),
+//              _availableSize(),
+                dropdown(),
+                SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                _quantity(),
+                SizedBox(
+                  height: 30,
+                ),
+                Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      side: BorderSide(color: Colors.black, width: .0)),
+                  margin: EdgeInsets.only(left: 10, right: 10),
+                  elevation: 0.0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(
+                            'Description : ',
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        Divider(
+                          height: 10,
+                          color: Colors.black,
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 15, right: 18, top: 8),
+                          child: Text(widget.details["description"]
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
           ),
-        ),
-      ]),
+        ]),
+      ),
       bottomNavigationBar: Container(
         height: 54,
         child: RaisedButton(
           onPressed: () {
-            var check1 = DatabaseHelper.instance.insertProductFromDetails(
-                productData["id"],
-                detail_variable[current_index].id,
-                detail_variable[current_index].value
-            );
-            print(check1);
+            print(productData["id"].toString());
+            print(detailVariable[currentIndex].id.toString());
+            print('selected qty is : '+detailVariable[currentIndex].value.toString());
+            print('available qty is : '+detailVariable[currentIndex].aQty.toString());
+            if(detailVariable[currentIndex].aQty < detailVariable[currentIndex].value){
+              Flushbar(
+                margin: EdgeInsets.all(8),
+                borderRadius: 8,
+                backgroundColor:
+                Colors.red,
+                flushbarPosition:
+                FlushbarPosition.TOP,
+                message:
+                "Product is no longer available in Stock,Sorry!!!",
+                duration:
+                Duration(seconds: 4),
+              )..show(context);
+            }else{
+              detailVariable[currentIndex].aQty=detailVariable[currentIndex].aQty-detailVariable[currentIndex].value;
+              var check1 = DatabaseHelper
+                  .instance
+                  .insertProduct(
+                  widget.details["id"],
+                  detailVariable[currentIndex].id,
+                  detailVariable[currentIndex].value,
+                  detailVariable[currentIndex].vName,
+                  widget.details["product_image_url"],
+                  widget.details["name"],
+                  detailVariable[currentIndex].sPrice,
+                  detailVariable[currentIndex].aPrice,
+                  detailVariable[currentIndex].aQty);
+              print(check1);
+              Flushbar(
+                margin: EdgeInsets.all(8),
+                borderRadius: 8,
+                backgroundColor:
+                Colors.blue,
+                flushbarPosition:
+                FlushbarPosition.TOP,
+                message:
+                "Product added to cart successfully !!!",
+                duration:
+                Duration(seconds: 4),
+              )..show(context);
+            }
           },
           color: Colors.blue,
           textColor: Colors.white,
@@ -219,77 +234,7 @@ class _DetailsPageState extends State<DetailsPage> {
       ],
     );
   }
-
-//  Widget _availableSize() {
-//    return Center(
-//      child: ToggleButtons(
-//          borderRadius: BorderRadius.circular(10.0),
-//          children: <Widget>[
-//
-//            Padding(
-//              padding: const EdgeInsets.all(8.0),
-//              child: Text(
-//                '$value1 g',
-//                style: TextStyle(fontSize: 16.0),
-//              ),
-//            ),
-//            Padding(
-//              padding: const EdgeInsets.all(8.0),
-//              child: Text(
-//                '$value2 g',
-//                style: TextStyle(fontSize: 16.0),
-//              ),
-//            ),
-//            Padding(
-//              padding: const EdgeInsets.all(8.0),
-//              child: Text(
-//                '$value3 g',
-//                style: TextStyle(fontSize: 16.0),
-//              ),
-//            ),
-//            Padding(
-//              padding: const EdgeInsets.all(8.0),
-//              child: Text(
-//                '$value4 g',
-//                style: TextStyle(fontSize: 16.0),
-//              ),
-//            ),
-//          ],
-//          isSelected: isSelected1,
-//          onPressed: (int index) {
-//            var k = (widget.details.subPrice);
-//            assert(k is int);
-//            setState(() {
-//              for (int buttonIndex = 0;
-//              buttonIndex < isSelected1.length;
-//              buttonIndex++) {
-//                if (buttonIndex == index) {
-//                  isSelected1[buttonIndex] = true;
-//                  indexValue = index;
-//                  priceValue = k;
-//                  if (index == 0) {
-//                    sum = (k) * value1 * _n;
-//                  }
-//                  if (index == 1) {
-//                    sum = (k) * value2 * _n;
-//                  }
-//                  if (index == 2) {
-//                    sum = (k) * value3 * _n;
-//                  }
-//                  if (index == 3) {
-//                    sum = (k) * value4 * _n;
-//                  }
-//                } else {
-//                  isSelected1[buttonIndex] = false;
-//                }
-//              }
-//            });
-//          }),
-//    );
-//  }
-
-//  String dropdowndefaultvalue=widget.initialVariable;
-
+  double check3;
   Widget dropdown() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -324,12 +269,12 @@ class _DetailsPageState extends State<DetailsPage> {
               onChanged: (newVal) {
                 setState(() {
                   dropDownDefaultValue = newVal;
-                  for (int i = 0; i < detail_variable.length; i++) {
+                  for (int i = 0; i < detailVariable.length; i++) {
                     if (dropDownDefaultValue ==
-                        detail_variable[i].id.toString()) {
-                      current_index = i;
-                      totalPrice = detail_variable[current_index].sprice *
-                          detail_variable[current_index].value;
+                        detailVariable[i].id.toString()) {
+                      currentIndex = i;
+                      totalPrice = detailVariable[currentIndex].sPrice *
+                          detailVariable[currentIndex].value;
                     }
                   }
                   print(newVal);
@@ -341,7 +286,7 @@ class _DetailsPageState extends State<DetailsPage> {
         Row(
           children: <Widget>[
             FutureBuilder(
-                future: DatabaseHelper.instance.getQuantity(productData["id"],detail_variable[current_index].id),
+                future: DatabaseHelper.instance.getQuantity(productData["id"],detailVariable[currentIndex].id),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.none &&
                       snapshot.hasData == null) {
@@ -356,17 +301,30 @@ class _DetailsPageState extends State<DetailsPage> {
                         onPressed: () {
                           setState(() {
                             String y = productData["product_variable"]
-                                [current_index]["quantity"];
+                                [currentIndex]["quantity"];
                             double check1 = double.parse(y);
                             double check2=snapshot.data;
-                            double check3=check1-check2;
+                            check3=check1-check2;
                             print('check3 is :'+check3.toString());
-                            if (detail_variable[current_index].value < check3) {
-                              detail_variable[current_index].value =
-                                  detail_variable[current_index].value + 1;
+                            if (detailVariable[currentIndex].value < check3) {
+                              detailVariable[currentIndex].value =
+                                  detailVariable[currentIndex].value + 1;
                               totalPrice =
-                                  detail_variable[current_index].value *
-                                      detail_variable[current_index].sprice;
+                                  detailVariable[currentIndex].value *
+                                      detailVariable[currentIndex].sPrice;
+                            }else{
+                              Flushbar(
+                                margin: EdgeInsets.all(8),
+                                borderRadius: 8,
+                                backgroundColor:
+                                Colors.red,
+                                flushbarPosition:
+                                FlushbarPosition.TOP,
+                                message:
+                                "Product is no longer available in Stock,Sorry!!!",
+                                duration:
+                                Duration(seconds: 4),
+                              )..show(context);
                             }
                           });
                         },
@@ -376,7 +334,7 @@ class _DetailsPageState extends State<DetailsPage> {
                   }
                 }),
             Text(
-              detail_variable[current_index].value.toString(),
+              detailVariable[currentIndex].value.toString(),
               style: TextStyle(fontSize: 18),
             ),
             Container(
@@ -387,11 +345,11 @@ class _DetailsPageState extends State<DetailsPage> {
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   setState(() {
-                    if (detail_variable[current_index].value > 1) {
-                      detail_variable[current_index].value =
-                          detail_variable[current_index].value - 1;
-                      totalPrice = detail_variable[current_index].value *
-                          detail_variable[current_index].sprice;
+                    if (detailVariable[currentIndex].value > 1) {
+                      detailVariable[currentIndex].value =
+                          detailVariable[currentIndex].value - 1;
+                      totalPrice = detailVariable[currentIndex].value *
+                          detailVariable[currentIndex].sPrice;
                     }
                   });
                 },
@@ -407,14 +365,17 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  List<items> detail_variable = [];
+  List<Items> detailVariable = [];
   double totalPrice;
 }
 
-class items {
+class Items {
   int id;
   double value;
-  double sprice;
+  double sPrice;
+  double aPrice;
+  String vName;
+  double aQty;
 
-  items(this.id, this.value, this.sprice);
+  Items(this.id, this.value, this.sPrice,this.aPrice,this.vName,this.aQty);
 }

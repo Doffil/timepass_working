@@ -1,18 +1,14 @@
-import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:timepass/main.dart';
-import 'package:timepass/pages/Categories.dart';
 import 'package:timepass/pages/DetailsPage.dart';
-import 'package:timepass/pages/OrderDetails.dart';
-import 'package:timepass/pages/ProfilePage.dart';
+import 'package:timepass/pages/MyDrawer.dart';
+import 'package:timepass/pages/ShoppingIcon.dart';
 import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/services/Service.dart';
 import 'package:timepass/sqlite/db_helper.dart';
@@ -31,48 +27,45 @@ class _ProductState extends State<Product> {
   int count1 = 0;
   var products;
   var scaffoldKey = GlobalKey<ScaffoldState>();
-  bool _showcross = false;
+  bool showCross = false;
 
   List<Region> _region = [];
   List<String> selectedRegion = [];
   List<int> selectedVariableIndex = [];
   bool loading = true;
 
-  final spinkit = SpinKitWave(
+  final spinKit = SpinKitWave(
     color: Colors.lightBlue,
     size: 30,
   );
-  void tapcart() {}
-  List original_product_list = new List();
-  List duplicate_product_list = new List();
+
+  List originalProductList = new List();
+  List duplicateProductList = new List();
   List<String> selectedItemValue = List<String>();
   var _controller = TextEditingController();
 
   List<Region> temp = [];
-  String aprice, aqty;
-  String sprice;
-  String vqty;
-  String vid;
-  String vname;
+  String aPrice, aqty;
+  String sPrice;
+  String vQty;
+  String vId;
+  String vName;
 
   bool noProducts = false;
   @override
   void initState() {
-    _showcross = false;
+    showCross = false;
     loading = true;
     super.initState();
     Service.getProducts(widget.productId).then((value) {
-//      products = value;
       if (value["success"] && value["data"].length > 0) {
-        original_product_list = value["data"];
-        for (int i = 0; i < original_product_list.length; i++) {
-          if (original_product_list[i]["product_variable"].length > 0) {
-            duplicate_product_list.add(original_product_list[i]);
-            selectedRegion.add(original_product_list[i]["product_variable"][0]
-                    ["id"]
-                .toString());
+        originalProductList = value["data"];
+        for (int i = 0; i < originalProductList.length; i++) {
+          if (originalProductList[i]["product_variable"].length > 0) {
+            duplicateProductList.add(originalProductList[i]);
+            selectedRegion.add(
+                originalProductList[i]["product_variable"][0]["id"].toString());
             selectedVariableIndex.add(0);
-//          _region=(original_product_list[i]["product_variable"]).map<Region>((item) => Region.fromJson(item)).toList();
           }
         }
       } else if (value["success"] && value["data"].length == 0) {
@@ -84,20 +77,9 @@ class _ProductState extends State<Product> {
         loading = false;
       });
     });
-//    setState(() {
-//      _subproducts = widget.id1.subCategory;
-//      _subfilteredProducts = _subproducts;
-//      _getMoreData();
-//    });
   }
 
   int cartLength = 0;
-  _getMoreData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      cartLength = prefs.getInt('cartLength');
-    });
-  }
 
   var dropdown;
   List variables;
@@ -115,151 +97,35 @@ class _ProductState extends State<Product> {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
-        _showcross=false;
+        showCross = false;
       },
       child: Scaffold(
         key: scaffoldKey,
-        drawer: Drawer(
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              Container(
-                height: 100,
-                child: DrawerHeader(
-                  child: Text(
-                    'Grocery',
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.home),
-                title: Text('Home'),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Categories()));
-                },
-              ),
-              ListTile(
-                leading: FaIcon(FontAwesomeIcons.shoppingBag),
-                title: Text('Shopping-Cart'),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      PageTransition(
-                          type: PageTransitionType.rightToLeft,
-                          duration: Duration(milliseconds: 500),
-                          child: ShoppingCartCopy()));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.language),
-                title: Text('Orders'),
-                onTap: () {
-                  //yet to implement
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => OrderDetails()));
-                },
-              ),
-              ListTile(
-                leading: FaIcon(FontAwesomeIcons.userCircle),
-                title: Text('Support'),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.language),
-                title: Text('Language'),
-                onTap: () {
-                  //yet to implement
-                },
-              ),
-              ListTile(
-                leading: FaIcon(FontAwesomeIcons.userCircle),
-                title: Text('Profile'),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()));
-                },
-              ),
-              ListTile(
-                leading: FaIcon(FontAwesomeIcons.signOutAlt),
-                title: Text('Sign-Out'),
-                onTap: () async {
-                  //add at the last
-                  await DatabaseHelper.instance.deleteAll();
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  FirebaseAuth.instance.signOut();
-                  prefs.setString('customerName', null);
-                  prefs.setString('customerEmailId', null);
-                  prefs.setString('customerId', null);
-                  prefs.setBool("isLoggedIn", false);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MyApp()));
-                },
-              ),
-            ],
-          ),
-        ),
+        drawer: MyDrawer(),
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
+                  Widget>[
+                Row(
                   children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        IconButton(
-//                    icon: Icon(Icons.menu,size: 30,),
-                          icon: FaIcon(FontAwesomeIcons.alignLeft),
-                          color: Colors.black87,
-                          onPressed: () =>
-                              scaffoldKey.currentState.openDrawer(),
-                        ),
-                        Text(
-                          widget.subCategoryName.toString(),
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
+                    IconButton(
+                      icon: FaIcon(FontAwesomeIcons.alignLeft),
+                      color: Colors.black87,
+                      onPressed: () => scaffoldKey.currentState.openDrawer(),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.blue),
-                      child: Stack(
-                        children: <Widget>[
-                          IconButton(
-//                    icon: Icon(Icons.menu,size: 30,),
-                            icon: FaIcon(FontAwesomeIcons.shoppingBag,
-                                size: 20),
-                            color: Colors.white,
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  PageTransition(
-                                      type: PageTransitionType.rightToLeft,
-                                      duration: Duration(milliseconds: 500),
-                                      child: ShoppingCartCopy()));
-                            },
-                          ),
-                        ],
+                    Text(
+                      widget.subCategoryName.toString(),
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
-                  ]),
+                  ],
+                ),
+               ShoppingIcon(),
+              ]),
               Container(
                 width: AppTheme.fullWidth(context),
                 margin: EdgeInsets.all(10),
@@ -271,13 +137,14 @@ class _ProductState extends State<Product> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                             color: LightColor.lightGrey.withAlpha(100),
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         child: TextField(
                           controller: _controller,
                           onChanged: (string) {
                             setState(() {
-                              _showcross = true;
-                              duplicate_product_list = original_product_list
+                              showCross = true;
+                              duplicateProductList = originalProductList
                                   .where((u) => (u["name"]
                                       .toLowerCase()
                                       .contains(string.toLowerCase())))
@@ -295,14 +162,14 @@ class _ProductState extends State<Product> {
                                   left: 10, right: 10, bottom: 0, top: 5),
                               prefixIcon:
                                   Icon(Icons.search, color: Colors.black54),
-                              suffixIcon: _showcross
+                              suffixIcon: showCross
                                   ? IconButton(
                                       icon: Icon(Icons.clear),
                                       onPressed: () {
                                         setState(() {
-                                          duplicate_product_list =
-                                              original_product_list;
-                                          _showcross = false;
+                                          duplicateProductList =
+                                              originalProductList;
+                                          showCross = false;
                                           _controller.clear();
                                         });
                                       },
@@ -319,27 +186,28 @@ class _ProductState extends State<Product> {
               ),
               loading
                   ? Center(
-                      child: spinkit,
+                      child: spinKit,
                     )
                   : noProducts
                       ? Container(
-                margin: EdgeInsets.all(27),
-                        child: Text(
-                          'No products available for this sub-category!!!',
-                          style: TextStyle(fontSize: 18),
-                          textAlign: TextAlign.center,
-                        ),
-                      )
+                          margin: EdgeInsets.all(27),
+                          child: Text(
+                            'No products available for this sub-category!!!',
+                            style: TextStyle(fontSize: 18),
+                            textAlign: TextAlign.center,
+                          ),
+                        )
                       : Expanded(
                           child: MediaQuery.removePadding(
                             context: context,
                             removeTop: true,
                             child: new ListView.builder(
-                              itemCount: duplicate_product_list.length,
+                              itemCount: duplicateProductList.length,
                               itemBuilder: (context, index) {
-                                _region = (original_product_list[index]
+                                _region = (originalProductList[index]
                                         ["product_variable"])
-                                    .map<Region>((item) => Region.fromJson(item))
+                                    .map<Region>(
+                                        (item) => Region.fromJson(item))
                                     .toList();
                                 return GestureDetector(
                                   onTap: () {
@@ -348,9 +216,10 @@ class _ProductState extends State<Product> {
                                       MaterialPageRoute(
                                         builder: (context) => DetailsPage(
                                             details:
-                                                duplicate_product_list[index],
-                                            initialVariable: duplicate_product_list[
-                                                    index]["product_variable"][0][
+                                                duplicateProductList[index],
+                                            initialVariable: duplicateProductList[
+                                                        index]
+                                                    ["product_variable"][0][
                                                 "product_variable_options_name"]),
                                       ),
                                     );
@@ -381,12 +250,13 @@ class _ProductState extends State<Product> {
                                               color: Colors.red,
                                               image: DecorationImage(
                                                   image: NetworkImage(
-                                                      duplicate_product_list[
-                                                              index]
-                                                          ["product_image_url"]),
+                                                      duplicateProductList[
+                                                              index][
+                                                          "product_image_url"]),
                                                   fit: BoxFit.cover),
                                               borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(10.0),
+                                                  topLeft:
+                                                      Radius.circular(10.0),
                                                   bottomLeft:
                                                       Radius.circular(10.0)),
                                             ),
@@ -401,34 +271,36 @@ class _ProductState extends State<Product> {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  duplicate_product_list[index]
+                                                  duplicateProductList[index]
                                                       ["name"],
                                                   style: TextStyle(
                                                     fontSize: 14.0,
                                                     fontWeight: FontWeight.w400,
                                                     letterSpacing: 0.8,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   maxLines: 5,
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      top: 3.0),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 3.0),
                                                   child: Row(
                                                     children: <Widget>[
                                                       Text(
                                                         getSum(
-                                                            double.parse(duplicate_product_list[index]
-                                                                        ["product_variable"]
-                                                                    [selectedVariableIndex[index]]
-                                                                [
-                                                                "variable_original_price"]),
-                                                            double.parse(duplicate_product_list[
+                                                            double.parse(duplicateProductList[
                                                                             index]
                                                                         ["product_variable"]
                                                                     [
                                                                     selectedVariableIndex[
-                                                                        index]]["variable_selling_price"]
+                                                                        index]][
+                                                                "variable_original_price"]),
+                                                            double.parse(duplicateProductList[index]
+                                                                            ["product_variable"]
+                                                                        [selectedVariableIndex[index]]
+                                                                    ["variable_selling_price"]
                                                                 .toString())),
                                                         style: TextStyle(
                                                             fontSize: 15.0,
@@ -442,11 +314,11 @@ class _ProductState extends State<Product> {
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsets.only(
-                                                                left: 3),
+                                                            const EdgeInsets
+                                                                .only(left: 3),
                                                         child: Text(
                                                           'Rs.' +
-                                                              duplicate_product_list[
+                                                              duplicateProductList[
                                                                               index]
                                                                           [
                                                                           "product_variable"]
@@ -457,8 +329,10 @@ class _ProductState extends State<Product> {
                                                           style: TextStyle(
                                                               fontSize: 18.0,
                                                               fontWeight:
-                                                                  FontWeight.w600,
-                                                              letterSpacing: 0.6),
+                                                                  FontWeight
+                                                                      .w600,
+                                                              letterSpacing:
+                                                                  0.6),
                                                         ),
                                                       ),
                                                     ],
@@ -474,19 +348,23 @@ class _ProductState extends State<Product> {
                                                         height: 30,
                                                         margin: EdgeInsets.only(
                                                             top: 10),
-                                                        padding: EdgeInsets.only(
-                                                            left: 10),
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10),
                                                         decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
                                                             border: Border.all(
-                                                                color:
-                                                                    Colors.blue)),
+                                                                color: Colors
+                                                                    .blue)),
                                                         child: DropdownButton<
                                                             String>(
                                                           hint: Text('Select'),
                                                           icon: Icon(Icons
                                                               .arrow_drop_down),
                                                           iconSize: 24,
-//                                                  hint: Text('select'),
                                                           isExpanded: true,
                                                           elevation: 16,
                                                           style: TextStyle(
@@ -497,11 +375,12 @@ class _ProductState extends State<Product> {
                                                             color: Colors
                                                                 .deepPurpleAccent,
                                                           ),
-                                                          items: _region
-                                                              .map((Region map) {
+                                                          items: _region.map(
+                                                              (Region map) {
                                                             return new DropdownMenuItem<
                                                                 String>(
-                                                              value: map.regionid,
+                                                              value:
+                                                                  map.regionId,
                                                               child: new Text(
                                                                   '${map.regionDescription}',
                                                                   style: new TextStyle(
@@ -515,18 +394,16 @@ class _ProductState extends State<Product> {
                                                             setState(() {
                                                               for (int i = 0;
                                                                   i <
-                                                                      duplicate_product_list[index]
+                                                                      duplicateProductList[index]
                                                                               [
                                                                               "product_variable"]
                                                                           .length;
                                                                   i++) {
                                                                 if (selectedRegion[
                                                                         index] ==
-                                                                    duplicate_product_list[index]
-                                                                                [
-                                                                                "product_variable"]
+                                                                    duplicateProductList[index]["product_variable"][i]
                                                                             [
-                                                                            i]["id"]
+                                                                            "id"]
                                                                         .toString()) {
                                                                   selectedVariableIndex[
                                                                       index] = i;
@@ -546,100 +423,132 @@ class _ProductState extends State<Product> {
                                                           count1++;
                                                           var productId;
                                                           for (int i = 0;
-                                                              i <
-                                                                  duplicate_product_list[
-                                                                              index]
-                                                                          [
-                                                                          "product_variable"]
-                                                                      .length;
-                                                              i++) {
-                                                            if (selectedRegion[
-                                                                    index] ==
-                                                                duplicate_product_list[
-                                                                                index]
-                                                                            [
-                                                                            "product_variable"]
-                                                                        [i]["id"]
+                                                              i < duplicateProductList[index]
+                                                                          ["product_variable"].length; i++) {
+                                                            if (selectedRegion[index] == duplicateProductList[index]["product_variable"][i]["id"]
                                                                     .toString()) {
-                                                              vname = duplicate_product_list[
-                                                                          index][
+                                                              vName = duplicateProductList[
+                                                                          index]
+                                                                      [
                                                                       "product_variable"][i]
                                                                   [
                                                                   "product_variable_options_name"];
                                                               print(
                                                                   'vname is : ' +
-                                                                      vname);
-                                                              vqty = 1.toString();
-                                                              if (vid == null) {
-                                                                vid = duplicate_product_list[
-                                                                                index]
+                                                                      vName);
+                                                              vQty =
+                                                                  1.toString();
+                                                              if (vId == null) {
+                                                                vId = duplicateProductList[index]
                                                                             [
                                                                             "product_variable"]
-                                                                        [0]["id"]
+                                                                        [
+                                                                        0]["id"]
                                                                     .toString();
-                                                                print('vid is:' +
-                                                                    vid);
+                                                                print(
+                                                                    'vid is:' +
+                                                                        vId);
                                                               }
-                                                              vid = duplicate_product_list[
+                                                              vId = duplicateProductList[
                                                                               index]
                                                                           [
                                                                           "product_variable"]
                                                                       [i]["id"]
                                                                   .toString();
-                                                              aqty = duplicate_product_list[
-                                                                          index][
+                                                              aqty = duplicateProductList[
+                                                                          index]
+                                                                      [
                                                                       "product_variable"]
-                                                                  [i]["quantity"];
-                                                              sprice = duplicate_product_list[
+                                                                  [
+                                                                  i]["quantity"];
+                                                              sPrice = duplicateProductList[
                                                                               index]
                                                                           [
                                                                           "product_variable"][i]
                                                                       [
                                                                       "variable_selling_price"]
                                                                   .toString();
-                                                              aprice = duplicate_product_list[
-                                                                          index][
+                                                              aPrice = duplicateProductList[
+                                                                          index]
+                                                                      [
                                                                       "product_variable"][i]
                                                                   [
                                                                   "variable_original_price"];
-                                                              productId = duplicate_product_list[
-                                                                          index][
-                                                                      "product_variable"]
+                                                              productId = duplicateProductList[
+                                                                          index]
+                                                                      [
+                                                                      "product_variable"][i]
                                                                   [
-                                                                  i]["product_id"];
+                                                                  "product_id"];
                                                               break;
                                                             }
                                                           }
+                                                            var check1 = await DatabaseHelper
+                                                                .instance
+                                                                .insertProduct(
+                                                                    productId,
+                                                                    int.parse(
+                                                                        vId),
+                                                                    double.parse(
+                                                                        vQty),
+                                                                    vName,
+                                                                    duplicateProductList[
+                                                                            index]
+                                                                        [
+                                                                        "product_image_url"],
+                                                                    duplicateProductList[
+                                                                            index]
+                                                                        [
+                                                                        "name"],
+                                                                    double.parse(
+                                                                        sPrice),
+                                                                    double.parse(
+                                                                        aPrice),
+                                                                    double.parse(
+                                                                        aqty));
+                                                            print('check1 in products is :'+check1.toString());
+                                                            if(check1=='no'){
+                                                              Flushbar(
+                                                                margin: EdgeInsets
+                                                                    .all(8),
+                                                                borderRadius: 8,
+                                                                backgroundColor:
+                                                                Colors.red,
+                                                                flushbarPosition:
+                                                                FlushbarPosition
+                                                                    .TOP,
+                                                                message:
+                                                                "Product is no longer available in stock,Sorry!!!",
+                                                                duration:
+                                                                Duration(
+                                                                    seconds:
+                                                                    4),
+                                                              )..show(context);
+                                                            }else{
+                                                              Flushbar(
+                                                                margin: EdgeInsets
+                                                                    .all(8),
+                                                                borderRadius: 8,
+                                                                backgroundColor:
+                                                                Colors.green,
+                                                                flushbarPosition:
+                                                                FlushbarPosition
+                                                                    .TOP,
+                                                                message:
+                                                                "Product is added to cart!!!",
+                                                                duration:
+                                                                Duration(
+                                                                    seconds:
+                                                                    4),
+                                                              )..show(context);
+                                                            }
 
-                                                          var check1 = DatabaseHelper
-                                                              .instance
-                                                              .insertProduct(
-                                                                  productId,
-                                                                  int.parse(vid),
-                                                                  double.parse(
-                                                                      vqty),
-                                                                  vname,
-                                                                  duplicate_product_list[
-                                                                          index][
-                                                                      "product_image_url"],
-                                                                  duplicate_product_list[
-                                                                          index]
-                                                                      ["name"],
-                                                                  double.parse(
-                                                                      sprice),
-                                                                  double.parse(
-                                                                      aprice),
-                                                                  double.parse(
-                                                                      aqty));
-                                                          print(check1);
-//
                                                         },
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8.0)),
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0)),
                                                         color: Colors.blue,
                                                         textColor: Colors.white,
                                                         icon: Icon(
@@ -674,12 +583,6 @@ class _ProductState extends State<Product> {
     );
   }
 
-  getAllProducts() {
-    Service.getProducts(widget.productId).then((value) {
-//      print(value);
-    });
-  }
-
   String checkPrice(String s, String a) {
     return a;
   }
@@ -694,24 +597,24 @@ class _ProductState extends State<Product> {
 }
 
 class Region {
-  final String regionid;
+  final String regionId;
   final String regionDescription;
   final String qty;
-  final int sprice;
-  final String aprice;
+  final int sPrice;
+  final String aPrice;
   Region(
-      {this.regionid,
+      {this.regionId,
       this.regionDescription,
-      this.aprice,
+      this.aPrice,
       this.qty,
-      this.sprice});
+      this.sPrice});
   factory Region.fromJson(Map<String, dynamic> json) {
     print(json['variable_selling_price'].runtimeType);
     return new Region(
-        regionid: json['id'].toString(),
+        regionId: json['id'].toString(),
         regionDescription: json['product_variable_options_name'],
         qty: (json['quantity']),
-        sprice: json['variable_selling_price'],
-        aprice: (json['variable_original_price']));
+        sPrice: json['variable_selling_price'],
+        aPrice: (json['variable_original_price']));
   }
 }

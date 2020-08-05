@@ -1,17 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timepass/main.dart';
+import 'package:timepass/pages/MyDrawer.dart';
 import 'package:timepass/pages/OrderFurtherDetails.dart';
-import 'package:timepass/pages/ProfilePage.dart';
-import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/services/Service.dart';
-import 'package:timepass/sqlite/db_helper.dart';
-
 import 'Categories.dart';
 
 class OrderDetails extends StatefulWidget {
@@ -21,12 +15,11 @@ class OrderDetails extends StatefulWidget {
 
 class _OrderDetailsState extends State<OrderDetails> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
-  int mobile_no;
+  int mobileNo;
   bool loading = true;
   bool paid = false;
   @override
   void initState() {
-    // TODO: implement initState
     paid = false;
     super.initState();
     getMobileNo();
@@ -34,118 +27,25 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   getMobileNo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    mobile_no = prefs.getInt('customerMobileNo');
+    mobileNo = prefs.getInt('customerMobileNo');
     setState(() {
       loading = false;
     });
-    print(mobile_no.toString());
+    print(mobileNo.toString());
   }
 
-  Future<bool> _onBackPressed() {
-    Navigator.push(
+  Future<bool> onBackPressed() {
+    return Navigator.push(
         context, MaterialPageRoute(builder: (context) => Categories()));
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onBackPressed,
+      onWillPop: onBackPressed,
       child: Scaffold(
           key: scaffoldKey,
-          drawer: Drawer(
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                Container(
-                  height: 100,
-                  child: DrawerHeader(
-                    child: Text(
-                      'Grocery',
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.home),
-                  title: Text('Home'),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Categories()));
-                  },
-                ),
-                ListTile(
-                  leading: FaIcon(FontAwesomeIcons.shoppingBag),
-                  title: Text('Shopping-Cart'),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        PageTransition(
-                            type: PageTransitionType.rightToLeft,
-                            duration: Duration(milliseconds: 500),
-                            child: ShoppingCartCopy()));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.language),
-                  title: Text('Orders'),
-                  onTap: () {
-                    //yet to implement
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => OrderDetails()));
-                  },
-                ),
-                ListTile(
-                  leading: FaIcon(FontAwesomeIcons.userCircle),
-                  title: Text('Support'),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ProfilePage()));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.language),
-                  title: Text('Language'),
-                  onTap: () {
-                    //yet to implement
-                  },
-                ),
-                ListTile(
-                  leading: FaIcon(FontAwesomeIcons.userCircle),
-                  title: Text('Profile'),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ProfilePage()));
-                  },
-                ),
-                ListTile(
-                  leading: FaIcon(FontAwesomeIcons.signOutAlt),
-                  title: Text('Sign-Out'),
-                  onTap: () async {
-                    //add at the last
-                    await DatabaseHelper.instance.deleteAll();
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    FirebaseAuth.instance.signOut();
-                    prefs.setString('customerName', null);
-                    prefs.setString('customerEmailId', null);
-                    prefs.setString('customerId', null);
-                    prefs.setBool("isLoggedIn", false);
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MyApp()));
-                  },
-                ),
-              ],
-            ),
-          ),
+          drawer: MyDrawer(),
           body: loading
               ? Center(child: CircularProgressIndicator())
               : Column(
@@ -179,24 +79,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                       context: context,
                       removeTop: true,
                       child: FutureBuilder(
-                        future: Service.getOrders(mobile_no),
+                        future: Service.getOrders(mobileNo),
                         builder: (context, snapshot) {
-//                    if (snapshot.connectionState == ConnectionState.done && snapshot?.data?.length==0&&
-//                        snapshot.data["success"] == false) {
-//                      return Container(
-//                        alignment: Alignment.center,
-//                        margin: EdgeInsets.only(left: 30, right: 30),
-//                        child: Column(
-//                          mainAxisAlignment: MainAxisAlignment.center,
-//                          children: <Widget>[
-//                            Text(
-//                              snapshot.data["msg"].toString(),
-//                              style: TextStyle(fontSize: 20,fontWeight: FontWeight.w200),
-//                            ),
-//                          ],
-//                        ),
-//                      );
-//                    }
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.data["success"] == false) {
+                     return Center(child: Text('No Orders Found !!!'),);
+                    }
                           if (snapshot.connectionState ==
                                   ConnectionState.done &&
                               snapshot.hasData &&

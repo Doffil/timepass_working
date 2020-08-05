@@ -24,11 +24,11 @@ class _MyAppState extends State<MyApp> {
   void initState(){
     // TODO: implement initState
     super.initState();
-    transfer();
+    checkInternet();
   }
 
   transfer(){
-    Timer(Duration(milliseconds: 6200),(){
+    Timer(Duration(milliseconds: 3000),(){
       navigateUser();
     });
   }
@@ -98,14 +98,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       body:
-//      Container(
-//        decoration: BoxDecoration(
-//            image: DecorationImage(
-//                image: AssetImage("assets/images/splashscreen.png"),
-//                fit: BoxFit.cover
-//            )
-//        ),
-//      ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -117,17 +109,17 @@ class _MyAppState extends State<MyApp> {
                     print("Tap Event");
                   },
                   text: [
-                    "Grocery App",
+                    "Shree Kakaji Masale",
                   ],
                   textStyle: TextStyle(
-                      fontSize: 28.0,
+                      fontSize: 26.0,
                       fontWeight: FontWeight.w600,
                     color: Colors.blue,
                     letterSpacing: 0.6
                   ),
                   textAlign: TextAlign.center,
                   alignment: AlignmentDirectional.topStart,
-                speed: Duration(milliseconds: 360),
+                speed: Duration(milliseconds: 140),
                 isRepeatingAnimation: false,// or Alignment.topLeft
               ),
             ),

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,14 +5,10 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timepass/main.dart';
-import 'package:timepass/pages/Categories.dart';
-import 'package:timepass/pages/OrderDetails.dart';
-import 'package:timepass/pages/ProfilePage.dart';
+import 'package:timepass/pages/MyDrawer.dart';
 import 'package:timepass/pages/Product.dart';
+import 'package:timepass/pages/ShoppingIcon.dart';
 import 'package:timepass/pages/shopping-copy.dart';
-import 'package:timepass/sqlite/db_helper.dart';
 import 'package:timepass/themes/light_color.dart';
 import 'package:timepass/themes/theme.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -23,10 +18,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class SubCategories extends StatefulWidget {
   final subCategories;
-  final category_name;
+  final categoryName;
 
 
-  const SubCategories({Key key,this.subCategories,this.category_name}) : super(key: key);
+  const SubCategories({Key key,this.subCategories,this.categoryName}) : super(key: key);
   @override
   _SubCategoriesState createState() => _SubCategoriesState();
 }
@@ -35,37 +30,24 @@ class _SubCategoriesState extends State<SubCategories> {
 
   bool _loading;
   var _controller = TextEditingController();
-  bool _showcross=false;
-  List duplicate_subcategories_list=new List();
-  List original_subcategories_list=new List();
+  bool showCross=false;
+  List duplicateSubcategoriesList=new List();
+  List originalSubcategoriesList=new List();
   var scaffoldKey = GlobalKey<ScaffoldState>();
-  final spinkit = SpinKitWave(
+  final spinKit = SpinKitWave(
     color: Colors.lightBlue,
     size: 30,
   );
 
   @override
   void initState() {
-    _showcross=false;
+    showCross=false;
     super.initState();
-    original_subcategories_list=widget.subCategories;
-    duplicate_subcategories_list=widget.subCategories;
+    originalSubcategoriesList=widget.subCategories;
+    duplicateSubcategoriesList=widget.subCategories;
     _loading = false;
   }
-
-
   int cartLength = 0;
-  _getMoreData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      cartLength = prefs.getInt('cartLength') ?? 0;
-    });
-  }
-
-  Future<bool> _onBackPressed() {
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>Categories()));
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -73,110 +55,12 @@ class _SubCategoriesState extends State<SubCategories> {
       onTap: (){
     FocusScope.of(context).requestFocus(new FocusNode());
     setState(() {
-      _showcross=false;
+      showCross=false;
     });
     },
       child: Scaffold(
           key: scaffoldKey,
-          drawer: Drawer(
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                Container(
-                  height: 100,
-                  child: DrawerHeader(
-                    child: Text(
-                      'Grocery',
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.home),
-                  title: Text('Home'),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Categories()));
-                  },
-                ),
-                ListTile(
-                  leading: FaIcon(FontAwesomeIcons.shoppingBag),
-                  title: Text('Shopping-Cart'),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        PageTransition(
-
-                            type: PageTransitionType
-                                .rightToLeft,
-                            duration:
-                            Duration(milliseconds: 500),
-                            child: ShoppingCartCopy()));
-                  },
-                ),
-
-                ListTile(
-                  leading: Icon(Icons.language),
-                  title: Text('Orders'),
-                  onTap: () {
-                    //yet to implement
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => OrderDetails()));
-                  },
-                ),
-                ListTile(
-                  leading: FaIcon(FontAwesomeIcons.userCircle),
-                  title: Text('Support'),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfilePage()));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.language),
-                  title: Text('Language'),
-                  onTap: () {
-                    //yet to implement
-                  },
-                ),
-                ListTile(
-                  leading: FaIcon(FontAwesomeIcons.userCircle),
-                  title: Text('Profile'),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfilePage()));
-                  },
-                ),
-                ListTile(
-                  leading: FaIcon(FontAwesomeIcons.signOutAlt),
-                  title: Text('Sign-Out'),
-                  onTap: ()async {
-                    //add at the last
-                    await DatabaseHelper.instance.deleteAll();
-                    SharedPreferences prefs = await SharedPreferences.getInstance();
-                    FirebaseAuth.instance.signOut();
-                    prefs.setString('customerName', null);
-                    prefs.setString('customerEmailId', null);
-                    prefs.setString('customerId', null);
-                    prefs.setBool("isLoggedIn", false);
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>MyApp()));                        },
-                ),
-              ],
-            ),
-          ),
+          drawer: MyDrawer(),
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +77,7 @@ class _SubCategoriesState extends State<SubCategories> {
                                 scaffoldKey.currentState.openDrawer(),
                           ),
                           Text(
-                            _loading ? 'Loading...' : widget.category_name,
+                            _loading ? 'Loading...' : widget.categoryName,
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w800,
@@ -201,30 +85,7 @@ class _SubCategoriesState extends State<SubCategories> {
                           ),
                         ],
                       ),
-                      Container(
-                        margin: EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.blue),
-                        child: Stack(
-                          children: <Widget>[
-                            IconButton(
-                                icon: FaIcon(FontAwesomeIcons.shoppingBag,
-                                    size: 20),
-                                color: Colors.white,
-                                onPressed: () => {
-                                Navigator.push(
-                                context,
-                                PageTransition(
-                                type: PageTransitionType
-                                    .rightToLeft,
-                                duration:
-                                Duration(milliseconds: 500),
-                                child: ShoppingCartCopy()))
-                                    }),
-
-                          ],
-                        ),
-                      ),
+                     ShoppingIcon(),
                     ]),
                 Container(
                   width: AppTheme.fullWidth(context),
@@ -248,13 +109,13 @@ class _SubCategoriesState extends State<SubCategories> {
                                     left: 10, right: 10, bottom: 0, top: 5),
                                 prefixIcon:
                                     Icon(Icons.search, color: Colors.black54),
-                              suffixIcon:_showcross?
+                              suffixIcon:showCross?
                               IconButton(
                                 icon: Icon(Icons.clear),
                                 onPressed: (){
                                   setState(() {
-                                    duplicate_subcategories_list=original_subcategories_list;
-                                    _showcross=false;
+                                    duplicateSubcategoriesList=originalSubcategoriesList;
+                                    showCross=false;
                                     _controller.clear();
                                   });
                                 },
@@ -263,8 +124,8 @@ class _SubCategoriesState extends State<SubCategories> {
 
                             onChanged: (string) {
                               setState(() {
-                                _showcross=true;
-                                duplicate_subcategories_list =original_subcategories_list
+                                showCross=true;
+                                duplicateSubcategoriesList =originalSubcategoriesList
                                     .where((u) => (u["product_subcategory_name"]
                                         .toLowerCase()
                                         .contains(string.toLowerCase())))
@@ -285,11 +146,11 @@ class _SubCategoriesState extends State<SubCategories> {
                       mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Center(
-                            child: spinkit,
+                            child: spinKit,
                           )
                         ],
                       )
-                    :duplicate_subcategories_list.length == 0
+                    :duplicateSubcategoriesList.length == 0
                     ? Center(
                   child: Text(
                     'No sub-categories found !!!',
@@ -304,7 +165,7 @@ class _SubCategoriesState extends State<SubCategories> {
                           child: Padding(
                             padding: const EdgeInsets.only(left: 10),
                             child: new GridView.builder(
-                              itemCount:duplicate_subcategories_list.length,
+                              itemCount:duplicateSubcategoriesList.length,
                               itemBuilder: (context, index) {
                                 return Card(
                                   shape: RoundedRectangleBorder(
@@ -318,14 +179,14 @@ class _SubCategoriesState extends State<SubCategories> {
                                       child: InkWell(
                                         splashColor: Colors.orange,
                                         onTap: () {
-                                          print(duplicate_subcategories_list[index]["id"]);
-                                          if(duplicate_subcategories_list[index]["is_active"] ==1){
+                                          print(duplicateSubcategoriesList[index]["id"]);
+                                          if(duplicateSubcategoriesList[index]["is_active"] ==1){
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    Product(productId: duplicate_subcategories_list[index]["id"],
-                                                    subCategoryName: duplicate_subcategories_list[index]["product_subcategory_name"]),
+                                                    Product(productId: duplicateSubcategoriesList[index]["id"],
+                                                    subCategoryName: duplicateSubcategoriesList[index]["product_subcategory_name"]),
                                               ),
                                             );
                                           }else{
@@ -355,7 +216,7 @@ class _SubCategoriesState extends State<SubCategories> {
                                                     topLeft: Radius.circular(10.0),
                                                     topRight: Radius.circular(10.0)),
                                                 child: CachedNetworkImage(
-                                                  imageUrl: duplicate_subcategories_list[index]["product_subcategory_image_url"],
+                                                  imageUrl: duplicateSubcategoriesList[index]["product_subcategory_image_url"],
                                                   placeholder: (context, url) {
                                                     return Icon(Icons.shopping_cart);
                                                   },
@@ -366,11 +227,11 @@ class _SubCategoriesState extends State<SubCategories> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 9.0),
+                                              padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 9.0),
                                               child: Opacity(
                                                 opacity: 0.8,
                                                 child: Text(
-                                                  duplicate_subcategories_list[index]["product_subcategory_name"],
+                                                  duplicateSubcategoriesList[index]["product_subcategory_name"],
                                                   softWrap: true,
                                                   style: TextStyle(
                                                       fontSize: 15.0,
@@ -379,15 +240,14 @@ class _SubCategoriesState extends State<SubCategories> {
                                                 ),
                                               ),
                                             ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 9.0, bottom: 6.0),
-                                              child: Text(
-                                                '(40)',
-                                                style: TextStyle(
-                                                  fontSize: 12.0,
-                                                ),
-                                              ),
-                                            )
+//                                            Padding(
+//                                              padding: const EdgeInsets.only(left: 9.0, bottom: 6.0),
+//                                              child: Text("",
+//                                                style: TextStyle(
+//                                                  fontSize: 12.0,
+//                                                ),
+//                                              ),
+//                                            )
                                           ],
                                         ),
                                       )),

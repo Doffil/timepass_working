@@ -1,19 +1,14 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/main.dart';
 import 'package:timepass/pages/Categories.dart';
+import 'package:timepass/pages/MyDrawer.dart';
 import 'package:timepass/pages/OrderDetails.dart';
-import 'package:timepass/pages/shopping-copy.dart';
-import 'package:timepass/sqlite/db_helper.dart';
 import 'package:timepass/widgets/custom_list_tile.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -24,23 +19,24 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
-  File _image;
-  final picker= ImagePicker();
-  Future getImage() async{
-    final image = await picker.getImage(source: ImageSource.gallery);
-    setState(() {
-      _image = File(image.path);
-    });
-  }
+
+  //  File _image;
+//  final picker= ImagePicker();
+//  Future getImage() async{
+//    final image = await picker.getImage(source: ImageSource.gallery);
+//    setState(() {
+//      _image = File(image.path);
+//    });
+//  }
   bool loading=true;
   Future<bool> _onBackPressed() {
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>Categories()));
+    return Navigator.push(context, MaterialPageRoute(builder: (context)=>Categories()));
   }
-  String emailId,name;
+  String emailId,customerName;
   int phone;
+
 @override
   void initState() {
-    // TODO: implement initState
   loading=true;
     super.initState();
     getData();
@@ -48,8 +44,9 @@ class _ProfilePageState extends State<ProfilePage> {
   getData()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     emailId=prefs.getString('customerEmailId');
-    name=prefs.getString('customerName');
+    customerName=prefs.getString('customerName');
     phone=prefs.getInt('customerMobileNo');
+    print(customerName.toString());
     setState(() {
       loading=false;
     });
@@ -63,144 +60,45 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-
-          TextEditingController _controller = TextEditingController();
-          final myController1 = TextEditingController();
-          final myController2 = TextEditingController();
+//
+//          TextEditingController _controller = TextEditingController();
+//          final myController1 = TextEditingController();
+//          final myController2 = TextEditingController();
           String name="";
 
-       void _showDialog(){
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Edit Profile'),
-                    content: TextField(
-                      controller: _controller,
-                    ),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text('Update'),
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pop(_controller.text.toString());
-//                          Navigator.pop(context,_controller.text.toString());
-                        },
-                      ),
-                    ],
-                  );
-                }
-            ).then((value){
-              setState(() {
-                name=value;
-              });
-            });
-          }
+//       void _showDialog(){
+//            showDialog(
+//                context: context,
+//                builder: (BuildContext context) {
+//                  return AlertDialog(
+//                    title: Text('Edit Profile'),
+//                    content: TextField(
+//                      controller: _controller,
+//                    ),
+//                    actions: <Widget>[
+//                      FlatButton(
+//                        child: Text('Update'),
+//                        onPressed: () {
+//                          Navigator.of(context)
+//                              .pop(_controller.text.toString());
+////                          Navigator.pop(context,_controller.text.toString());
+//                        },
+//                      ),
+//                    ],
+//                  );
+//                }
+//            ).then((value){
+//              setState(() {
+//                name=value;
+//              });
+//            });
+//          }
 
           return WillPopScope(
             onWillPop: _onBackPressed,
             child: Scaffold(
               key: scaffoldKey,
-              drawer: Drawer(
-                child: ListView(
-                  // Important: Remove any padding from the ListView.
-                  padding: EdgeInsets.zero,
-                  children: <Widget>[
-                    Container(
-                      height: 100,
-                      child: DrawerHeader(
-                        child: Text(
-                          'Grocery',
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.home),
-                      title: Text('Home'),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Categories()));
-                      },
-                    ),
-                    ListTile(
-                      leading: FaIcon(FontAwesomeIcons.shoppingBag),
-                      title: Text('Shopping-Cart'),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            PageTransition(
-
-                                type: PageTransitionType
-                                    .rightToLeft,
-                                duration:
-                                Duration(milliseconds: 500),
-                                child: ShoppingCartCopy()));
-                      },
-                    ),
-
-                    ListTile(
-                      leading: Icon(Icons.language),
-                      title: Text('Orders'),
-                      onTap: () {
-                        //yet to implement
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => OrderDetails()));
-                      },
-                    ),
-                    ListTile(
-                      leading: FaIcon(FontAwesomeIcons.userCircle),
-                      title: Text('Support'),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProfilePage()));
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.language),
-                      title: Text('Language'),
-                      onTap: () {
-                        //yet to implement
-                      },
-                    ),
-                    ListTile(
-                      leading: FaIcon(FontAwesomeIcons.userCircle),
-                      title: Text('Profile'),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProfilePage()));
-                      },
-                    ),
-                    ListTile(
-                      leading: FaIcon(FontAwesomeIcons.signOutAlt),
-                      title: Text('Sign-Out'),
-                      onTap: ()async {
-                        //add at the last
-                        await DatabaseHelper.instance.deleteAll();
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        FirebaseAuth.instance.signOut();
-                        prefs.setString('customerName', null);
-                        prefs.setString('customerEmailId', null);
-                        prefs.setString('customerId', null);
-                        prefs.setBool("isLoggedIn", false);
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>MyApp()));                        },
-                    ),
-                  ],
-                ),
-              ),
+              drawer: MyDrawer(),
               backgroundColor: Colors.white,
               body:loading?Center(child: spinkit,):
               SafeArea(
@@ -242,6 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             IconButton(
                               icon: FaIcon(FontAwesomeIcons.solidUserCircle,color: Colors.blue,),
                               iconSize: 120,
+                              onPressed: (){},
                             ),
 
 //                            SafeArea(
@@ -292,7 +191,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                     ),
                                     Text(
-                                      name.toString(),
+                                      customerName.toString(),
                                       style: TextStyle(
                                         fontSize: 18
                                       ),

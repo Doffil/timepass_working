@@ -9,9 +9,9 @@ import 'package:timepass/themes/theme.dart';
 
 
 class FailedPage extends StatefulWidget {
-  final response,razorpay_id;
+  final response,razorpay_id,order_id,amount;
   FailedPage({
-    @required this.response, this.razorpay_id,
+    @required this.response, this.razorpay_id,this.order_id,this.amount
   });
 
   @override
@@ -77,7 +77,8 @@ class _FailedPageState extends State<FailedPage> {
                       onPressed: (){
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
-                            builder: (context) => CheckRazor(razorpay_id: widget.razorpay_id,),
+                            builder: (context) => CheckRazor(razorpay_id: widget.razorpay_id,
+                                amount:widget.amount,order_id:widget.order_id),
                           ),
                               (Route<dynamic> route) => false,
                         );                      },

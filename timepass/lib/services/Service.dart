@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart'as http;
 
 class urls{
-  static const String base_url = "http://spices.acknowtech.in/public/api/v1";
+  static const String base_url = "http://192.168.43.41:8000/api/v1";
   static int save_mobile_no;
 }
 
@@ -78,12 +78,6 @@ class Service{
   }
 
   static Future registerAddress(int mobile,String address1,String address2,String pincode,double lat,double long) async{
-//    print('lat in service is'+lat.toString());
-//    print('long in service is'+long.toString());
-//    print('mobile in service is'+mobile.toString());
-//    print('address1 in service is'+address1.toString());
-//    print('address2 in service is'+address2.toString());
-//    print('pincode in service is'+pincode.toString());
 
     var body=jsonEncode({
       'mobile_no': mobile,
@@ -134,16 +128,21 @@ class Service{
     }
   }
 
-  static Future placeOrder(List products,int address_id,int mobile_no,[String promocode]) async{
+  static Future placeOrder(List products,int address_id,int mobile_no,{String promocode,String alternateMobileNo}) async{
     if(promocode==null){
       promocode="";
+    }
+    if(alternateMobileNo==""){
+      alternateMobileNo="none";
     }
     var body=jsonEncode({
       'products':products,
       'address_id':address_id,
       'mobile_no':mobile_no,
       'promocode':promocode,
+      'alternate_no':alternateMobileNo
     });
+    print(body);
     final http.Response response = await http.post(
       urls.base_url+'/customer/placeOrder',
       headers: <String, String>{
@@ -155,6 +154,7 @@ class Service{
       print(response.body);
       return json.decode(response.body);
     } else {
+      print(response.body);
       throw Exception('Failed to load response of place orders');
     }
   }
@@ -194,5 +194,40 @@ class Service{
     }
   }
 
+  static Future createTicket(String subjectName,String categoryName,String message,
+      int customer_id,int order_id) async{
+    var body=jsonEncode({
+      'subject': subjectName,
+      'category': categoryName,
+      'message':message,
+      'order_id':order_id,
+      'customer_id':customer_id
+    });
+    final http.Response response = await http.post(
+      urls.base_url+'/customer/createTicket',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body:body,
+    );
+    if (response.statusCode == 200) {
+      print(response.body);
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load response of create ticket');
+    }
+  }
+
+  static Future getAllTickets(int mobile) async{
+    print('mobile no. in service is'+mobile.toString());
+    final http.Response response = await http.get(
+      urls.base_url+'/customer/getAllTickets?mobile_no='+mobile.toString(),
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to get address from server');
+    }
+  }
 
 }

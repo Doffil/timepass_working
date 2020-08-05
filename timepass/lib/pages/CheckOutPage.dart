@@ -1,22 +1,19 @@
-import 'dart:convert';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/pages/GoogleMapPage.dart';
-import 'package:timepass/pages/RazorpayHome.dart';
 import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/payment/check.dart';
 import 'package:timepass/services/Service.dart';
 import 'package:timepass/sqlite/db_helper.dart';
-
-import 'package:http/http.dart' as http;
-
+import 'package:loading_overlay/loading_overlay.dart';
 
 class CheckOutPage extends StatefulWidget {
   final String currentAddress;
-  final list_of_addresses;
-  const CheckOutPage({Key key, this.currentAddress, this.list_of_addresses}) : super(key: key);
+  final listOfAddresses;
+  const CheckOutPage({Key key, this.currentAddress, this.listOfAddresses}) : super(key: key);
   @override
   _CheckOutPageState createState() => _CheckOutPageState();
 }
@@ -27,45 +24,64 @@ class _CheckOutPageState extends State<CheckOutPage> {
   bool turnOnNotification = false;
   bool turnOnLocation = false;
   int sum = 0;
-  int get_address_id;
+  int getAddressId;
   var rateData;
   bool _loading=true;
-  String promocode="";
+  String promoCode="";
   List queryRows=[];
-  int mobile_no;
-  var razorpay_id;
-  var order_id;
+  int mobileNo;
+  String customerName;
+  var razorpayId;
+  var orderId;
+  bool checkOutLoader=false;
+  TextEditingController alternatePhoneNo = TextEditingController();
+  String altNo="";
   @override
   void initState() {
     print('loaded');
     _loading=true;
-    _currentAddress=widget.list_of_addresses[widget.list_of_addresses.length-1]
+    _currentAddress=widget.listOfAddresses[widget.listOfAddresses.length-1]
     ["address_line_1"].toString()+","
-        +widget.list_of_addresses[widget.list_of_addresses.length-1]
+        +widget.listOfAddresses[widget.listOfAddresses.length-1]
         ["address_line_2"].toString();
-    get_address_id=widget.list_of_addresses[widget.list_of_addresses.length-1]["id"];
+    getAddressId=widget.listOfAddresses[widget.listOfAddresses.length-1]["id"];
     getRate();
     super.initState();
   }
 
   getRate()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    mobile_no=prefs.getInt('customerMobileNo');
+    mobileNo=prefs.getInt('customerMobileNo');
+    customerName = prefs.getString('customerName');
     queryRows=await DatabaseHelper.instance.queryAll();
     if(queryRows.length!=0){
-      promocode=promocodeText.text;
-      if(promocode.length>0){
-        Service.getRates(queryRows, get_address_id, mobile_no,promocode).then((value){
+      promoCode=promoCodeText.text;
+      if(promoCode.length>0){
+        Service.getRates(queryRows, getAddressId, mobileNo,promoCode).then((value){
           if(value["success"]==true){
             rateData=value["data"];
             setState(() {
               _loading=false;
             });
+            if(rateData["discount"]==0){
+              Flushbar(
+                margin: EdgeInsets.all(8),
+                borderRadius: 8,
+                backgroundColor:
+                Colors.red,
+                flushbarPosition:
+                FlushbarPosition.TOP,
+                message:
+                "Wrong Promocode,Sorry!!!",
+                duration:
+                Duration(seconds: 4),
+              )..show(context);
+            }
             print('discount is:'+rateData["discount"].toString());
           }
         });
       }else{
-        Service.getRates(queryRows, get_address_id, mobile_no).then((value){
+        Service.getRates(queryRows, getAddressId, mobileNo).then((value){
           if(value["success"]==true){
             rateData=value["data"];
             setState(() {
@@ -87,14 +103,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
       width: 300.0, // Change as per your requirement
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: widget.list_of_addresses.length,
+        itemCount: widget.listOfAddresses.length,
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: (){
               setState(() {
-                _currentAddress=widget.list_of_addresses[index]["address_line_1"].toString()+","+widget.list_of_addresses[index]["address_line_2"].toString();
-                get_address_id=widget.list_of_addresses[index]["id"];
-                print('address id to be send: '+get_address_id.toString());
+                _currentAddress=widget.listOfAddresses[index]["address_line_1"].toString()+","+widget.listOfAddresses[index]["address_line_2"].toString();
+                getAddressId=widget.listOfAddresses[index]["id"];
+                print('address id to be send: '+getAddressId.toString());
                 _loading=true;
                 getRate();
                 Navigator.of(context).pop();
@@ -103,7 +119,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
             child: Column(
               children: <Widget>[
                 ListTile(
-                  title: Text(widget.list_of_addresses[index]["address_line_1"].toString()+","+widget.list_of_addresses[index]["address_line_2"].toString()),
+                  title: Text(widget.listOfAddresses[index]["address_line_1"].toString()+","+widget.listOfAddresses[index]["address_line_2"].toString()),
                 ),
                 Divider(
                   height: 25,
@@ -121,20 +137,20 @@ class _CheckOutPageState extends State<CheckOutPage> {
     color: Colors.lightBlue,
     size: 30,
   );
-  TextEditingController promocodeText= TextEditingController();
+  TextEditingController promoCodeText= TextEditingController();
 
-  Future<bool> _onBackPressed() {
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCartCopy()));
+  Future<bool> onBackPressed() {
+    return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ShoppingCartCopy()));
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-     onWillPop: _onBackPressed,
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
-        },
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child:
+      LoadingOverlay(
         child: Scaffold(
           body: _loading
               ? Center(
@@ -188,7 +204,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                'Rohit Ghodke',
+                                customerName.toString(),
                               )
                             ],
                           ),
@@ -203,7 +219,18 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               Flexible(
-                                child: TextField(
+                                child: TextFormField(
+                                  controller: alternatePhoneNo,
+                                  validator: (value) {
+                                    String patttern = '^[6-9]{1}[0-9]{9}';
+                                    RegExp regExp = new RegExp(patttern);
+                                    if(!regExp.hasMatch(value)){
+                                      return 'Please enter valid mobile number';
+                                    }else if(value.length==0){
+                                      return 'Please enter mobile Number';
+                                    }
+                                    return null;
+                                  },
                                   decoration: InputDecoration(
                                       hintText: 'Enter Mobile Number',
                                       fillColor: Colors.blue,
@@ -232,9 +259,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                               Flexible(
                                 child: Text(
                                   _currentAddress.length==0?
-                                    widget.list_of_addresses[widget.list_of_addresses.length-1]
+                                    widget.listOfAddresses[widget.listOfAddresses.length-1]
                                     ["address_line_1"].toString()+","
-                                        +widget.list_of_addresses[widget.list_of_addresses.length-1]
+                                        +widget.listOfAddresses[widget.listOfAddresses.length-1]
                                     ["address_line_2"].toString(): _currentAddress,
 //                              maxLines: 5,
 //                              overflow:TextOverflow.ellipsis,
@@ -418,7 +445,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                   padding: EdgeInsets.only(right: 10),
                                   height: 36,
                                   child: TextFormField(
-                                    controller: promocodeText,
+                                    controller: promoCodeText,
                                     style: TextStyle(
                                       fontSize: 15
                                     ),
@@ -426,8 +453,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                       labelText: "Enter PromoCode",
                                       fillColor: Colors.white,
                                       border: new OutlineInputBorder(
-//                                      borderRadius:
-//                                          new BorderRadius.circular(8.0),
                                         borderSide: new BorderSide(),
                                       ),
                                       //fillColor: Colors.green
@@ -469,40 +494,48 @@ class _CheckOutPageState extends State<CheckOutPage> {
               ),
             ),
           ),
-          bottomNavigationBar: Container(
+          bottomNavigationBar: _loading
+              ? Center(
+            child: spinkit,
+          ):
+          Container(
             height: 54,
             child: RaisedButton(
               onPressed: () async{
-                if(promocode.length>0){
-                  Service.placeOrder(queryRows, get_address_id,mobile_no,promocode).then((value){
+                setState(() {
+                  _loading=true;
+                });
+                altNo=alternatePhoneNo.text;
+                if(promoCode.length>0){
+                  Service.placeOrder(queryRows, getAddressId,mobileNo,promocode:promoCode, alternateMobileNo:altNo).then((value){
                     if(value["success"]==true){
-                      razorpay_id=value["data"]["razorpay_order_id"];
-                      order_id=value["data"]["order_id"];
-                      print('order id in checkout is '+order_id.toString());
+                      razorpayId=value["data"]["razorpay_order_id"];
+                      orderId=value["data"]["order_id"];
+                      print('order id in checkout is '+orderId.toString());
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                          builder: (context) => CheckRazor(razorpay_id: razorpay_id,amount:rateData["total"],order_id:order_id),
+                          builder: (context) => CheckRazor(razorpay_id: razorpayId,
+                              amount:rateData["total"],order_id:orderId),
                         ),
                             (Route<dynamic> route) => false,
                       );
                     }
                   });
                 }else{
-                  Service.placeOrder(queryRows, get_address_id,mobile_no).then((value){
+                  Service.placeOrder(queryRows, getAddressId,mobileNo, alternateMobileNo:altNo).then((value){
                     if(value["success"]==true){
-                      razorpay_id=value["data"]["razorpay_order_id"];
-                      order_id=value["data"]["order_id"].toString();
-                      print('order id in checkout is '+order_id.toString());
+                      razorpayId=value["data"]["razorpay_order_id"];
+                      orderId=value["data"]["order_id"].toString();
+                      print('order id in checkout is '+orderId.toString());
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                          builder: (context) => CheckRazor(razorpay_id: razorpay_id,amount:rateData["total"],order_id:order_id),
+                          builder: (context) => CheckRazor(razorpay_id: razorpayId,amount:rateData["total"],order_id:orderId),
                         ),
                             (Route<dynamic> route) => false,
                       );
                     }
                   });
                 }
-//              Navigator.push(context, MaterialPageRoute(builder: (context)=>RazorpayHome(razorpay_id:razorpay_id)));
               },
 
               color: Colors.blue,
@@ -511,6 +544,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
             ),
           ),
         ),
+        opacity: 0.5,
+        isLoading: checkOutLoader,
+        progressIndicator: CircularProgressIndicator(),
       ),
     );
   }
@@ -521,140 +557,4 @@ class _CheckOutPageState extends State<CheckOutPage> {
     return queryRows;
   }
 
-  Widget getData() {
-    return FutureBuilder(
-      future: getAllItems(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.none &&
-            snapshot.hasData == null) {
-          return Center(
-            child: Text(
-              'No data found',
-              style: TextStyle(fontSize: 20),
-            ),
-          );
-        } else {
-          return Flexible(
-            child: ListView.builder(
-                itemCount: snapshot?.data?.length ?? 0,
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (BuildContext context, int index) {
-                  sum = sum + snapshot.data[index]["subPrice"];
-//                  SubCategory subCategory = snapshot.data[index];
-                  return GestureDetector(
-                    onTap: () {},
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        margin: EdgeInsets.only(left: 18, right: 18, bottom: 5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25.0)),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0)),
-                          elevation: 7,
-                          child: Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.all(9.0),
-                                child: Container(
-                                  width: 100.0,
-                                  height: 100.0,
-                                  decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      image: DecorationImage(
-                                          image: NetworkImage(snapshot
-                                              .data[index]["subImageUrl"]),
-                                          fit: BoxFit.cover),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      boxShadow: [BoxShadow(blurRadius: 2.0)]),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(5.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 10.0, top: 9.0),
-                                      child: Text(
-                                        snapshot.data[index]["subName"],
-                                        style: TextStyle(fontSize: 18.0),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 7.0, left: 10.0),
-                                      child: Text(
-                                        snapshot.data[index]["subPrice"]
-                                            .toString(),
-                                        style: TextStyle(
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10.0, left: 10.0),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 23.0),
-                                            child: ButtonTheme(
-                                              minWidth: 20.0,
-                                              child: OutlineButton(
-                                                child:
-                                                    Icon(Icons.favorite_border),
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6.0)),
-                                              ),
-                                            ),
-                                          ),
-                                          ButtonTheme(
-                                            minWidth: 20.0,
-                                            child: OutlineButton(
-                                              child: Icon(Icons.delete),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          6.0)),
-//                                              onPressed: () async {
-//                                                int rowAffected =
-//                                                    await DatabaseHelper
-//                                                        .instance
-//                                                        .delete(
-//                                                            snapshot.data[index]
-//                                                                ["subId"],snapshot.data[index]["varId"]);
-//                                                setState(() {
-//                                                  getAllItems();
-//                                                });
-////                                           widget.valueSetter(widget.id1.subCategory[i]);
-//                                              },
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-          );
-        }
-      },
-    );
-  }
 }

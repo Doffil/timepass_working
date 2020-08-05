@@ -8,10 +8,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timepass/pages/CheckOutPage.dart';
-import 'package:timepass/pages/HomeDemo.dart';
 import 'package:timepass/pages/shopping-copy.dart';
 import 'package:timepass/services/Service.dart';
-//import 'package:location/location.dart';
 
 class GoogleMapPage extends StatefulWidget {
   const GoogleMapPage(
@@ -27,7 +25,7 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
   final myController = TextEditingController();
 
   Marker marker;
-  String _currentAddress = "";
+  String currentAddress = "";
   bool turnOnNotification = false;
   bool turnOnLocation = false;
   String getCurrentAddress =
@@ -65,12 +63,13 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
 //        '${first.subAdminArea},${first.addressLine}, ${first.featureName},'
 //        '${first.thoroughfare}');
 
-    _currentAddress =
+    currentAddress =
         '${myController.text},${first.addressLine},${first.locality},'
         '${first.postalCode}, ${first.adminArea}';
 
     setState(() {
-      var _locationMessage = "${position.latitude}, ${position.longitude}";
+      var locationMessage = "${position.latitude}, ${position.longitude}";
+      print(locationMessage);
     });
   }
 
@@ -81,19 +80,18 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
     _getCurrentLocation();
     super.initState();
   }
-List list_of_addresses=new List();
+List listOfAddresses=new List();
   final _formKey = GlobalKey<FormState>();
-  LocationResult _pickedLocation;
 
-  Future<bool> _onBackPressed() {
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCartCopy()));
+  Future<bool> onBackPressed() {
+    return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ShoppingCartCopy()));
   }
 
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onBackPressed,
+      onWillPop: onBackPressed,
       child: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -293,7 +291,7 @@ List list_of_addresses=new List();
                 if (_formKey.currentState.validate()) {
 //                  print(_currentAddress);
                   SharedPreferences prefs = await SharedPreferences.getInstance();
-                  prefs.setString('customerAddress', _currentAddress);
+                  prefs.setString('customerAddress', currentAddress);
                   int mobile_no=prefs.getInt('customerMobileNo');
 //                  print('mobile_no in googlemap page is:'+mobile_no.toString());
 
@@ -306,7 +304,7 @@ List list_of_addresses=new List();
                           print('rohit ghodke');
 //                          print(value["data"][0]["customer_id"].toString());
                           Navigator.push(context, MaterialPageRoute(builder:
-                              (context)=>CheckOutPage(list_of_addresses: value["data"])));
+                              (context)=>CheckOutPage(listOfAddresses: value["data"])));
                         }else{
                           print('something went wrong');
                         }
@@ -336,7 +334,7 @@ List list_of_addresses=new List();
 //        '${first.thoroughfare}');
       lat=tappedPoint.latitude;
       long=tappedPoint.longitude;
-    _currentAddress =
+    currentAddress =
         '${myController.text},${first.addressLine},${first.locality},'
         '${first.postalCode}, ${first.adminArea}';
     setState(() {
